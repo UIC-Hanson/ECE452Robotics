@@ -4,7 +4,7 @@ from time import sleep
 
 # Define initial variables
 picarx = Picarx()
-picarx.set_grayscale_reference([100, 100, 100])
+picarx.set_grayscale_reference([1400, 1400, 1400])
 last_state = None
 px_power = 0.25  # Robot speed
 offset = 20
