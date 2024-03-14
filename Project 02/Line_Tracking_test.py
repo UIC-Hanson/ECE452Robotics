@@ -2,7 +2,7 @@ from picarx import Picarx
 from time import sleep
 
 px = Picarx()
-px = Picarx(grayscale_pins=['A0', 'A1', 'A2'])
+px = Picarx(grayscale_pins=['1400', '1400', '1400'])
 
 # Please run ./calibration/grayscale_calibration.py to Auto calibrate grayscale values
 # or manual modify reference value by follow code
