@@ -11,11 +11,6 @@ from picarx import Picarx
 from time import sleep
 
 px = Picarx()
-# px = Picarx(grayscale_pins=['A0', 'A1', 'A2'])
-
-# Please run ./calibration/grayscale_calibration.py to Auto calibrate grayscale values
-# or manual modify reference value by follow code
-# px.set_line_reference([1400, 1400, 1400])
 
 current_state = None
 px_power = 10 # Change after 5 iterations
@@ -27,15 +22,15 @@ def outHandle():
     if last_state == 'left':
         px.set_dir_servo_angle(-30)
         #px.backward(10)
-    elif last_state == 'ri ght':
+    elif last_state == 'right':
         px.set_dir_servo_angle(30)
         #px.backward(10)
     while True:
         gm_val_list = px.get_grayscale_data()
         gm_state = get_status(gm_val_list)
         print("outHandle gm_val_list: %s, %s"%(gm_val_list, gm_state))
-        currentSta = gm_state
-        if currentSta != last_state:
+        current_state = gm_state
+        if current_state != last_state:
             break
     sleep(0.001)
 
@@ -49,6 +44,9 @@ def get_status(val_list):
         return 'right'
     elif _state[2] == 1:
         return 'left'
+    else:
+        print("Unknown value, stopping")
+        return 'stop'
 
 if __name__=='__main__':
     try:
