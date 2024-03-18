@@ -73,5 +73,8 @@ if __name__=='__main__':
                 outHandle()
     finally:
         px.stop()
+        px.set_cam_tilt_angle(0)
+        px.set_cam_pan_angle(0)  
+        px.set_dir_servo_angle(0) 
         print("stop and exit")
         sleep(0.1)
