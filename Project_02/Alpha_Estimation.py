@@ -26,10 +26,10 @@ def outHandle():
     global last_state, current_state
     if last_state == 'left':
         px.set_dir_servo_angle(-30)
-        px.backward(10)
-    elif last_state == 'right':
+        #px.backward(10)
+    elif last_state == 'ri ght':
         px.set_dir_servo_angle(30)
-        px.backward(10)
+        #px.backward(10)
     while True:
         gm_val_list = px.get_grayscale_data()
         gm_state = get_status(gm_val_list)
