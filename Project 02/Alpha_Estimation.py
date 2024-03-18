@@ -1,7 +1,7 @@
 """
 Used to estimate alpha to determine the incremental travel displacement for the rear tires
 
-Set up a 100 cm black line for the robot to follow
+Set up a 100 cm black line for the robot to follow (I used a 900cm)
 Run 5 iterations at 5 different speeds and record the distance travelled in each iteration
 See Project 2 instructions on how to determine alpha
 
