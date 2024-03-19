@@ -31,8 +31,8 @@ def outHandle():
         gm_val_list = px.get_grayscale_data()
         gm_state = get_status(gm_val_list)
         print("outHandle gm_val_list: %s, %s" % (gm_val_list, gm_state))
-        currentSta = gm_state
-        if currentSta != last_state:
+        current_state = gm_state
+        if current_state != last_state:
             break
     sleep(0.001)
 
@@ -51,30 +51,40 @@ def get_status(val_list):
         print("Charlie is in the bad place, State was: ", state)
         return 'stop'
 
-
 if __name__ == '__main__':
     try:
         tracking_start_time = time()  # Record the start time
-        while time() - tracking_start_time <= tracking_duration:  # Run the loop for the specified duration
+        while True:  # Change this to an infinite loop
             gm_val_list = px.get_grayscale_data()
             gm_state = get_status(gm_val_list)
             print("gm_val_list: %s, %s" % (gm_val_list, gm_state))
 
+            if gm_state == "stop":
+                print("Stop state reached. Stopping robot.")
+                break  # Exit the loop if "stop" state is detected
+
             if gm_state != "stop":
                 last_state = gm_state
 
-            if gm_state == 'forward':
-                px.set_dir_servo_angle(0)
-                px.forward(px_power)
-            elif gm_state == 'left':
-                px.set_dir_servo_angle(offset)
-                px.forward(px_power)
-            elif gm_state == 'right':
-                px.set_dir_servo_angle(-offset)
-                px.forward(px_power)
+                if gm_state == 'forward':
+                    px.set_dir_servo_angle(0)
+                    px.forward(px_power)
+                elif gm_state == 'left':
+                    px.set_dir_servo_angle(offset)
+                    px.forward(px_power)
+                elif gm_state == 'right':
+                    px.set_dir_servo_angle(-offset)
+                    px.forward(px_power)
+                else:
+                    outHandle()
             else:
-                outHandle()
+                px.stop()
+                break  # Ensure the robot stops if no condition is met
+
     finally:
+        end_time = time()  # Record the end time
         px.stop()
         print("stop and exit")
         sleep(0.1)
+        duration = end_time - tracking_start_time
+        print(f"Time taken to run the course: {duration:.2f} seconds"
