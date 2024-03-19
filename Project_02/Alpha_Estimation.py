@@ -19,7 +19,7 @@ px.set_cam_tilt_angle(0)
 
 current_state = None
 px_power = 10  # Adjust as needed for slow initial movement
-offset = 20
+offset = 30
 last_state = "stop"
 timer_started = False
 tracking_start_time = None
