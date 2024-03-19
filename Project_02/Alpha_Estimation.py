@@ -87,5 +87,4 @@ if __name__ == '__main__':
         print("stop and exit")
         sleep(0.1)
         duration = end_time - tracking_start_time
-        print(f"Time taken to run the course: {duration:.2f} seconds"
-        
+        print(f"Time taken to run the course: {duration:.2f} seconds")
