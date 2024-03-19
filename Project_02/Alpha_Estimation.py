@@ -37,15 +37,19 @@ def outHandle():
     sleep(0.001)
 
 def get_status(val_list):
-    _state = px.get_line_status(val_list)
-    if _state == [0, 0, 0]:
+    state = px.get_line_status(val_list)  # Assumes state returns a list like [0, 0, 0] where 0 means line, 1 means background
+    if state == [0, 0, 0]:
         return 'stop'
-    elif _state[1] == 1:
+    elif state[1] == 1:
         return 'forward'
-    elif _state[0] == 1:
+    elif state[0] == 1:
         return 'right'
-    elif _state[2] == 1:
+    elif state[2] == 1:
         return 'left'
+    else:
+        print("Charlie is in the bad place")
+        return 'stop'
+
 
 if __name__ == '__main__':
     try:
