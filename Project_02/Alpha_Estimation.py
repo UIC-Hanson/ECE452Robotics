@@ -1,15 +1,8 @@
-"""
-Used to estimate alpha to determine the incremental travel displacement for the rear tires
-
-Set up a 100 cm black line for the robot to follow
-Run 5 iterations at 5 different speeds and record the distance travelled in each iteration
-See Project 2 instructions on how to determine alpha
-
-"""
-
 from picarx import Picarx
 from time import sleep, time
-from datetime import datetime
+import datetime
+import csv
+import os
 
 px = Picarx()
 
@@ -21,9 +14,9 @@ px.set_cam_tilt_angle(0)
 current_state = None
 px_power = 10  # Adjust as needed for slow initial movement
 offset = 30
-last_state = "stop"
 timer_started = False
 tracking_start_time = None
+csv_file_path = "picarx_run_data.csv"
 
 def get_status(val_list):
     state = px.get_line_status(val_list)
@@ -33,24 +26,33 @@ def get_status(val_list):
     elif state[1] == 1:
         return 'forward'
     elif state[0] == 1:
-        print("Sensor values: ", state)
+        # print("Sensor values: ", state)
         return 'right'
     elif state[2] == 1:
-        print("Sensor values: ", state)
+        # print("Sensor values: ", state)
         return 'left'
     else:
         print("Charlie is in the bad place, State was: ", state)
         return 'unknown'
 
+def append_to_csv(data, file_path):
+    file_exists = os.path.isfile(file_path)
+    with open(file_path, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(["date", "start_time", "px_power", "duration"])
+        writer.writerow(data)
+
 if __name__ == '__main__':
     try:
+        start_time = datetime.datetime.now()
         px.forward(px_power)  # Start moving forward slowly
         while True:
             gm_val_list = px.get_grayscale_data()
             gm_state = get_status(gm_val_list)
-            #Robot has been stopping before the end of the track.
-            current_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Get current time with milliseconds
-            print(f"{current_time} - Grayscale sensor values:", gm_val_list)
+            # Robot has been stopping before the end of the track.
+            # current_time_str = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Get current time with milliseconds
+            # print(f"{current_time_str} - Grayscale sensor values:", gm_val_list)
 
             # Check if the line is detected for the first time
             if gm_state in ['forward', 'left', 'right'] and not timer_started:
@@ -67,16 +69,19 @@ if __name__ == '__main__':
             if gm_state == 'forward':
                 px.set_dir_servo_angle(0)
             elif gm_state == 'left':
-                print(gm_state)
+                # print(gm_state)
                 px.set_dir_servo_angle(offset)
             elif gm_state == 'right':
-                print(gm_state)
+                # print(gm_state)
                 px.set_dir_servo_angle(-offset)
     finally:
         px.stop()
         if timer_started:
             duration = time() - tracking_start_time
             print(f"Time taken to follow the line: {duration:.2f} seconds")
+            date_str = start_time.strftime("%y-%m-%d")
+            start_time_str = start_time.strftime("%H:%M:%S")
+            append_to_csv([date_str, start_time_str, px_power, f"{duration:.2f}"], csv_file_path)
         else:
             print("No line was detected.")
         sleep(0.1)
