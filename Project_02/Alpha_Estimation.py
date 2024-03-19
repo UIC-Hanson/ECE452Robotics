@@ -12,37 +12,21 @@ from time import sleep, time
 
 px = Picarx()
 
-# Set servos to the 0 position
-px.set_dir_servo_angle(0)  # Set the direction servo to 0
-px.set_cam_pan_angle(0)    # camera, set the pan angle to 0
-px.set_cam_tilt_angle(0)   # camera, set the tilt angle to 0
+# Initialize servos
+px.set_dir_servo_angle(0)
+px.set_cam_pan_angle(0)
+px.set_cam_tilt_angle(0)
 
 current_state = None
-px_power = 10
+px_power = 10  # Adjust as needed for slow initial movement
 offset = 20
 last_state = "stop"
+timer_started = False
 tracking_start_time = None
 
-def outHandle():
-    global last_state, current_state
-    if last_state == 'left':
-        px.set_dir_servo_angle(-30)
-        px.backward(10)
-    elif last_state == 'right':
-        px.set_dir_servo_angle(30)
-        px.backward(10)
-    while True:
-        gm_val_list = px.get_grayscale_data()
-        gm_state = get_status(gm_val_list)
-        print("outHandle gm_val_list: %s, %s" % (gm_val_list, gm_state))
-        current_state = gm_state
-        if current_state != last_state:
-            break
-    sleep(0.001)
-
 def get_status(val_list):
-    state = px.get_line_status(val_list)  # Assumes state returns a list like [0, 0, 0] where 0 means line, 1 means background
-    #print("Sensor values: ", state)  # trying to identifty faults, comment out eventually
+    state = px.get_line_status(val_list)
+    print("Sensor values: ", state)
     if state == [0, 0, 0]:
         return 'stop'
     elif state[1] == 1:
@@ -53,42 +37,38 @@ def get_status(val_list):
         return 'left'
     else:
         print("Charlie is in the bad place, State was: ", state)
-        return 'stop'
+        return 'unknown'
 
 if __name__ == '__main__':
     try:
-        tracking_start_time = time()  # Record the start time
-        while True:  # Change this to an infinite loop
+        px.forward(px_power)  # Start moving forward slowly
+        while True:
             gm_val_list = px.get_grayscale_data()
             gm_state = get_status(gm_val_list)
-            print("gm_val_list: %s, %s" % (gm_val_list, gm_state))
 
-            if gm_state == "stop":
-                print("Stop state reached. Stopping robot.")
-                break  # Exit the loop if "stop" state is detected
+            # Check if the line is detected for the first time
+            if gm_state in ['forward', 'left', 'right'] and not timer_started:
+                print("Line detected. Starting timer.")
+                tracking_start_time = time()
+                timer_started = True  # Prevent restarting the timer
 
-            if gm_state != "stop":
-                last_state = gm_state
+            # If the end of the line is reached or the timer has not started yet
+            if gm_state == "stop" and timer_started:
+                print("End of line reached or lost line. Stopping robot.")
+                break
 
-                if gm_state == 'forward':
-                    px.set_dir_servo_angle(0)
-                    px.forward(px_power)
-                elif gm_state == 'left':
-                    px.set_dir_servo_angle(offset)
-                    px.forward(px_power)
-                elif gm_state == 'right':
-                    px.set_dir_servo_angle(-offset)
-                    px.forward(px_power)
-                else:
-                    outHandle()
-            else:
-                px.stop()
-                break  # Ensure the robot stops if no condition is met
-
+            # Adjust direction based on the line position
+            if gm_state == 'forward':
+                px.set_dir_servo_angle(0)
+            elif gm_state == 'left':
+                px.set_dir_servo_angle(offset)
+            elif gm_state == 'right':
+                px.set_dir_servo_angle(-offset)
     finally:
-        end_time = time()  # Record the end time
         px.stop()
-        print("stop and exit")
+        if timer_started:
+            duration = time() - tracking_start_time
+            print(f"Time taken to follow the line: {duration:.2f} seconds")
+        else:
+            print("No line was detected.")
         sleep(0.1)
-        duration = end_time - tracking_start_time
-        print(f"Time taken to run the course: {duration:.2f} seconds")
