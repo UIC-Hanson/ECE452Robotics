@@ -38,7 +38,7 @@ def outHandle():
 
 def get_status(val_list):
     state = px.get_line_status(val_list)  # Assumes state returns a list like [0, 0, 0] where 0 means line, 1 means background
-    print("Sensor values: ", val_list)  # trying to identifty faults, comment out eventually
+    print("Sensor values: ", state)  # trying to identifty faults, comment out eventually
     if state == [0, 0, 0]:
         return 'stop'
     elif state[1] == 1:
@@ -48,7 +48,7 @@ def get_status(val_list):
     elif state[2] == 1:
         return 'left'
     else:
-        print("Charlie is in the bad place")
+        print("Charlie is in the bad place, State was: ", state)
         return 'stop'
 
 
