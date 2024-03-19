@@ -12,12 +12,16 @@ from time import sleep, time
 
 px = Picarx()
 
+# Set servos to the 0 position
+px.set_dir_servo_angle(0)  # Set the direction servo to 0
+px.set_cam_pan_angle(0)    # camera, set the pan angle to 0
+px.set_cam_tilt_angle(0)   # camera, set the tilt angle to 0
+
 current_state = None
 px_power = 10
 offset = 20
 last_state = "stop"
 tracking_start_time = None
-tracking_duration = 10  # Duration to track the line in seconds
 
 def outHandle():
     global last_state, current_state
@@ -38,7 +42,7 @@ def outHandle():
 
 def get_status(val_list):
     state = px.get_line_status(val_list)  # Assumes state returns a list like [0, 0, 0] where 0 means line, 1 means background
-    print("Sensor values: ", state)  # trying to identifty faults, comment out eventually
+    #print("Sensor values: ", state)  # trying to identifty faults, comment out eventually
     if state == [0, 0, 0]:
         return 'stop'
     elif state[1] == 1:
