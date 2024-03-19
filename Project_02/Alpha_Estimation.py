@@ -59,10 +59,13 @@ if __name__ == '__main__':
 
             # Adjust direction based on the line position
             if gm_state == 'forward':
+                print(gm_state)
                 px.set_dir_servo_angle(0)
             elif gm_state == 'left':
+                print(gm_state)
                 px.set_dir_servo_angle(offset)
             elif gm_state == 'right':
+                print(gm_state)
                 px.set_dir_servo_angle(-offset)
     finally:
         px.stop()
