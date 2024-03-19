@@ -9,6 +9,7 @@ See Project 2 instructions on how to determine alpha
 
 from picarx import Picarx
 from time import sleep, time
+from datetime import datetime
 
 px = Picarx()
 
@@ -26,14 +27,16 @@ tracking_start_time = None
 
 def get_status(val_list):
     state = px.get_line_status(val_list)
-    print("Sensor values: ", state)
+    
     if state == [0, 0, 0]:
         return 'stop'
     elif state[1] == 1:
         return 'forward'
     elif state[0] == 1:
+        print("Sensor values: ", state)
         return 'right'
     elif state[2] == 1:
+        print("Sensor values: ", state)
         return 'left'
     else:
         print("Charlie is in the bad place, State was: ", state)
@@ -45,6 +48,9 @@ if __name__ == '__main__':
         while True:
             gm_val_list = px.get_grayscale_data()
             gm_state = get_status(gm_val_list)
+            #Robot has been stopping before the end of the track.
+            current_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Get current time with milliseconds
+            print(f"{current_time} - Grayscale sensor values:", gm_val_list)
 
             # Check if the line is detected for the first time
             if gm_state in ['forward', 'left', 'right'] and not timer_started:
@@ -59,7 +65,6 @@ if __name__ == '__main__':
 
             # Adjust direction based on the line position
             if gm_state == 'forward':
-                print(gm_state)
                 px.set_dir_servo_angle(0)
             elif gm_state == 'left':
                 print(gm_state)
