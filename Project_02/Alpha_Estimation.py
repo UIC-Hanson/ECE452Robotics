@@ -76,6 +76,7 @@ if __name__ == '__main__':
                 print(gm_state)
                 px.set_dir_servo_angle(-offset)
     finally:
+        px.set_dir_servo_angle(0)
         px.stop()
         px.stop() #call twice per documentation
         if timer_started:
@@ -86,7 +87,4 @@ if __name__ == '__main__':
             append_to_csv([date_str, start_time_str, px_power, f"{duration:.2f}"], csv_file_path)
         else:
             print("No line was detected.")
-
-        px.set_dir_servo_angle(0)
-
-        sleep(0.1)
+        sleep(0.2)
