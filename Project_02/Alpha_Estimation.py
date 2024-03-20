@@ -12,7 +12,17 @@ px.set_cam_pan_angle(0)
 px.set_cam_tilt_angle(0)
 
 current_state = None
-px_power = 10  # Adjust as needed for slow initial movement
+# Ask the user to enter the power level, ensuring it's between 1 and 100
+while True:
+    try:
+        px_power = int(input("Enter power level (1-100): "))
+        if 1 <= px_power <= 100:
+            break
+        else:
+            print("Please enter a value between 1 and 100.")
+    except ValueError:
+        print("Invalid input. Please enter a numerical value between 1 and 100.")
+
 offset = 30
 last_state = "stop"
 timer_started = False
@@ -51,34 +61,27 @@ if __name__ == '__main__':
         while True:
             gm_val_list = px.get_grayscale_data()
             gm_state = get_status(gm_val_list)
-            #Robot has been stopping before the end of the track.
             current_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Get current time with milliseconds
-            #print(f"{current_time} - Grayscale sensor values:", gm_val_list)
 
-            # Check if the line is detected for the first time
             if gm_state in ['forward', 'left', 'right'] and not timer_started:
                 print("Line detected. Starting timer.")
                 tracking_start_time = time()
-                timer_started = True  # Prevent restarting the timer
+                timer_started = True
 
-            # If the end of the line is reached or the timer has not started yet
             if gm_state == "stop" and timer_started:
                 print("End of line reached or lost line. Stopping robot.")
                 break
 
-            # Adjust direction based on the line position
             if gm_state == 'forward':
                 px.set_dir_servo_angle(0)
             elif gm_state == 'left':
-                #print(gm_state)
                 px.set_dir_servo_angle(offset)
             elif gm_state == 'right':
-                #print(gm_state)
                 px.set_dir_servo_angle(-offset)
     finally:
         px.set_dir_servo_angle(0)
         px.stop()
-        px.stop() #call twice per documentation
+        px.stop() # Call twice per documentation
         if timer_started:
             duration = time() - tracking_start_time
             print(f"Time taken to follow the line: {duration:.2f} seconds")
