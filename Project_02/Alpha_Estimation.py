@@ -1,4 +1,4 @@
-rom picarx import Picarx
+from picarx import Picarx
 from time import sleep, time
 from datetime import datetime
 import csv
