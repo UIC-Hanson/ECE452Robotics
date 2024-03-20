@@ -45,10 +45,8 @@ def get_status(val_list):
     elif state[1] == 1:
         return 'forward'
     elif state[0] == 1:
-        #print("Sensor values: ", state)
         return 'right'
     elif state[2] == 1:
-        #print("Sensor values: ", state)
         return 'left'
     else:
         print("Charlie is in the bad place, State was: ", state)
@@ -81,13 +79,19 @@ if __name__ == '__main__':
     finally:
         px.set_dir_servo_angle(0)
         px.stop()
-        px.stop() # Call twice per documentation
+        px.stop()  # Call twice per documentation
         if timer_started:
             duration = time() - tracking_start_time
             print(f"Time taken to follow the line: {duration:.2f} seconds")
-            date_str = start_time.strftime("%y-%m-%d")
-            start_time_str = start_time.strftime("%H:%M:%S")
-            append_to_csv([date_str, start_time_str, px_power, f"{duration:.2f}"], csv_file_path)
+            # Ask if the user wants to save the data
+            save_data = input("Do you want to commit the data to the CSV file? (yes/no): ").lower()
+            if save_data in ['yes', 'y']:
+                date_str = start_time.strftime("%y-%m-%d")
+                start_time_str = start_time.strftime("%H:%M:%S")
+                append_to_csv([date_str, start_time_str, px_power, f"{duration:.2f}"], csv_file_path)
+                print("Data committed to the CSV file.")
+            else:
+                print("Data not saved.")
         else:
             print("No line was detected.")
         sleep(0.2)
