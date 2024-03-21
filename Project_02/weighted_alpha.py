@@ -38,7 +38,8 @@ def main(power=None):
         args = parser.parse_args()
         power = args.power
 
-    input_filename = os.path.expanduser("~/alpha_estimation.csv")
+    directory = "/home/452Lab/"
+    input_filename = os.path.join(directory, "alpha_data.csv")
     weighted_alpha = weighted_alpha_for_power(input_filename, power)
     if weighted_alpha is not None:
         print(f"The weighted alpha for power {power} is: {weighted_alpha}")
