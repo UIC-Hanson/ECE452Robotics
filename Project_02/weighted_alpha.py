@@ -7,8 +7,7 @@ def weighted_alpha_for_power(input_filename, power):
         alpha_by_decade = pd.read_csv(input_filename)
         # Filtering to exclude non-numeric 'decade' values
         alpha_by_decade = alpha_by_decade[~alpha_by_decade['decade'].astype(str).str.contains('Overall', na=False)]
-
-	    print(alpha_by_decade)
+        print(alpha_by_decade)
 
         power = float(power)
         lower_decade = (power // 10) * 10
@@ -23,7 +22,7 @@ def weighted_alpha_for_power(input_filename, power):
             lower_weight = (upper_decade - power) / 10.0
             upper_weight = (power - lower_decade) / 10.0
             weighted_alpha = (lower_alpha * lower_weight) + (upper_alpha * upper_weight)
-	    print(f"Weighted alpha between {lower_decade:.1f} and {upper_decade:.1f}: {weighted_alpha}")
+	        print(f"Weighted alpha between {lower_decade:.1f} and {upper_decade:.1f}: {weighted_alpha}")
             return weighted_alpha, f"{power:.1f}"
         else:
             print("The given power does not match any decade or surrounding decades in the dataset.")
