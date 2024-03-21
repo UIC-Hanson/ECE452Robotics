@@ -48,7 +48,7 @@ def main(power=None):
         power = args.power
 
     directory = "/home/452Lab/"
-    input_filename = os.path.join(directory, "alpha_data.csv")
+    input_filename = os.path.join(directory, "alpha_estimation.csv")
     weighted_alpha = weighted_alpha_for_power(input_filename, power)
     if weighted_alpha is not None:
         print(f"The weighted alpha for power {power} is: {weighted_alpha}")
