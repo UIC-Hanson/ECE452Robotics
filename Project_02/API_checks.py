@@ -54,15 +54,6 @@ def sensor_readings():
     except Exception as e:
         print(f"Sensor Reading Error: {e}")
 
-def led_buzzer_test():
-    try:
-        # Set RGB LED to red
-        rgb_led.color("#FF0000")
-        # Play a tone on the buzzer
-        buzzer.play(440, 1) # Play 440Hz for 1 second
-        print("LED and Buzzer test completed successfully.")
-    except Exception as e:
-        print(f"LED/Buzzer Error: {e}")
 
 if __name__ == "__main__":
     print("Starting robot system check...")
@@ -70,5 +61,4 @@ if __name__ == "__main__":
     motor_status()
     servo_test()
     sensor_readings()
-    led_buzzer_test()
     print("System check completed.")
