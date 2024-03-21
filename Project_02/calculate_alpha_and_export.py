@@ -1,6 +1,10 @@
 import pandas as pd
 
-def calculate_alpha_and_export(input_filename, output_filename):
+def calculate_alpha_and_export():
+    # Define the input and output file paths
+    input_filename = "~/picarx_run_data.csv"
+    output_filename = "~/alpha_estimation.csv"
+
     # Load data, ignoring the first two columns (date and time)
     data = pd.read_csv(input_filename, usecols=[2, 3], names=['px_power', 'duration'], header=None, skiprows=1)
     
@@ -14,15 +18,13 @@ def calculate_alpha_and_export(input_filename, output_filename):
     # Group px_power values by decade
     data['decade'] = (data['px_power'] // 10) * 10
     
-    # Calculate mean α for each decade
-    mean_alpha_per_decade = data.groupby('decade')['alpha'].mean().reset_index()
+    # Calculate mean α for each decade, and sort by decade
+    mean_alpha_per_decade = data.groupby('decade')['alpha'].mean().reset_index().sort_values('decade')
     
-    # Export the results
+    # Export the results, overwriting any existing data
     mean_alpha_per_decade.to_csv(output_filename, index=False)
 
 # Example usage
-input_filename = "path/to/your/picarx_run_data.csv"  # Update this path
-output_filename = "path/to/your/alpha_estimation.csv"  # Update this path
-calculate_alpha_and_export(input_filename, output_filename)
+calculate_alpha_and_export()
 
 print("Alpha values by decade have been saved.")
