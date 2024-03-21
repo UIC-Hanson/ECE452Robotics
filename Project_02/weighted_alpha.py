@@ -12,6 +12,7 @@ def weighted_alpha_for_power(input_filename, power):
         power = float(power)
         lower_decade = (power // 10) * 10
         upper_decade = lower_decade + 10.0
+        print(f"between decades {lower_decade} and {upper_decade}")
 
         if power in alpha_by_decade['decade'].values:
             direct_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == power, 'alpha'].values[0]
@@ -22,7 +23,6 @@ def weighted_alpha_for_power(input_filename, power):
             lower_weight = (upper_decade - power) / 10.0
             upper_weight = (power - lower_decade) / 10.0
             weighted_alpha = (lower_alpha * lower_weight) + (upper_alpha * upper_weight)
-            print(f"Weighted alpha between {lower_decade:.1f} and {upper_decade:.1f}: {weighted_alpha}")
             return weighted_alpha, f"{power:.1f}"
         else:
             print("The given power does not match any decade or surrounding decades in the dataset.")
