@@ -4,31 +4,28 @@ import os
 
 def weighted_alpha_for_power(input_filename, power):
     try:
-        # Load the CSV file into a DataFrame
         alpha_by_decade = pd.read_csv(input_filename)
+        # Ensure 'Overall' row or any non-decade rows are excluded
+        alpha_by_decade = alpha_by_decade[~alpha_by_decade['decade'].astype(str).str.contains('Overall')]
         
-        # Check if the 'decade' and 'alpha' columns exist in the DataFrame
-        if 'decade' not in alpha_by_decade.columns or 'alpha' not in alpha_by_decade.columns:
-            print("Error: The input file does not contain the required 'decade' and/or 'alpha' columns.")
-            return None
-        
-        # If the exact decade match exists, return its alpha value
+        # Directly return the alpha value if power matches a decade exactly
         if power % 10 == 0 and power in alpha_by_decade['decade'].values:
             return alpha_by_decade.loc[alpha_by_decade['decade'] == power, 'alpha'].values[0]
-        
-        # Calculate weighted alpha for powers not exactly on a decade
-        lower_decade = (power // 10) * 10
-        upper_decade = lower_decade + 10
-        if lower_decade in alpha_by_decade['decade'].values and upper_decade in alpha_by_decade['decade'].values:
-            lower_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == lower_decade, 'alpha'].values[0]
-            upper_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == upper_decade, 'alpha'].values[0]
-            lower_weight = (upper_decade - power) / 10
-            upper_weight = (power - lower_decade) / 10
-            weighted_alpha = (lower_alpha * lower_weight) + (upper_alpha * upper_weight)
-            return weighted_alpha
         else:
-            print("The given power does not match any decade or surrounding decades in the dataset.")
-            return None
+            # Calculate weighted alpha for powers not exactly on a decade
+            lower_decade = (power // 10) * 10
+            upper_decade = lower_decade + 10
+            if lower_decade in alpha_by_decade['decade'].values and upper_decade in alpha_by_decade['decade'].values:
+                lower_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == lower_decade, 'alpha'].values[0]
+                upper_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == upper_decade, 'alpha'].values[0]
+                # Weight based on proximity to the lower and upper decades
+                lower_weight = (upper_decade - power) / 10.0
+                upper_weight = (power - lower_decade) / 10.0
+                weighted_alpha = lower_alpha * lower_weight + upper_alpha * upper_weight
+                return weighted_alpha
+            else:
+                print("The given power does not match any decade or surrounding decades in the dataset.")
+                return None
     except FileNotFoundError:
         print(f"Error: The file '{input_filename}' was not found.")
         return None
