@@ -4,8 +4,8 @@ import os
 from csv_utils import append_to_csv
 
 def calculate_alpha_and_export():
-    input_filename = os.path.expanduser("~/picarx_run_data.csv")
-    output_filename = os.path.expanduser("~/alpha_estimation.csv")
+    input_filename = os.path.expanduser("/home/452Lab/picarx_run_data.csv")
+    output_filename = os.path.expanduser("/home/452Lab/alpha_estimation.csv")
     if not os.path.exists(input_filename):
         print(f"Input file {input_filename} does not exist.")
         return
