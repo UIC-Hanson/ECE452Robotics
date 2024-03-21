@@ -2,7 +2,7 @@ from picarx import Picarx
 from time import sleep
 #our scripts
 from calculate_weighted_alpha import weighted_alpha_for_power
-from Alpha_Estimation import get_power_level
+from robot_control import get_power_level
 
 # Define initial variables
 picarx = Picarx()
