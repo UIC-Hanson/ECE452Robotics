@@ -3,8 +3,9 @@ import pandas as pd
 import os
 from csv_utils import append_to_csv
 
-def calculate_alpha_and_export(input_filename, output_filename):
-    """Calculates alpha values from input data and appends them to an output CSV."""
+def calculate_alpha_and_export():
+    input_filename = os.path.expanduser("~/picarx_run_data.csv")
+    output_filename = os.path.expanduser("~/alpha_estimation.csv")
     if not os.path.exists(input_filename):
         print(f"Input file {input_filename} does not exist.")
         return
