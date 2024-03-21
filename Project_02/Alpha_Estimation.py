@@ -5,7 +5,7 @@ from csv_utils import append_to_csv
 def calculate_alpha_and_export():
     directory = "/home/452Lab/"
 
-    input_filename = os.path.join(directory, "picarx_run_data.csv")
+    input_filename = os.path.join(directory, "alpha_data.csv")
     output_filename = os.path.join(directory, "alpha_estimation.csv")
     
     # Check if the input file exists
