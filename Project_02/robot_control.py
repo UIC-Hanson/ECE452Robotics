@@ -4,6 +4,7 @@ from time import sleep, time
 from datetime import datetime
 from csv_utils import append_to_csv
 import os
+px = Picarx()
 
 def get_power_level():
     """Prompts the user for a power level between 1 and 100."""
@@ -17,8 +18,9 @@ def get_power_level():
         except ValueError:
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
-def get_status(px):
+def get_status():
     """Determine the robot's state based on grayscale sensor data."""
+    val_list=px.get_grayscale_data()
     state = px.get_line_status(val_list)
     
     if state == [0, 0, 0]:
@@ -52,8 +54,7 @@ def main():
     try:
         px.forward(px_power)  # Start moving forward slowly
         while True:
-            gm_val_list = px.get_grayscale_data()
-            gm_state = get_status(gm_val_list)  # Updated to pass the Picarx instance
+            gm_state = get_status()
             current_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Get current time with milliseconds
 
             if gm_state in ['forward', 'left', 'right'] and not timer_started:
@@ -67,10 +68,13 @@ def main():
 
             if gm_state == 'forward':
                 px.set_dir_servo_angle(0)
+                sleep(0.01)
             elif gm_state == 'left':
                 px.set_dir_servo_angle(offset)
+                sleep(0.01)
             elif gm_state == 'right':
                 px.set_dir_servo_angle(-offset)
+                sleep(0.01)
     finally:
         px.set_dir_servo_angle(0)
         px.stop()
