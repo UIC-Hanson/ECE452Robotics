@@ -32,3 +32,5 @@ def calculate_alpha_and_export():
     print(f"alpha Line 32")
     print(f"Alpha values by decade have been saved to {output_filename}, including the overall average alpha.")
 
+if __name__ == '__main__':
+    calculate_alpha_and_export()
