@@ -17,7 +17,7 @@ def get_power_level():
         except ValueError:
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
-def get_status(px):
+def get_status(val_list):
     """Determine the robot's state based on grayscale sensor data."""
     state = px.get_line_status(val_list)
     
