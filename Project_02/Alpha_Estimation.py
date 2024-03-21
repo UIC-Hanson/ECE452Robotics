@@ -5,7 +5,7 @@ from csv_utils import overwrite_csv
 
 def calculate_alpha_and_export():
     distance = 0.9  # distance in meters of the line
-
+    print(f"alpha Line 8")
     directory = "/home/452Lab/"
     input_filename = os.path.join(directory, "alpha_data.csv")
     output_filename = os.path.join(directory, "alpha_estimation.csv")
