@@ -5,6 +5,7 @@ import os
 def weighted_alpha_for_power(input_filename, power):
     try:
         alpha_by_decade = pd.read_csv(input_filename)
+        print(alpha_by_decade)
         # Ensure 'Overall' row or any non-decade rows are excluded
         alpha_by_decade = alpha_by_decade[~alpha_by_decade['decade'].astype(str).str.contains('Overall')]
         
