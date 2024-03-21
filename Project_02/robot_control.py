@@ -56,7 +56,7 @@ def main():
 
     start_time = datetime.now()  # Record script start time
     try:
-        px.forward(px_power)  # Start moving forward slowly
+        px.forward(px_power)  # Start moving forward
         while True:
             gm_state = get_status()
             current_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Get current time with milliseconds
