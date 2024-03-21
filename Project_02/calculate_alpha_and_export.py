@@ -1,5 +1,14 @@
 import pandas as pd
 import os
+import csv  # Make sure to import the csv module
+
+def append_to_csv(data, file_path):
+    file_exists = os.path.isfile(file_path)
+    with open(file_path, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(["decade", "alpha"])
+        writer.writerow(data)
 
 def calculate_alpha_and_export():
     # Define the input and output file paths
@@ -30,10 +39,8 @@ def calculate_alpha_and_export():
     # Calculate mean α for each decade, and sort by decade
     mean_alpha_per_decade = data.groupby('decade')['alpha'].mean().reset_index().sort_values('decade')
     
-    # Export the results, overwriting any existing data
-    mean_alpha_per_decade.to_csv(output_filename, index=False)
+    # Export the results, appending to the CSV or creating it if it doesn't exist
+    for index, row in mean_alpha_per_decade.iterrows():
+        append_to_csv([row['decade'], row['alpha']], output_filename)
 
     print("Alpha values by decade have been saved.")
-
-## Example usage
-#calculate_alpha_and_export()
