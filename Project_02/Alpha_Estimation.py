@@ -20,16 +20,17 @@ def calculate_alpha_and_export():
     data['decade'] = (data['px_power'] // 10) * 10
     mean_alpha_per_decade = data.groupby('decade')['alpha'].mean().reset_index().sort_values('decade')
     
-    # Overwrite the output file with the new headers and first row of data
-    overwrite_csv(mean_alpha_per_decade.iloc[0], output_filename, ["decade", "alpha"])
-    # Append remaining rows
+    # Overwrite the output file with the new headers and the first row of data
+    overwrite_csv(mean_alpha_per_decade.iloc[0].tolist(), output_filename, ["decade", "alpha"])
+    
+    # Append remaining rows without headers
     for index, row in mean_alpha_per_decade.iloc[1:].iterrows():
-        overwrite_csv([row['decade'], round(row['alpha'], 9)], output_filename)
-    print(f"alpha Line 28")
-    # Append the overall average alpha value
+        append_to_csv(row.tolist(), output_filename, None)  # No headers for appending
+    
+    # Calculate and append the overall average alpha value
     overall_avg_alpha = round(data['alpha'].mean(), 9)
-    overwrite_csv(["Overall", overall_avg_alpha], output_filename)
-    print(f"alpha Line 32")
+    append_to_csv(["Overall", overall_avg_alpha], output_filename, None)  # No headers here as well
+
     print(f"Alpha values by decade have been saved to {output_filename}, including the overall average alpha.")
 
 if __name__ == '__main__':
