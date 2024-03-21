@@ -8,8 +8,6 @@ px = Picarx()
 
 px_power = 0 #start at 0
 offset = 30  # Steering angle offset for left/right corrections
-timer_started = False
-tracking_start_time = None
 csv_file_path = os.path.expanduser("~/alpha_data.csv")  # Define the CSV file path
 
 # Initialize servos
@@ -48,6 +46,10 @@ def get_status():
     return 'stop' 
 
 def main():
+    timer_started = False
+    tracking_start_time = None
+
+    global px_power
 
     px_power=get_power_level()
     print(f"Power level set to: {px_power}")
