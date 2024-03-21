@@ -23,6 +23,12 @@ def calculate_alpha_and_export():
 
     data['decade'] = (data['px_power'] // 10) * 10
     mean_alpha_per_decade = data.groupby('decade')['alpha_rounded'].mean().reset_index().sort_values('decade')
+    
+    # Create a dataframe with all desired decades
+    all_decades = pd.DataFrame({'decade': range(0, 101, 10)})
+
+    # Merge with mean_alpha_per_decade, filling missing values as needed
+    mean_alpha_per_decade = all_decades.merge(mean_alpha_per_decade, on='decade', how='left').fillna(value={"alpha_rounded": 0})
 
     # Overwrite the file with the first row of data (headers included)
     overwrite_csv([mean_alpha_per_decade.iloc[0]['decade'], round(mean_alpha_per_decade.iloc[0]['alpha_rounded'], 9)], output_filename, ["decade", "alpha"])
