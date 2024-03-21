@@ -7,13 +7,15 @@ def weighted_alpha_for_power(input_filename, power):
         alpha_by_decade = pd.read_csv(input_filename)
         # Ensure 'Overall' row or any non-decade rows are excluded
         alpha_by_decade = alpha_by_decade[pd.to_numeric(alpha_by_decade['decade'], errors='coerce').notnull()]
+        print(alpha_by_decade)
 
         if power % 10 == 0 and power in alpha_by_decade['decade'].values:
             direct_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == power, 'alpha'].values[0]
-            return round(direct_alpha, 1), f"{power:.1f}"  # Return alpha rounded to 1 decimal and formatted power value
+            return round(direct_alpha, 1)  # Alpha rounded to one decimal place
         else:
             lower_decade = (power // 10) * 10
             upper_decade = lower_decade + 10
+            print(f"Looking for lower_decade: {lower_decade}, upper_decade: {upper_decade}")  # Debugging
             if lower_decade in alpha_by_decade['decade'].values and upper_decade in alpha_by_decade['decade'].values:
                 lower_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == lower_decade, 'alpha'].values[0]
                 upper_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == upper_decade, 'alpha'].values[0]
