@@ -27,7 +27,7 @@ offset = 30
 last_state = "stop"
 timer_started = False
 tracking_start_time = None
-csv_file_path = "picarx_run_data.csv"
+csv_file_path = os.path.expanduser("~/alpha_data.csv")
 
 def append_to_csv(data, file_path):
     file_exists = os.path.isfile(file_path)
