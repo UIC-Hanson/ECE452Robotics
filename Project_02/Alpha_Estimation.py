@@ -2,6 +2,7 @@ import pandas as pd
 import os
 
 from csv_utils import overwrite_csv
+from csv_utils import append_to_csv
 
 def calculate_alpha_and_export():
     distance = 0.9  # distance in meters of the line
