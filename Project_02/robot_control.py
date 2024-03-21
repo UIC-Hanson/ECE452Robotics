@@ -17,7 +17,7 @@ def get_power_level():
         except ValueError:
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
-def get_status(val_list):
+def get_status(px):
     """Determine the robot's state based on grayscale sensor data."""
     state = px.get_line_status(val_list)
     
@@ -53,7 +53,7 @@ def main():
         px.forward(px_power)  # Start moving forward slowly
         while True:
             gm_val_list = px.get_grayscale_data()
-            gm_state = get_status(px)  # Updated to pass the Picarx instance
+            gm_state = get_status(gm_val_list)  # Updated to pass the Picarx instance
             current_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Get current time with milliseconds
 
             if gm_state in ['forward', 'left', 'right'] and not timer_started:
