@@ -8,7 +8,7 @@ def weighted_alpha_for_power(input_filename, power):
         # Filtering to exclude non-numeric 'decade' values
         alpha_by_decade = alpha_by_decade[~alpha_by_decade['decade'].astype(str).str.contains('Overall', na=False)]
 
-	print(alpha_by_decade)
+	    print(alpha_by_decade)
 
         power = float(power)
         lower_decade = (power // 10) * 10
