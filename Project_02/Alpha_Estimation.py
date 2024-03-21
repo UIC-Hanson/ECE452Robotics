@@ -5,7 +5,7 @@ from csv_utils import overwrite_csv
 
 def calculate_alpha_and_export():
     distance = 0.9  # distance in meters of the line
-    print(f"alpha Line 8")
+    
     directory = "/home/452Lab/"
     input_filename = os.path.join(directory, "alpha_data.csv")
     output_filename = os.path.join(directory, "alpha_estimation.csv")
@@ -13,13 +13,13 @@ def calculate_alpha_and_export():
     if not os.path.exists(input_filename):
         print(f"Input file {input_filename} does not exist.")
         return
-    print(f"alpha Line 16")
+    
     data = pd.read_csv(input_filename, usecols=[2, 3], names=['px_power', 'duration'], header=None, skiprows=1)
     data['delta_dr'] = round(distance / data['duration'], 9)
     data['alpha'] = round(data['delta_dr'] / data['px_power'], 9)
     data['decade'] = (data['px_power'] // 10) * 10
     mean_alpha_per_decade = data.groupby('decade')['alpha'].mean().reset_index().sort_values('decade')
-    print(f"alpha Line 22")
+    
     # Overwrite the output file with the new headers and first row of data
     overwrite_csv(mean_alpha_per_decade.iloc[0], output_filename, ["decade", "alpha"])
     # Append remaining rows
