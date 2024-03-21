@@ -9,8 +9,9 @@ def prepare_file(file_path, mode):
     - file_path: Path to the CSV file (str).
     - mode: The mode of operation ('append' or 'overwrite') (str).
     """
-    action = "Creating a new file" if mode == 'overwrite' or not os.path.isfile(file_path) else "Appending to existing file"
-    print(f"{action} at: {file_path}")
+    #action = "Creating a new file" if mode == 'overwrite' or not os.path.isfile(file_path) else "Appending to existing file"
+    #print(f"{action} at: {file_path}")
+    #this was a bit excessive.
     
     # Ensure the directory exists
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
