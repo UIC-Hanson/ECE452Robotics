@@ -8,7 +8,7 @@ px = Picarx()
 
 px_power = 0 #start at 0
 offset = 30  # Steering angle offset for left/right corrections
-csv_file_path = os.path.expanduser("~/alpha_data.csv")  # Define the CSV file path
+csv_file_path = "~/alpha_data.csv"  # Define the CSV file path
 
 # Initialize servos
 px.set_dir_servo_angle(0)
