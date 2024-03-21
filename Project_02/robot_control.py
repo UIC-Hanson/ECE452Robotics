@@ -6,8 +6,7 @@ from csv_utils import append_to_csv
 import os
 px = Picarx()
 
-px_power = get_power_level()
-
+px_power = 0 #start at 0
 offset = 30  # Steering angle offset for left/right corrections
 timer_started = False
 tracking_start_time = None
@@ -49,6 +48,8 @@ def get_status():
     return 'stop' 
 
 def main():
+
+    px_power=get_power_level()
     print(f"Power level set to: {px_power}")
 
     start_time = datetime.now()  # Record script start time
