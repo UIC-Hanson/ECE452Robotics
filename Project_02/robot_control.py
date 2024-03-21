@@ -88,7 +88,7 @@ def main():
             print(f"Time taken to follow the line: {duration:.2f} seconds")
             save_data = input("Do you want to commit the data to the CSV file? (yes/no): ").lower()
             if save_data in ['yes', 'y']:
-                date_str = start_time.strftime("%Y-%m-%d")
+                date_str = start_time.strftime("%y-%m-%d")
                 start_time_str = start_time.strftime("%H:%M:%S")
                 append_to_csv([date_str, start_time_str, px_power, f"{duration:.2f}"], csv_file_path, ["date", "start_time", "px_power", "duration"])
                 print("Data committed to the CSV file.")
