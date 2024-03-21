@@ -1,14 +1,19 @@
-
 from picarx import Picarx
 from time import sleep
+#our scripts
+from calculate_weighted_alpha import weighted_alpha_for_power
+from Alpha_Estimation import get_power_level
 
 # Define initial variables
 picarx = Picarx()
 picarx.set_grayscale_reference([1400, 1400, 1400])
+
+# Ask the user for the power level and calculate the alpha value
+px_power = get_power_level()
+alpha = weighted_alpha_for_power(px_power) # Alpha value
+
 last_state = None
-px_power = 0.25  # Robot speed
 offset = 20
-alpha = 0.000332  # Alpha value
 distance = 0
 
 def handle_out():
@@ -30,7 +35,7 @@ if __name__ == '__main__':
                 last_state = gm_state
 
             if distance / 0.0205 < 2:
-                distance = (alpha * px_power + distance)
+                distance += alpha * px_power
 
             if distance > 0.04:
                 picarx.stop()

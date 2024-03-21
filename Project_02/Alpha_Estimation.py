@@ -13,15 +13,25 @@ px.set_cam_tilt_angle(0)
 
 current_state = None
 # Ask the user to enter the power level, ensuring it's between 1 and 100
-while True:
-    try:
-        px_power = int(input("Enter power level (1-100): "))
-        if 1 <= px_power <= 100:
-            break
-        else:
-            print("Please enter a value between 1 and 100.")
-    except ValueError:
-        print("Invalid input. Please enter a numerical value between 1 and 100.")
+def get_power_level():
+    """
+    Prompts the user to enter a power level between 1 and 100.
+
+    Returns:
+        int: The power level entered by the user.
+    """
+    while True:
+        try:
+            px_power = int(input("Enter power level (1-100): "))
+            if 1 <= px_power <= 100:
+                return px_power
+            else:
+                print("Please enter a value between 1 and 100.")
+        except ValueError:
+            print("Invalid input. Please enter a numerical value between 1 and 100.")
+
+px_power = get_power_level()
+print(f"Power level set to: {px_power}")
 
 offset = 30
 last_state = "stop"
