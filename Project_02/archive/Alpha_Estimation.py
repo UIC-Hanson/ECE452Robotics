@@ -6,13 +6,23 @@ import os
 
 px = Picarx()
 
+current_state = None
+# Ask the user to enter the power level, ensuring it's between 1 and 100
+
+px_power = get_power_level()
+print(f"Power level set to: {px_power}")
+
+offset = 30
+last_state = "stop"
+timer_started = False
+tracking_start_time = None
+csv_file_path = os.path.expanduser("~/alpha_data.csv")
+
 # Initialize servos
 px.set_dir_servo_angle(0)
 px.set_cam_pan_angle(0)
 px.set_cam_tilt_angle(0)
 
-current_state = None
-# Ask the user to enter the power level, ensuring it's between 1 and 100
 def get_power_level():
     """
     Prompts the user to enter a power level between 1 and 100.
@@ -30,14 +40,6 @@ def get_power_level():
         except ValueError:
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
-px_power = get_power_level()
-print(f"Power level set to: {px_power}")
-
-offset = 30
-last_state = "stop"
-timer_started = False
-tracking_start_time = None
-csv_file_path = os.path.expanduser("~/alpha_data.csv")
 
 def append_to_csv(data, file_path):
     file_exists = os.path.isfile(file_path)

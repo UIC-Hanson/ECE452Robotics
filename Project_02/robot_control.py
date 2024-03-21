@@ -6,6 +6,18 @@ from csv_utils import append_to_csv
 import os
 px = Picarx()
 
+px_power = get_power_level()
+
+offset = 30  # Steering angle offset for left/right corrections
+timer_started = False
+tracking_start_time = None
+csv_file_path = os.path.expanduser("~/alpha_data.csv")  # Define the CSV file path
+
+# Initialize servos
+px.set_dir_servo_angle(0)
+px.set_cam_pan_angle(0)
+px.set_cam_tilt_angle(0)
+
 def get_power_level():
     """Prompts the user for a power level between 1 and 100."""
     while True:
@@ -33,22 +45,11 @@ def get_status():
         return 'left'
     else:
         print("Charlie is in the bad place, State was: ", state)
-        return 'unknown'
+        return 'stop'
     return 'stop' 
 
 def main():
-    px = Picarx()
-    px.set_dir_servo_angle(0)
-    px.set_cam_pan_angle(0)
-    px.set_cam_tilt_angle(0)
-
-    px_power = get_power_level()
     print(f"Power level set to: {px_power}")
-
-    offset = 30  # Steering angle offset for left/right corrections
-    timer_started = False
-    tracking_start_time = None
-    csv_file_path = os.path.expanduser("~/alpha_data.csv")  # Define the CSV file path
 
     start_time = datetime.now()  # Record script start time
     try:
