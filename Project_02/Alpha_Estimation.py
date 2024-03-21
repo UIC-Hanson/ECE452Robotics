@@ -18,18 +18,22 @@ def calculate_alpha_and_export():
     data['delta_dr'] = distance / data['duration']
     data['alpha'] = data['delta_dr'] / data['px_power']
 
-    # Apply rounding to the entire 'alpha' column
+    # Calculate 'alpha_rounded' to ensure alpha values are rounded to 9 decimal places
     data['alpha_rounded'] = data['alpha'].apply(lambda x: round(x, 9))
 
     data['decade'] = (data['px_power'] // 10) * 10
     mean_alpha_per_decade = data.groupby('decade')['alpha_rounded'].mean().reset_index().sort_values('decade')
 
-    # Use overwrite_csv and append_to_csv as before, ensuring to pass 'alpha_rounded' for the alpha values
+    # Overwrite the file with the first row of data (headers included)
+    overwrite_csv([mean_alpha_per_decade.iloc[0]['decade'], round(mean_alpha_per_decade.iloc[0]['alpha_rounded'], 9)], output_filename, ["decade", "alpha"])
     
-    # Ensure rounding is correctly applied to the overall average calculation
+    # Append the remaining rows
+    for index, row in mean_alpha_per_decade.iloc[1:].iterrows():
+        append_to_csv([row['decade'], round(row['alpha_rounded'], 9)], output_filename, None)
+
+    # Calculate and append the overall average alpha value, ensuring rounding is applied
     overall_avg_alpha = round(data['alpha'].mean(), 9)
     append_to_csv(["Overall", overall_avg_alpha], output_filename, None)
-
 
     print(f"Alpha values by decade have been saved to {output_filename}, including the overall average alpha.")
 
