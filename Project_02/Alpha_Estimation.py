@@ -16,21 +16,27 @@ def calculate_alpha_and_export():
         return
     
     data = pd.read_csv(input_filename, usecols=[2, 3], names=['px_power', 'duration'], header=None, skiprows=1)
-    data['delta_dr'] = round(distance / data['duration'], 9)
-    data['alpha'] = round(data['delta_dr'] / data['px_power'], 9)
+    
+    # Calculate delta_dr and alpha without rounding here
+    data['delta_dr'] = distance / data['duration']
+    data['alpha'] = data['delta_dr'] / data['px_power']
+    
+    # Round alpha values to 9 decimal places for processing
+    data['alpha_rounded'] = data['alpha'].round(9)
+    
     data['decade'] = (data['px_power'] // 10) * 10
-    mean_alpha_per_decade = data.groupby('decade')['alpha'].mean().reset_index().sort_values('decade')
+    mean_alpha_per_decade = data.groupby('decade')['alpha_rounded'].mean().reset_index().sort_values('decade')
     
-    # Overwrite the output file with the new headers and the first row of data
-    overwrite_csv(mean_alpha_per_decade.iloc[0].tolist(), output_filename, ["decade", "alpha"])
+    # Overwrite the output file with the new headers and the first row of data, ensuring alpha values are rounded
+    overwrite_csv([mean_alpha_per_decade.iloc[0]['decade'], mean_alpha_per_decade.iloc[0]['alpha_rounded']], output_filename, ["decade", "alpha"])
     
-    # Append remaining rows without headers
+    # Append remaining rows without headers, making sure to round the alpha values
     for index, row in mean_alpha_per_decade.iloc[1:].iterrows():
-        append_to_csv(row.tolist(), output_filename, None)  # No headers for appending
+        append_to_csv([row['decade'], row['alpha_rounded']], output_filename, None)
     
-    # Calculate and append the overall average alpha value
-    overall_avg_alpha = round(data['alpha'].mean(), 9)
-    append_to_csv(["Overall", overall_avg_alpha], output_filename, None)  # No headers here as well
+    # Calculate and append the overall average alpha value, rounded to 9 decimal places
+    overall_avg_alpha = data['alpha'].mean().round(9)
+    append_to_csv(["Overall", overall_avg_alpha], output_filename, None)
 
     print(f"Alpha values by decade have been saved to {output_filename}, including the overall average alpha.")
 
