@@ -7,13 +7,13 @@ current_state = None
 
 def initialize_robot():
     # Initialize settings
-    #px.set_grayscale_reference([1400, 1400, 1400])
     px.set_dir_servo_angle(0)
     px.set_cam_pan_angle(0)
     px.set_cam_tilt_angle(0)
 
 def get_status():
     """Determine the robot's state based on grayscale sensor data."""
+    global current_state
     val_list=px.get_grayscale_data()
     state = px.get_line_status(val_list)
     
@@ -32,6 +32,7 @@ def get_status():
     return current_state
 
 def outHandle(offset):
+    global current_state
     last_state = current_state
 
     if last_state == 'left':
@@ -63,6 +64,7 @@ def get_power_level():
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
 def main():
+    global current_state
     initialize_robot()
     px_power = get_power_level()
 
@@ -78,7 +80,7 @@ def main():
     try:
         while run==True:
             current_state = get_status()
-            distance = (alpha*px_power_for_alpha + distance)  # Increment distance based on power
+            distance += alpha * px_power_for_alpha  # Increment distance based on power
             
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
@@ -114,4 +116,5 @@ def main():
         print("Robot stopped.")
 
 if __name__ == '__main__':
+    current_state = None
     main()
