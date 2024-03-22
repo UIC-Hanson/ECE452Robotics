@@ -64,7 +64,7 @@ def main():
                 #px.forward(0)
                 #px.stop()
                 print("Just doing what I was told.")
-                break
+                #break
             elif gm_state == 'forward':
                 px.forward(px_power)
                 px.set_dir_servo_angle(0)
