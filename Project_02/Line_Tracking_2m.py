@@ -100,8 +100,7 @@ def main():
                 px.forward(px_power)
                 px.set_dir_servo_angle(-offset)
             else:
-
-                print("Frank let's play nightcrawlers" (current_state))
+                print("Frank let's play nightcrawlers: ", current_state)
 
             sleep(0.01)  # Sleep at the end of the loop to ensure some delay
 
