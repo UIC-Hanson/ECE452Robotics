@@ -59,7 +59,8 @@ def main():
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
                 run=False
-            elif gm_state == 'stop':
+
+            if gm_state == 'stop':
                 px.forward(0)
                 px.stop()
                 print("Just doing what I was told.")
