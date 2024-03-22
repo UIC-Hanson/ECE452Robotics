@@ -1,20 +1,22 @@
 import pandas as pd
 import argparse
 import os
-
+pd.options.display.float_format = '{:.4f}'.format
 
 def weighted_alpha_for_power(input_filename, power):
     try:
         alpha_by_decade = pd.read_csv(input_filename)
-        # Filtering to exclude non-numeric 'decade' values
-        alpha_by_decade = alpha_by_decade[~alpha_by_decade['px_power'].astype(str).str.contains('Overall', na=False)]
-        
-        if power == 0 or power > 100:
+        # overall_power = alpha_by_decade.loc[alpha_by_decade['px_power'] == "Overall"].values[0][1]
+        # Drop overall
+        alpha_by_decade = alpha_by_decade[alpha_by_decade.px_power != "Overall"]
+        # Convert to int
+        alpha_by_decade = alpha_by_decade.apply(pd.to_numeric, errors='coerce')
+        if power < 0 or power > 100:
             print(f"Value out of range.")
             return None, f"{power}"
 
-        if power in [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]: #if it's on a decade
-            weighted_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == power, 'alpha'].values[0]
+        if power in [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]:  # if it's on a decade
+            weighted_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == power].values[0][1]
             return weighted_alpha, f"{power}"
         else:
             # Calculate tens digit to determine the lower and upper decades
