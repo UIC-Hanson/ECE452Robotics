@@ -46,8 +46,9 @@ def main():
     px_power_for_alpha =px_power/100
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
-    alpha = 0.012921758
+    alpha = 0.017881989
     wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
+    offset = 30  # Steering angle offset for left/right corrections
     run=True
 
     try:
