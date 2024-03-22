@@ -66,7 +66,7 @@ def main():
         while True:
             current_time = time()
             elapsed_time = current_time - start_time
-            distance = (alpha * px_power/100 + distance)  # Increment distance based on power
+            distance = (alpha * px_power/1000 + distance)  # Increment distance based on power
             
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
