@@ -43,7 +43,8 @@ def get_power_level():
 def main():
     initialize_robot()
     px_power = get_power_level()
-    print(f"Power level set to: {px_power}")
+    px_power_for_alpha =px_power/100
+    print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
     alpha = 0.012921758
     wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
@@ -52,7 +53,7 @@ def main():
     try:
         while run==True:
             gm_state = get_status()
-            distance = (alpha * px_power/10000 + distance)  # Increment distance based on power
+            distance = (alpha*px_power_for_alpha + distance)  # Increment distance based on power
             
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
