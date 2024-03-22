@@ -3,6 +3,8 @@ from time import sleep, time
 
 px = Picarx()
 
+current_state = None
+
 def initialize_robot():
     # Initialize settings
     #px.set_grayscale_reference([1400, 1400, 1400])
@@ -16,17 +18,36 @@ def get_status():
     state = px.get_line_status(val_list)
     
     if state[1] == 1:
-        return 'forward'
-    #elif state == [0, 0, 0]:
-        #return 'stop'
+        current_state= 'forward'
+    elif state == [0, 0, 0]:
+        return 'outstate'
     elif state[0] == 1:
-        return 'right'
+        current_state= 'right'
     elif state[2] == 1:
-        return 'left'
-    #else:
-        #print("Charlie is in the bad place, State was: ", state)
-        #return 'stop'
-    #return 'stop' 
+        current_state= 'left'
+    else:
+        print("Charlie is in the bad place, State was: ", state)
+        return 'stop'
+    return 'stop' 
+
+def outHandle(offset):
+    last_state = current_state
+
+    if last_state == 'left':
+        px.set_dir_servo_angle(-offset)
+        px.backward(5)
+    elif last_state == 'right':
+        px.set_dir_servo_angle(offset)
+        px.backward(5)
+    while True:
+        gm_val_list = px.get_grayscale_data() #Logic for following based on grayscale data
+        current_state = px.get_line_status(gm_val_list)
+        print("outHandle gm_val_list: Grayscale Data:%s, Line Status:%s" %
+              (gm_val_list, current_state))
+        currentSta = current_state
+        if currentSta != last_state:
+            break
+    sleep(0.001)
 
 def get_power_level():
     """Prompts the user for a power level between 1 and 100."""
@@ -44,7 +65,6 @@ def main():
     initialize_robot()
     px_power = get_power_level()
 
-    px_power=px_power/10 #We're going real slow here guys
     px_power_for_alpha =px_power/1000
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
@@ -55,29 +75,32 @@ def main():
 
     try:
         while run==True:
-            gm_state = get_status()
+            current_state = get_status()
             distance = (alpha*px_power_for_alpha + distance)  # Increment distance based on power
             
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
                 run=False
 
-            if gm_state == 'forward':
+            if current_state == 'forward':
                 px.forward(px_power)
                 px.set_dir_servo_angle(0)
-            elif gm_state == 'stop':
+            elif current_state == 'outstate':
+                outHandle(offset)
+            elif current_state == 'stop':
                 px.forward(0)
                 px.stop()
                 print("Just doing what I was told.")
                 break
-            elif gm_state == 'left':
+            elif current_state == 'left':
                 px.forward(px_power)
                 px.set_dir_servo_angle(offset)
-            elif gm_state == 'right':
+            elif current_state == 'right':
                 px.forward(px_power)
                 px.set_dir_servo_angle(-offset)
             else:
-                print("Frank let's play nightcrawlers")
+
+                print("Frank let's play nightcrawlers {current_state}")
 
             sleep(0.01)  # Sleep at the end of the loop to ensure some delay
 
