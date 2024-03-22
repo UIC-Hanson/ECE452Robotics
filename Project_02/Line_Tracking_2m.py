@@ -52,7 +52,7 @@ def main():
     try:
         while run==True:
             gm_state = get_status()
-            distance = (alpha * px_power/1000 + distance)  # Increment distance based on power
+            distance = (alpha * px_power/100 + distance)  # Increment distance based on power
             
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
