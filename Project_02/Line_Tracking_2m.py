@@ -33,12 +33,12 @@ def get_status():
 def outHandle(offset):
     global current_state
     last_state = current_state
-
+    px.forward(0)
     if last_state == 'left':
         px.set_dir_servo_angle(-offset)
     elif last_state == 'right':
         px.set_dir_servo_angle(offset)
-    px.backward(5)
+    px.forward(-5)
     while current_state == last_state:
         sleep(0.001)  # Short delay before checking again
         current_state = get_status()
