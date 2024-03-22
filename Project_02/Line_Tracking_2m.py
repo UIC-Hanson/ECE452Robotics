@@ -19,16 +19,17 @@ def get_status():
     
     if state[1] == 1:
         current_state= 'forward'
+        return
     elif state == [0, 0, 0]:
-        return 'outstate'
+        current_state=  'outstate'
     elif state[0] == 1:
         current_state= 'right'
     elif state[2] == 1:
         current_state= 'left'
     else:
         print("Charlie is in the bad place, State was: ", state)
-        return 'stop'
-    return 'stop' 
+        current_state = 'stop'
+    return current_state
 
 def outHandle(offset):
     last_state = current_state
