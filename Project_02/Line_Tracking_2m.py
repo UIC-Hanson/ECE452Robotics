@@ -14,18 +14,17 @@ def initialize_robot():
 def get_status():
     """Determine the robot's state based on grayscale sensor data."""
     global current_state
-    val_list=px.get_grayscale_data()
+    val_list = px.get_grayscale_data()
     state = px.get_line_status(val_list)
     
     if state[1] == 1:
-        current_state= 'forward'
-        return
+        current_state = 'forward'
     elif state == [0, 0, 0]:
-        current_state=  'outstate'
+        current_state = 'outstate'
     elif state[0] == 1:
-        current_state= 'right'
+        current_state = 'right'
     elif state[2] == 1:
-        current_state= 'left'
+        current_state = 'left'
     else:
         print("Charlie is in the bad place, State was: ", state)
         current_state = 'stop'
@@ -37,19 +36,12 @@ def outHandle(offset):
 
     if last_state == 'left':
         px.set_dir_servo_angle(-offset)
-        px.backward(5)
     elif last_state == 'right':
         px.set_dir_servo_angle(offset)
-        px.backward(5)
-    while True:
-        gm_val_list = px.get_grayscale_data() #Logic for following based on grayscale data
-        current_state = px.get_line_status(gm_val_list)
-        print("outHandle gm_val_list: Grayscale Data:%s, Line Status:%s" %
-              (gm_val_list, current_state))
-        currentSta = current_state
-        if currentSta != last_state:
-            break
-    sleep(0.001)
+    px.backward(5)
+    while current_state == last_state:
+        sleep(0.001)  # Short delay before checking again
+        current_state = get_status()
 
 def get_power_level():
     """Prompts the user for a power level between 1 and 100."""
