@@ -48,7 +48,7 @@ def main():
     distance = 0
     alpha = 0.017881989
     wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
-    offset = 30  # Steering angle offset for left/right corrections
+    offset = 60  # Steering angle offset for left/right corrections
     run=True
 
     try:
@@ -64,6 +64,7 @@ def main():
                 px.forward(0)
                 px.stop()
                 print("Just doing what I was told.")
+                break
             elif gm_state == 'forward':
                 px.forward(px_power)
                 px.set_dir_servo_angle(0)
