@@ -60,7 +60,6 @@ def main():
     alpha = 0.012921758
     wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
 
-    px.forward(px_power)  # Start moving forward
     start_time = time()  # Record start time
 
     try:
@@ -76,17 +75,22 @@ def main():
             gm_state = get_status()
 
             if gm_state == 'stop':
+                px.forward(0)
                 px.stop()
                 print("Just doing what I was told.")
             elif gm_state == 'forward':
+                px.forward(px_power)
                 px.set_dir_servo_angle(0)
             elif gm_state == 'left':
+                px.forward(px_power)
                 px.set_dir_servo_angle(offset)
             elif gm_state == 'right':
+                px.forward(px_power)
                 px.set_dir_servo_angle(-offset)
             sleep(0.01)  # Sleep at the end of the loop to ensure some delay
 
     finally:
+        px.forward(0)
         px.stop()
         print("Robot stopped.")
 
