@@ -47,7 +47,7 @@ def main():
     distance = 0
     alpha = 0.012921758
     wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
-    run==True
+    run=True
 
     try:
         while run==True:
