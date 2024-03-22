@@ -48,7 +48,7 @@ def main():
     distance = 0
     alpha = 0.017881989
     wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
-    offset = 60  # Steering angle offset for left/right corrections
+    offset = 90  # Steering angle offset for left/right corrections
     run=True
 
     try:
@@ -60,14 +60,14 @@ def main():
                 print("We have crossed the desert to the holy land, 2 meters away.")
                 run=False
 
-            if gm_state == 'stop':
-                #px.forward(0)
-                #px.stop()
-                print("Just doing what I was told.")
-                #break
-            elif gm_state == 'forward':
+            if gm_state == 'forward':
                 px.forward(px_power)
                 px.set_dir_servo_angle(0)
+            #elif gm_state == 'stop':
+                #px.forward(0)
+                #px.stop()
+                #print("Just doing what I was told.")
+                #break
             elif gm_state == 'left':
                 px.forward(px_power)
                 px.set_dir_servo_angle(offset)
