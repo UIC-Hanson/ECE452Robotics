@@ -21,27 +21,27 @@ def calculate_alpha_and_export():
     # Calculate 'alpha_rounded' to ensure alpha values are rounded to 9 decimal places
     data['alpha_rounded'] = data['alpha'].apply(lambda x: round(x, 9))
 
-    data['decade'] = (data['px_power'] // 10) * 10
-    mean_alpha_per_decade = data.groupby('decade')['alpha_rounded'].mean().reset_index().sort_values('decade')
+    data['px_power'] = (data['px_power'] // 10) * 10
+    mean_alpha_per_decade = data.groupby('px_power')['alpha_rounded'].mean().reset_index().sort_values('px_power')
     
     # Create a dataframe with all desired decades
-    all_decades = pd.DataFrame({'decade': range(0, 101, 10)})
+    all_decades = pd.DataFrame({'px_power': range(0, 101, 10)})
 
     # Merge with mean_alpha_per_decade, filling missing values as needed
-    mean_alpha_per_decade = all_decades.merge(mean_alpha_per_decade, on='decade', how='left').fillna(value={"alpha_rounded": 0})
+    mean_alpha_per_decade = all_decades.merge(mean_alpha_per_decade, on='px_power', how='left').fillna(value={"alpha_rounded": 0})
 
     # Overwrite the file with the first row of data (headers included)
-    overwrite_csv([mean_alpha_per_decade.iloc[0]['decade'], round(mean_alpha_per_decade.iloc[0]['alpha_rounded'], 9)], output_filename, ["decade", "alpha"])
+    overwrite_csv([mean_alpha_per_decade.iloc[0]['px_power'], round(mean_alpha_per_decade.iloc[0]['alpha_rounded'], 9)], output_filename, ["px_power", "alpha"])
     
     # Append the remaining rows
     for index, row in mean_alpha_per_decade.iloc[1:].iterrows():
-        append_to_csv([row['decade'], round(row['alpha_rounded'], 9)], output_filename, None)
+        append_to_csv([row['px_power'], round(row['alpha_rounded'], 9)], output_filename, None)
 
     # Calculate and append the overall average alpha value, ensuring rounding is applied
     overall_avg_alpha = round(data['alpha'].mean(), 9)
     append_to_csv(["Overall", overall_avg_alpha], output_filename, None)
 
-    print(f"Alpha values by decade have been saved to {output_filename}, including the overall average alpha.")
+    print(f"Alpha values by power decade have been saved to {output_filename}, including the overall average alpha.")
 
 if __name__ == '__main__':
     calculate_alpha_and_export()

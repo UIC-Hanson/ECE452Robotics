@@ -7,27 +7,29 @@ def weighted_alpha_for_power(input_filename, power):
     try:
         alpha_by_decade = pd.read_csv(input_filename)
         # Filtering to exclude non-numeric 'decade' values
-        alpha_by_decade = alpha_by_decade[~alpha_by_decade['decade'].astype(str).str.contains('Overall', na=False)]
-        print(alpha_by_decade)
+        alpha_by_decade = alpha_by_decade[~alpha_by_decade['px_power'].astype(str).str.contains('Overall', na=False)]
 
         power = float(power)
+
+        # Handling the zero power case explicitly
+        if power == 0:
+            return 0, "0.0"
+
         lower_decade = (power // 10) * 10
         upper_decade = lower_decade + 10.0
-        print(f"between decades {lower_decade} and {upper_decade}")
 
-        if power in alpha_by_decade['decade'].values:
-            direct_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == power, 'alpha'].values[0]
+        if power in alpha_by_decade['px_power'].values:
+            direct_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == power, 'alpha'].values[0]
             return direct_alpha, f"{power:.1f}"
-        elif lower_decade in alpha_by_decade['decade'].values and upper_decade in alpha_by_decade['decade'].values:
-            lower_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == lower_decade, 'alpha'].values[0]
-            upper_alpha = alpha_by_decade.loc[alpha_by_decade['decade'] == upper_decade, 'alpha'].values[0]
+        elif lower_decade in alpha_by_decade['px_power'].values and upper_decade in alpha_by_decade['px_power'].values:
+            lower_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == lower_decade, 'alpha'].values[0]
+            upper_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == upper_decade, 'alpha'].values[0]
             lower_weight = (upper_decade - power) / 10.0
             upper_weight = (power - lower_decade) / 10.0
             weighted_alpha = (lower_alpha * lower_weight) + (upper_alpha * upper_weight)
             return weighted_alpha, f"{power:.1f}"
         else:
-            print("The given power does not match any decade or surrounding decades in the dataset.")
-            return None, f"{power:.1f}"
+            return None, "Data not available for this power range."
     except FileNotFoundError:
         print(f"Error: The file '{input_filename}' was not found.")
         return None, f"{power:.1f}"
