@@ -70,7 +70,7 @@ def main():
     distance = 0
     alpha = 0.017881989
     wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
-    offset = 90  # Steering angle offset for left/right corrections
+    offset = 30  # Steering angle offset for left/right corrections
     run=True
 
     try:
