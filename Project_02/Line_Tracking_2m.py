@@ -15,10 +15,10 @@ def get_status():
     val_list=px.get_grayscale_data()
     state = px.get_line_status(val_list)
     
-    if state == [0, 0, 0]:
-        return 'stop'
-    elif state[1] == 1:
+    if state[1] == 1:
         return 'forward'
+    #elif state == [0, 0, 0]:
+        #return 'stop'
     elif state[0] == 1:
         return 'right'
     elif state[2] == 1:
@@ -43,6 +43,8 @@ def get_power_level():
 def main():
     initialize_robot()
     px_power = get_power_level()
+
+    px_power=px_power/10 #We're going real slow here guys
     px_power_for_alpha =px_power/1000
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
@@ -63,11 +65,11 @@ def main():
             if gm_state == 'forward':
                 px.forward(px_power)
                 px.set_dir_servo_angle(0)
-            #elif gm_state == 'stop':
-                #px.forward(0)
-                #px.stop()
-                #print("Just doing what I was told.")
-                #break
+            elif gm_state == 'stop':
+                px.forward(0)
+                px.stop()
+                print("Just doing what I was told.")
+                break
             elif gm_state == 'left':
                 px.forward(px_power)
                 px.set_dir_servo_angle(offset)
