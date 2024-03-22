@@ -4,20 +4,20 @@ from time import sleep
 
 from robot_control import get_power_level
 
-# Initialize servos
-px.set_dir_servo_angle(0)
-px.set_cam_pan_angle(0)
-px.set_cam_tilt_angle(0)
+picarx = Picarx()
 
 # Define initial variables
-picarx = Picarx()
 picarx.set_grayscale_reference([1400, 1400, 1400]) #do we need this?
-
 px_power = 0
 alpha = 0.012921758 # Alpha value
 
 last_state = None
 offset = 30
+
+# Initialize servos
+picarx.set_dir_servo_angle(0)
+picarx.set_cam_pan_angle(0)
+picarx.set_cam_tilt_angle(0)
 
 def handle_out():
     global last_state
