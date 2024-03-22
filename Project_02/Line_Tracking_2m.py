@@ -63,27 +63,35 @@ def main():
     last_state = None
 
     try:
-        px.forward(px_power)
+        px.forward(px_power)  # Start moving forward
         while True:
-            gm_state = get_status()
+            gm_val_list = px.get_grayscale_data()
+            gm_state = px.get_line_status(gm_val_list)
+            print(f"Grayscale Data:{gm_val_list}, Line Status:{gm_state}")
 
             if gm_state != "stop":
                 last_state = gm_state
+                sleep(0.01)
 
             if distance / 0.0205 < 2:
                 distance += alpha * px_power
-            
+                sleep(0.01)
+                
             if distance > 0.04:
                 px.stop()
                 break  # Stop the loop if the distance condition is met
+
             elif gm_state == 'forward':
                 px.set_dir_servo_angle(0)
+                sleep(0.01)
             elif gm_state in ['left', 'right']:
                 px.set_dir_servo_angle(offset if gm_state == 'left' else -offset)
+                sleep(0.01)
             else:
                 handle_out(px, last_state)
+                sleep(0.01)
 
-            px.forward(px_power)  # Ensure continuous movement
+            px.forward(px_power)  # Continue moving forward
             print(f'Distance: {distance / 0.0205}')
             sleep(0.1)
     finally:
