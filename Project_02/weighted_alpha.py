@@ -61,29 +61,6 @@ def weighted_alpha_for_power(input_filename, power):
         print(f"An unexpected error occurred: {e}")
         return None, f"{power}"
 
-
-def weight_average(low_power, low_value, high_power, high_value, desired_power):
-    power_diff = high_power - low_power
-    desired_power_position = (desired_power - low_power) / power_diff  # Fractional position of the desired power output
-    low_power_weight = low_value * (1-desired_power_position)
-    high_power_weight = high_value * desired_power_position
-    print(f"{desired_power_position} {low_power_weight} {high_power_weight}")
-    return low_power_weight + high_power_weight
-
-
-def expect_actual(expect, actual):
-    if expect == actual:
-        print(f"\033[32mOK {expect}\033[0m")
-    else:
-        print(f"\033[31mExpected:\033[0m {expect} Got {actual}")
-
-
-def test():
-    expect_actual(15, weight_average(10, 10, 20, 20, 15))
-    expect_actual(45, weight_average(40, 40, 50, 50, 45))
-    expect_actual(12, weight_average(10, 10, 20, 20, 12))
-
-
 def main():
     parser = argparse.ArgumentParser(description="Calculate weighted alpha for a given power.")
     parser.add_argument("power", type=int, help="Power value to calculate for")
@@ -98,7 +75,5 @@ def main():
     else:
         print(f"Failed to calculate weighted alpha for power {formatted_power}.")
 
-
 if __name__ == "__main__":
-    #test()
     main()
