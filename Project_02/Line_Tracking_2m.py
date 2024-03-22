@@ -1,6 +1,5 @@
 from picarx import Picarx
 from time import sleep, time
-from robot_control import get_power_level, get_status
 from gpiozero import Device  # Add this import for cleanup
 
 px = Picarx()
@@ -24,6 +23,36 @@ def handle_out(px, last_state):
         if time() - start_time > timeout:
             print("Timeout occurred in handle_out")
             break
+
+def get_power_level():
+    """Prompts the user for a power level between 1 and 100."""
+    while True:
+        try:
+            px_power = int(input("Enter power level (1-100): "))
+            if 1 <= px_power <= 100:
+                return px_power
+            else:
+                print("Please enter a value between 1 and 100.")
+        except ValueError:
+            print("Invalid input. Please enter a numerical value between 1 and 100.")
+
+def get_status():
+    """Determine the robot's state based on grayscale sensor data."""
+    val_list=px.get_grayscale_data()
+    state = px.get_line_status(val_list)
+    
+    if state == [0, 0, 0]:
+        return 'stop'
+    elif state[1] == 1:
+        return 'forward'
+    elif state[0] == 1:
+        return 'right'
+    elif state[2] == 1:
+        return 'left'
+    else:
+        print("Charlie is in the bad place, State was: ", state)
+        return 'stop'
+    return 'stop' 
 
 def main():
     initialize_robot()
