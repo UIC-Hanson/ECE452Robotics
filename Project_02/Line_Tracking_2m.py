@@ -73,6 +73,7 @@ def main():
     wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
     offset = 30  # Steering angle offset for left/right corrections
     run=True
+    current_state = get_status() #initial setup
 
     try:
         while run==True:
