@@ -61,8 +61,8 @@ def main():
                 run=False
 
             if gm_state == 'stop':
-                px.forward(0)
-                px.stop()
+                #px.forward(0)
+                #px.stop()
                 print("Just doing what I was told.")
                 break
             elif gm_state == 'forward':
