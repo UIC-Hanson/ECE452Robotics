@@ -8,37 +8,56 @@ def weighted_alpha_for_power(input_filename, power):
         alpha_by_decade = pd.read_csv(input_filename)
         # Filtering to exclude non-numeric 'decade' values
         alpha_by_decade = alpha_by_decade[~alpha_by_decade['px_power'].astype(str).str.contains('Overall', na=False)]
+        
+        if power == 0 or power > 100:
+            print(f"Value out of range.")
+            return None, f"{power}"
 
-        power = float(power)
-
-        # Handling the zero power case explicitly
-        if power == 0:
-            return 0, "0.0"
-
-        lower_decade = (power // 10) * 10
-        upper_decade = lower_decade + 10.0
-
-        if power in alpha_by_decade['px_power'].values:
-            direct_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == power, 'alpha'].values[0]
-            return direct_alpha, f"{power:.1f}"
-        elif lower_decade in alpha_by_decade['px_power'].values and upper_decade in alpha_by_decade['px_power'].values:
-            lower_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == lower_decade, 'alpha'].values[0]
-            upper_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == upper_decade, 'alpha'].values[0]
-            lower_weight = (upper_decade - power) / 10.0
-            upper_weight = (power - lower_decade) / 10.0
-            weighted_alpha = (lower_alpha * lower_weight) + (upper_alpha * upper_weight)
-            return weighted_alpha, f"{power:.1f}"
+        if power in [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]: #if it's on a decade
+            weighted_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == power, 'alpha'].values[0]
+            return weighted_alpha, f"{power}"
         else:
-            return None, "Data not available for this power range."
+            # Calculate tens digit to determine the lower and upper decades
+            tens_digit = (int(power) // 10) % 10
+
+            # Calculate the upper and lower decade power values
+            upper_power = (tens_digit + 1) * 10
+            lower_power = tens_digit * 10
+
+            # Retrieve alpha values for the upper and lower decades
+            try:
+                upper_decade_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == upper_power, 'alpha'].values[0]
+            except IndexError:
+                print(f"No alpha value found for power {upper_power}")
+                upper_decade_alpha = None
+            try:
+                lower_decade_alpha = alpha_by_decade.loc[alpha_by_decade['px_power'] == lower_power, 'alpha'].values[0]
+            except IndexError:
+                print(f"No alpha value found for power {lower_power}")
+                lower_decade_alpha = None
+
+            if upper_decade_alpha is not None and lower_decade_alpha is not None:
+                # Calculate weights based on the ones digit of the power
+                ones_digit = int(power) % 10
+                upper_weight = ones_digit / 10.0
+                lower_weight = 1 - upper_weight
+
+                # Calculate and return the weighted alpha
+                weighted_alpha = (upper_decade_alpha * upper_weight) + (lower_decade_alpha * lower_weight)
+                return weighted_alpha, f"{power}"
+            else:
+                print(f"Unable to calculate weighted alpha for power {power} due to missing decade data.")
+                return None, f"{power}"
+
     except FileNotFoundError:
         print(f"Error: The file '{input_filename}' was not found.")
-        return None, f"{power:.1f}"
+        return None, f"{power}"
     except pd.errors.EmptyDataError:
         print(f"Error: The file '{input_filename}' is empty.")
-        return None, f"{power:.1f}"
+        return None, f"{power}"
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return None, f"{power:.1f}"
+        return None, f"{power}"
 
 
 def weight_average(low_power, low_value, high_power, high_value, desired_power):
