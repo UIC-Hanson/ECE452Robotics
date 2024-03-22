@@ -1,6 +1,5 @@
 from picarx import Picarx
 from time import sleep, time
-from gpiozero import Device  # Add this import for cleanup
 
 px = Picarx()
 
@@ -89,7 +88,6 @@ def main():
             sleep(0.1)
     finally:
         px.stop()
-        Device.close_all()  # Cleanup GPIO resources
 
 if __name__ == '__main__':
     main()
