@@ -1,63 +1,79 @@
 from picarx import Picarx
 from time import sleep
-from robot_control import get_power_level
+import readchar
 
-px = Picarx()
+manual = '''
+Press keys on keyboard to control PiCar-X!
+    w: Forward
+    a: Turn left
+    s: Backward
+    d: Turn right
+    i: Head up
+    k: Head down
+    j: Turn head left
+    l: Turn head right
+    ctrl+c: Press twice to exit the program
+'''
 
-def initialize_robot():
-    # Initialize Picar-X and set initial servo angles and grayscale reference
-    px.set_grayscale_reference([1400, 1400, 1400])
-    px.set_dir_servo_angle(0)
-    px.set_cam_pan_angle(0)
-    px.set_cam_tilt_angle(0)
+def show_info():
+    print("\033[H\033[J",end='')  # clear terminal windows
+    print(manual)
 
-def handle_out(px, last_state):
-    # Correct the direction based on the last state
-    correction_angle = -12 if last_state == 'left' else 12
-    px.set_dir_servo_angle(correction_angle)
-    px.backward(5)
-    while px.get_line_status(px.get_grayscale_data()) == last_state:
-        sleep(0.001)
 
-def main():
-    initialize_robot()
-    px_power = get_power_level()
-    print(f"Power level set to: {px_power}")
-    distance = 0
-    alpha = 0.012921758 # Alpha value for distance calculation
-    offset = 30
-    last_state = None
-
+if __name__ == "__main__":
     try:
-        px.forward(px_power)  # Start moving forward
+        pan_angle = 0
+        tilt_angle = 0
+        px = Picarx()
+        show_info()
         while True:
-            gm_val_list = px.get_grayscale_data()
-            gm_state = px.get_line_status(gm_val_list)
-            print(f"Grayscale Data:{gm_val_list}, Line Status:{gm_state}")
+            key = readchar.readkey()
+            key = key.lower()
+            if key in('wsadikjl'): 
+                if 'w' == key:
+                    px.set_dir_servo_angle(0)
+                    px.forward(80)
+                elif 's' == key:
+                    px.set_dir_servo_angle(0)
+                    px.backward(80)
+                elif 'a' == key:
+                    px.set_dir_servo_angle(-30)
+                    px.forward(80)
+                elif 'd' == key:
+                    px.set_dir_servo_angle(30)
+                    px.forward(80)
+                elif 'i' == key:
+                    tilt_angle+=5
+                    if tilt_angle>30:
+                        tilt_angle=30
+                elif 'k' == key:
+                    tilt_angle-=5
+                    if tilt_angle<-30:
+                        tilt_angle=-30
+                elif 'l' == key:
+                    pan_angle+=5
+                    if pan_angle>30:
+                        pan_angle=30
+                elif 'j' == key:
+                    pan_angle-=5
+                    if pan_angle<-30:
+                        pan_angle=-30                 
 
-            if gm_state != "stop":
-                last_state = gm_state
+                px.set_cam_tilt_angle(tilt_angle)
+                px.set_cam_pan_angle(pan_angle)      
+                show_info()                     
+                sleep(0.5)
+                px.forward(0)
+          
+            elif key == readchar.key.CTRL_C:
+                print("\n Quit")
+                break
 
-            if distance / 0.0205 < 2:
-                distance += alpha * px_power
-                sleep(0.01)
-                
-            if distance > 0.04:
-                px.stop()
-                break  # Stop the loop if the distance condition is met
-
-            elif gm_state == 'forward':
-                px.set_dir_servo_angle(0)
-            elif gm_state in ['left', 'right']:
-                px.set_dir_servo_angle(offset if gm_state == 'left' else -offset)
-            else:
-                handle_out(px, last_state)
-
-            px.forward(px_power)  # Continue moving forward
-            print(f'Distance: {distance / 0.0205}')
-            sleep(0.1)
     finally:
+        px.set_cam_tilt_angle(0)
+        px.set_cam_pan_angle(0)  
+        px.set_dir_servo_angle(0)  
         px.stop()
+        sleep(.2)
 
-if __name__ == '__main__':
-    main()
+
