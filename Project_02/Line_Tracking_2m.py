@@ -19,6 +19,24 @@ def handle_out():
         while px.get_line_status(px.get_grayscale_data()) == last_state:
             sleep(0.001)
 
+def get_status():
+    """Determine the robot's state based on grayscale sensor data."""
+    val_list=px.get_grayscale_data()
+    state = px.get_line_status(val_list)
+    
+    if state == [0, 0, 0]:
+        return 'stop'
+    elif state[1] == 1:
+        return 'forward'
+    elif state[0] == 1:
+        return 'right'
+    elif state[2] == 1:
+        return 'left'
+    else:
+        print("Charlie is in the bad place, State was: ", state)
+        return 'stop'
+    return 'stop' 
+
 def get_power_level():
     """Prompts the user for a power level between 1 and 100."""
     while True:
@@ -38,41 +56,28 @@ def main():
     distance = 0
     alpha = 0.012921758
     offset = 30
+    wheelsize=0.0205
 
-    try:
-        while True:
-            gm_val_list = px.get_grayscale_data()
-            gm_state = px.get_line_status(gm_val_list)
-            print("Grayscale Data:%s, Line Status:%s" % (gm_val_list, gm_state))
-
-            if gm_state != "stop":
-                last_state = gm_state
-                sleep(0.01)
-
-            if distance / 0.0205 < 2:
-                distance = (alpha * px_power + distance)
-                sleep(0.01)
-
-            #if distance > 0.04:
-            #    px.stop()
-
-            elif gm_state == 'forward':
-                px.set_dir_servo_angle(0)
-                px.forward(px_power)
-                sleep(0.01)
-            elif gm_state in ['left', 'right']:
-                px.set_dir_servo_angle(offset if gm_state == 'left' else -offset)
-                px.forward(px_power)
-                sleep(0.01)
-            else:
-                handle_out()
-
-            print('Distance: ' + str(distance / 0.0205))
-            sleep(0.1)
+    px.forward(px_power)  # Start moving forward
+    while True:
+        gm_state = get_status()
+        
+        if gm_state == "stop"
+            px.stop()
+                print("Just doing what I was told")
+        if gm_state == 'forward':
+            px.set_dir_servo_angle(0)
+            sleep(0.01)
+        elif gm_state == 'left':
+            px.set_dir_servo_angle(offset)
+            sleep(0.01)
+        elif gm_state == 'right':
+            px.set_dir_servo_angle(-offset)
+            sleep(0.01)
     finally:
+        px.set_dir_servo_angle(0)
         px.stop()
-        px.stop()
-        sleep(0.2)
+        px.stop() 
 
 if __name__ == '__main__':
     main()
