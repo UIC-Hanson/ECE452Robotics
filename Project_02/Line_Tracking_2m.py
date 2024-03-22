@@ -1,35 +1,41 @@
 from picarx import Picarx
-from time import sleep
+from time import sleep, time
 from robot_control import get_power_level, get_status
+from gpiozero import Device  # Add this import for cleanup
 
 px = Picarx()
 
 def initialize_robot():
-    # Initialize Picar-X and set initial servo angles and grayscale reference
+    # Initialize settings
     px.set_grayscale_reference([1400, 1400, 1400])
     px.set_dir_servo_angle(0)
     px.set_cam_pan_angle(0)
     px.set_cam_tilt_angle(0)
 
 def handle_out(px, last_state):
-    # Correct the direction based on the last state, reverse!
+    # Modified handle_out with timeout
     correction_angle = -12 if last_state == 'left' else 12
     px.set_dir_servo_angle(correction_angle)
     px.backward(5)
+    start_time = time()
+    timeout = 2
     while get_status() == last_state:
         sleep(0.001)
+        if time() - start_time > timeout:
+            print("Timeout occurred in handle_out")
+            break
 
 def main():
     initialize_robot()
     px_power = get_power_level()
     print(f"Power level set to: {px_power}")
     distance = 0
-    alpha = 0.012921758  # Alpha value for distance calculation
+    alpha = 0.012921758
     offset = 30
     last_state = None
 
     try:
-        px.forward(px_power)  # Start moving forward
+        px.forward(px_power)
         while True:
             gm_state = get_status()
 
@@ -54,6 +60,7 @@ def main():
             sleep(0.1)
     finally:
         px.stop()
+        Device.close_all()  # Cleanup GPIO resources
 
 if __name__ == '__main__':
     main()
