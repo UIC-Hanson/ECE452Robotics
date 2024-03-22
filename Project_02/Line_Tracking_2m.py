@@ -23,10 +23,10 @@ def get_status():
         return 'right'
     elif state[2] == 1:
         return 'left'
-    else:
-        print("Charlie is in the bad place, State was: ", state)
-        return 'stop'
-    return 'stop' 
+    #else:
+        #print("Charlie is in the bad place, State was: ", state)
+        #return 'stop'
+    #return 'stop' 
 
 def get_power_level():
     """Prompts the user for a power level between 1 and 100."""
