@@ -1,7 +1,6 @@
 from picarx import Picarx
 from time import sleep
 #our scripts
-from calculate_weighted_alpha import weighted_alpha_for_power
 from robot_control import get_power_level
 
 # Define initial variables
@@ -10,7 +9,7 @@ picarx.set_grayscale_reference([1400, 1400, 1400])
 
 # Ask the user for the power level and calculate the alpha value
 px_power = get_power_level()
-alpha = weighted_alpha_for_power(px_power) # Alpha value
+alpha = 0.012921758 # Alpha value
 
 last_state = None
 offset = 20
