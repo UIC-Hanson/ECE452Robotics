@@ -13,7 +13,8 @@ def initialize_robot():
     px.set_cam_tilt_angle(0)
 
 def handle_out():
-    if last_state == 'left' or last_state == 'right':
+    global last_state
+    if last_state in ['left', 'right']:
         px.set_dir_servo_angle(-12 if last_state == 'left' else 12)
         px.backward(5)
         while px.get_line_status(px.get_grayscale_data()) == last_state:
@@ -21,21 +22,23 @@ def handle_out():
 
 def get_status():
     """Determine the robot's state based on grayscale sensor data."""
-    val_list=px.get_grayscale_data()
+    global last_state
+    val_list = px.get_grayscale_data()
     state = px.get_line_status(val_list)
     
     if state == [0, 0, 0]:
-        return 'stop'
+        last_state = 'stop'
     elif state[1] == 1:
-        return 'forward'
+        last_state = 'forward'
     elif state[0] == 1:
-        return 'right'
+        last_state = 'right'
     elif state[2] == 1:
-        return 'left'
+        last_state = 'left'
     else:
         print("Charlie is in the bad place, State was: ", state)
-        return 'stop'
-    return 'stop' 
+        last_state = 'stop'
+
+    return last_state
 
 def get_power_level():
     """Prompts the user for a power level between 1 and 100."""
@@ -55,29 +58,37 @@ def main():
     print(f"Power level set to: {px_power}")
     distance = 0
     alpha = 0.012921758
-    offset = 30
-    wheelsize=0.0205
+    wheelsize = 0.0205  # Assuming this is the wheel diameter in meters
 
     px.forward(px_power)  # Start moving forward
-    while True:
-        gm_state = get_status()
-        
-        if gm_state == "stop"
-            px.stop()
-                print("Just doing what I was told")
-        if gm_state == 'forward':
-            px.set_dir_servo_angle(0)
-            sleep(0.01)
-        elif gm_state == 'left':
-            px.set_dir_servo_angle(offset)
-            sleep(0.01)
-        elif gm_state == 'right':
-            px.set_dir_servo_angle(-offset)
-            sleep(0.01)
+    start_time = time()  # Record start time
+
+    try:
+        while True:
+            current_time = time()
+            elapsed_time = current_time - start_time
+            distance = (alpha * px_power + distance)  # Increment distance based on power
+            
+            if distance / wheelsize >= 2:
+                print("We have crossed the desert to the holy land, 2 meters away.")
+                break
+            
+            gm_state = get_status()
+
+            if gm_state == 'stop':
+                px.stop()
+                print("Just doing what I was told.")
+            elif gm_state == 'forward':
+                px.set_dir_servo_angle(0)
+            elif gm_state == 'left':
+                px.set_dir_servo_angle(offset)
+            elif gm_state == 'right':
+                px.set_dir_servo_angle(-offset)
+            sleep(0.01)  # Sleep at the end of the loop to ensure some delay
+
     finally:
-        px.set_dir_servo_angle(0)
         px.stop()
-        px.stop() 
+        print("Robot stopped.")
 
 if __name__ == '__main__':
     main()
