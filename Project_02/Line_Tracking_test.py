@@ -63,6 +63,7 @@ def get_status(val_list):
 if __name__ == '__main__':
     initialize_robot()
     get_power_level()  # Get the power level from user input
+    px_power_modifier=220
 
     try:
         while True:
@@ -71,7 +72,7 @@ if __name__ == '__main__':
             print("Grayscale values, current state: %s, %s" % (gm_val_list, current_state))
 
              # Increment distance based on power
-            distance += alpha * (px_power / 2200)
+            distance += alpha * (px_power / px_power_modifier)
             if distance / wheelsize >= 2:
                 print("Travelled 2 meters, stopping.")
                 break
