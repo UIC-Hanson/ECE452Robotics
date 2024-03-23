@@ -28,7 +28,8 @@ def get_status():
     
     else:
         print("Charlie is in the bad place, State was: ", state)
-        return current_state = 'stop'
+        current_state = 'stop'
+        return current_state
     print("val_list, state, current_state: %s, %s, %s" % (val_list, state, current_state))
     return current_state
 
