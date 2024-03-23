@@ -34,19 +34,19 @@ def get_power_level():
 
 def turn():
     """Turn the robot based on the current state."""
-    inboard_wheel = px_power * 0.95
-    outboard_wheel = px_power
+    #inboard_wheel = px_power * 0.95
+    #outboard_wheel = px_power
 
     if current_state == 'left':
-        #px.set_dir_servo_angle(-offset)
-        px.set_motor_speed(1, inboard_wheel)
-        px.set_motor_speed(2, outboard_wheel)
-        print("Turning left. Outboard wheel, inboard wheel: %s, %s" % (outboard_wheel, inboard_wheel))
+        px.set_dir_servo_angle(-offset)
+        #px.set_motor_speed(1, inboard_wheel)
+        #px.set_motor_speed(2, outboard_wheel)
+        #print("Turning left. Outboard wheel, inboard wheel: %s, %s" % (outboard_wheel, inboard_wheel))
     elif current_state == 'right':
-        #px.set_dir_servo_angle(offset)
-        px.set_motor_speed(1, outboard_wheel)
-        px.set_motor_speed(2, inboard_wheel)
-        print("Turning right. Outboard wheel, inboard wheel: %s, %s" % (outboard_wheel, inboard_wheel))
+        px.set_dir_servo_angle(offset)
+        #px.set_motor_speed(1, outboard_wheel)
+        #px.set_motor_speed(2, inboard_wheel)
+        #print("Turning right. Outboard wheel, inboard wheel: %s, %s" % (outboard_wheel, inboard_wheel))
 
 def get_status(val_list):
     """Get the current status of the robot based on grayscale sensor input."""
@@ -63,7 +63,7 @@ def get_status(val_list):
 if __name__ == '__main__':
     initialize_robot()
     #get_power_level()  # Get the power level from user input
-    px_power_modifier=18000
+    px_power_modifier=16000
 
     try:
         while True:
