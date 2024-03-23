@@ -12,8 +12,6 @@ def initialize_robot():
     px.set_cam_pan_angle(0)
     px.set_cam_tilt_angle(0)
 
-
-
 def main():
     global offset, px_power
     px_power_for_alpha=px_power*.84 #during testing it stopped just short of 2m, adjust this slightly

@@ -1,94 +1,87 @@
 from picarx import Picarx
 from time import sleep
 
-# Global Variables
 px = Picarx()
-current_state = None
-px_power = .25  # Default power level, can be adjusted via get_power_level()
-offset = 20 #default turning max is 30
+
+px_power = .25
+offset = 20
 last_state = "stop"
-distance = 0
-alpha = 0.000332 #alpha for pwr level 10
-wheelsize = 0.0205  # wheel diameter in meters
 
 def initialize_robot():
-    """Initialize settings for the robot."""
+    # Initialize settings
     px.set_dir_servo_angle(0)
     px.set_cam_pan_angle(0)
     px.set_cam_tilt_angle(0)
 
-def get_power_level():
-    """Prompts the user for a power level between 1 and 100, used in 2mdrive.py."""
+def outHandle():
+    global last_state
+    if last_state == 'left':
+        px.set_dir_servo_angle(-30)
+        px.backward(10)
+    elif last_state == 'right':
+        px.set_dir_servo_angle(30)
+        px.backward(10)
     while True:
-        try:
-            level = int(input("Enter power level (1-100): "))
-            if 1 <= level <= 100:
-                global px_power
-                px_power = level
-                print(f"Power level set to: {level}")
-                return
-            else:
-                print("Please enter a value between 1 and 100.")
-        except ValueError:
-            print("Invalid input. Please enter a numerical value between 1 and 100.")
+        currentSta = get_status()
+        if currentSta != last_state:
+            break
+    sleep(0.001)
 
-def turn():
-    """Turn the robot based on the current state."""
-    #inboard_wheel = px_power * 0.95
-    #outboard_wheel = px_power
-
-    if current_state == 'left':
-        px.set_dir_servo_angle(-offset)
-        #px.set_motor_speed(1, inboard_wheel)
-        #px.set_motor_speed(2, outboard_wheel)
-        #print("Turning left. Outboard wheel, inboard wheel: %s, %s" % (outboard_wheel, inboard_wheel))
-    elif current_state == 'right':
-        px.set_dir_servo_angle(offset)
-        #px.set_motor_speed(1, outboard_wheel)
-        #px.set_motor_speed(2, inboard_wheel)
-        #print("Turning right. Outboard wheel, inboard wheel: %s, %s" % (outboard_wheel, inboard_wheel))
-
-def get_status(val_list):
-    """Get the current status of the robot based on grayscale sensor input."""
+def get_status():
+    val_list=px.get_grayscale_data()
     _state = px.get_line_status(val_list)  # [bool, bool, bool], 0 means line, 1 means background
+    print("val_list, _state: %s %s"%(val_list, _state))
     if _state == [0, 0, 0]:
         return 'stop'
-    elif _state[1] == 1:
-        return 'forward'
-    elif _state[0] == 1:
-        return 'right'
     elif _state[2] == 1:
         return 'left'
+    elif _state[0] == 1:
+        return 'right'
+    elif _state[1] == 1:
+        return 'forward'
 
-if __name__ == '__main__':
-    initialize_robot()
-    #get_power_level()  # Get the power level from user input
-    px_power_modifier=1
+def main():
+    global px_power, offset, last_state
+    distance = 0
+    alpha = 0.000332
+    wheelsize = 0.0205  # wheel diameter in meters
+    run=True
 
     try:
-        while True:
-            gm_val_list = px.get_grayscale_data()
-            current_state = get_status(gm_val_list)
-            print("Grayscale values, current state: %s, %s" % (gm_val_list, current_state))
+        while run==True:
+            distance += alpha * px_power_for_alpha  # Increment distance based on power
+            px.forward(px_power)
 
-             # Increment distance based on power
-            distance += alpha * (px_power / px_power_modifier)
             if distance / wheelsize >= 2:
-                print("Travelled 2 meters, stopping.")
-                break
+                print("We have crossed the desert to the holy land, 2 meters away.")
+                run=False
+            
+            gm_state = get_status()
+            print("current_state: %s"%(gm_state))
 
-            if current_state != "stop":
-                last_state = current_state
+            if gm_state != "stop":
+                last_state = gm_state
 
-            if current_state == 'forward':
+            if gm_state == 'forward':
                 px.set_dir_servo_angle(0)
-                px.forward(px_power)
-                sleep(0.0001)
-            elif current_state in ['left', 'right']:
-                turn()
-                sleep(0.0001)
+                px.forward(px_power) 
+            elif gm_state == 'left':
+                px.set_dir_servo_angle(offset)
+                px.forward(px_power) 
+            elif gm_state == 'right':
+                px.set_dir_servo_angle(-offset)
+                px.forward(px_power) 
             else:
-                sleep(0.0001)
+                outHandle()
+
     finally:
+        initialize_robot()
         px.stop()
-        print("Robot stopped.")
+        print("stop and exit")
+        sleep(0.1)
+
+
+if __name__=='__main__':
+    initialize_robot()
+    main()
+
