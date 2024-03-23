@@ -35,6 +35,7 @@ def main():
     try:
         while run==True:
             distance += alpha * px_power_for_alpha  # Increment distance based on power
+            px.forward(px_power)
             
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
