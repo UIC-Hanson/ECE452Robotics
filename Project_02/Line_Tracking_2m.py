@@ -35,9 +35,8 @@ def get_status():
 
 def turn(px_power, offset):
     global current_state
-    power_modifier=2
-    inboard_wheel=px_power/power_modifier
-    px_power=px_power*power_modifier
+    inboard_wheel=0
+    px_power=px_power
 
     if current_state == 'left':
         px.set_dir_servo_angle(offset)
