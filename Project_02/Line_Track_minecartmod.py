@@ -40,30 +40,35 @@ def get_status():
     elif _state[1] == 1:
         return 'forward'
 
-if __name__=='__main__':
-    initialize_robot()
+def main():
+    global px_power, offset, last_state
     try:
-        while True:
-            gm_state = get_status()
-            print("current_state: %s"%(gm_state))
+    while True:
+        gm_state = get_status()
+        print("current_state: %s"%(gm_state))
 
-            if gm_state != "stop":
-                last_state = gm_state
+        if gm_state != "stop":
+            last_state = gm_state
 
-            if gm_state == 'forward':
-                px.set_dir_servo_angle(0)
-                px.forward(px_power) 
-            elif gm_state == 'left':
-                px.set_dir_servo_angle(offset)
-                px.forward(px_power) 
-            elif gm_state == 'right':
-                px.set_dir_servo_angle(-offset)
-                px.forward(px_power) 
-            else:
-                outHandle()
+        if gm_state == 'forward':
+            px.set_dir_servo_angle(0)
+            px.forward(px_power) 
+        elif gm_state == 'left':
+            px.set_dir_servo_angle(offset)
+            px.forward(px_power) 
+        elif gm_state == 'right':
+            px.set_dir_servo_angle(-offset)
+            px.forward(px_power) 
+        else:
+            outHandle()
 
     finally:
         px.stop()
         print("stop and exit")
         sleep(0.1)
+
+
+if __name__=='__main__':
+    initialize_robot()
+    main()
 
