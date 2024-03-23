@@ -33,16 +33,19 @@ def get_status():
 def turn(px_power, offset):
     global current_state
     inboard_wheel=px_power/9
+    px_power=px_power*1.5
 
     if current_state == 'left':
         px.set_dir_servo_angle(offset)
         px.set_motor_speed(1,inboard_wheel)
         px.set_motor_speed(2,px_power)
+        sleep(.2)
 
     elif current_state == 'right':
         px.set_dir_servo_angle(-offset)
         px.set_motor_speed(2,inboard_wheel)
         px.set_motor_speed(1,px_power)
+        sleep(.2)
 
 def outHandle(offset):
     global current_state
