@@ -23,7 +23,7 @@ def get_status():
         current_state = 'right'
     elif state[2] == 1:
         current_state = 'left'
-    elif state state[1] == 1:
+    elif state[1] == 1:
         current_state = 'forward'
     
     else:
