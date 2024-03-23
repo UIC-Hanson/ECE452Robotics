@@ -14,7 +14,7 @@ def initialize_robot():
 
 def main():
     global offset, px_power
-    px_power_for_alpha =px_power #/2200
+    px_power_for_alpha=px_power/10 #during testing it stopped just short of 2m, adjust this slightly
     distance = 0
     alpha = 0.000332
     wheelsize = 0.0205  # wheel diameter in meters
