@@ -34,7 +34,6 @@ def main():
 
     try:
         while run==True:
-            current_state = get_status()
             distance += alpha * px_power_for_alpha  # Increment distance based on power
             
             if distance / wheelsize >= 2:
