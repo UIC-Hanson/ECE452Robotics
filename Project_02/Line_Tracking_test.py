@@ -4,11 +4,11 @@ from time import sleep
 # Global Variables
 px = Picarx()
 current_state = None
-px_power = 10  # Default power level, can be adjusted via get_power_level()
-offset = 10 #default turning max is 30
+px_power = .25  # Default power level, can be adjusted via get_power_level()
+offset = 20 #default turning max is 30
 last_state = "stop"
 distance = 0
-alpha = 0.032048612 #alpha for pwr level 10
+alpha = 0.000332 #alpha for pwr level 10
 wheelsize = 0.0205  # wheel diameter in meters
 
 def initialize_robot():
@@ -63,7 +63,7 @@ def get_status(val_list):
 if __name__ == '__main__':
     initialize_robot()
     #get_power_level()  # Get the power level from user input
-    px_power_modifier=16000
+    px_power_modifier=1
 
     try:
         while True:
@@ -83,7 +83,6 @@ if __name__ == '__main__':
             if current_state == 'forward':
                 px.set_dir_servo_angle(0)
                 px.forward(px_power)
-               
                 sleep(0.0001)
             elif current_state in ['left', 'right']:
                 turn()
