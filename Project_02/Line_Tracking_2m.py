@@ -1,5 +1,5 @@
 from picarx import Picarx
-from time import sleep, time
+from time import sleep
 
 px = Picarx()
 
@@ -30,6 +30,20 @@ def get_status():
         current_state = 'stop'
     return current_state
 
+def turn(px_power, offset):
+    global current_state
+    inboard_wheel=px_power/9
+
+    if current_state == 'left':
+        px.set_dir_servo_angle(offset)
+        px.set_motor_speed(1,inboard_wheel)
+        px.set_motor_speed(2,px_power)
+
+    elif current_state == 'right':
+        px.set_dir_servo_angle(-offset)
+        px.set_motor_speed(2,inboard_wheel)
+        px.set_motor_speed(1,px_power)
+
 def outHandle(offset):
     global current_state
     last_state = current_state
@@ -58,7 +72,6 @@ def get_power_level():
 
 def main():
     global current_state
-    initialize_robot()
     px_power = get_power_level()
 
     px_power_for_alpha =px_power/1000
@@ -90,11 +103,10 @@ def main():
                 print("Just doing what I was told.")
                 break
             elif current_state == 'left':
-                px.forward(px_power)
-                px.set_dir_servo_angle(offset)
+                turn(px_power, offset)
             elif current_state == 'right':
-                px.forward(px_power)
-                px.set_dir_servo_angle(-offset)
+                turn(px_power, offset)
+                
             else:
                 print("Frank let's play nightcrawlers: ", current_state)
 
@@ -110,4 +122,5 @@ def main():
 
 if __name__ == '__main__':
     current_state = None
+    initialize_robot()
     main()
