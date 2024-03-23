@@ -28,6 +28,7 @@ def get_status():
     else:
         print("Charlie is in the bad place, State was: ", state)
         current_state = 'stop'
+    print("val_list, state, current_state: %s, %s"%(val_list, state, current_state))
     return current_state
 
 def turn(px_power, offset):
