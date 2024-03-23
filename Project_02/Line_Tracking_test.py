@@ -45,7 +45,7 @@ def main():
     distance = 0
     alpha = 0.000332
     wheelsize = 0.0205  # wheel diameter in meters
-    px_power_for_alpha=px_power*.84 #during testing it stopped just short of 2m, adjust this slightly
+    px_power_for_alpha=px_power #during testing it stopped short of 2m
     run=True
 
     try:
@@ -57,6 +57,7 @@ def main():
                 print("We have crossed the desert to the holy land, 2 meters away.")
                 run=False
             
+
             gm_state = get_status()
             print("current_state: %s"%(gm_state))
 
