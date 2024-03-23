@@ -27,6 +27,10 @@ def outHandle():
             break
     sleep(0.001)
 
+def TallyHo(speed):
+    px.set_motor_speed(1, speed)
+    px.set_motor_speed(2, -1*speed)   
+
 def get_status():
     val_list=px.get_grayscale_data()
     _state = px.get_line_status(val_list)  # [bool, bool, bool], 0 means line, 1 means background
@@ -69,10 +73,10 @@ def main():
                 px.forward(px_power) 
             elif gm_state == 'left':
                 px.set_dir_servo_angle(offset)
-                px.forward(px_power) 
+                TallyHo(px_power) 
             elif gm_state == 'right':
                 px.set_dir_servo_angle(-offset)
-                px.forward(px_power) 
+                TallyHo(px_power) 
             else:
                 outHandle()
 
