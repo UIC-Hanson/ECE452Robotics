@@ -17,17 +17,18 @@ def get_status():
     val_list = px.get_grayscale_data()
     state = px.get_line_status(val_list)
     
-    if state[1] == 1:
-        current_state = 'forward'
-    elif state == [0, 0, 0]:
+    if state == [0, 0, 0]:
         current_state = 'outstate'
     elif state[0] == 1:
         current_state = 'right'
     elif state[2] == 1:
         current_state = 'left'
+    elif state state[1] == 1:
+        current_state = 'forward'
+    
     else:
         print("Charlie is in the bad place, State was: ", state)
-        current_state = 'stop'
+        return current_state = 'stop'
     print("val_list, state, current_state: %s, %s, %s" % (val_list, state, current_state))
     return current_state
 
