@@ -12,7 +12,7 @@ def initialize_robot():
     px.set_cam_pan_angle(0)
     px.set_cam_tilt_angle(0)
 
-    
+
 
 def main():
     global offset, px_power
@@ -34,8 +34,8 @@ def main():
             sleep(0.01)  # Sleep at the end of the loop to ensure some delay
 
     finally:
-        px.stop()
         initialize_robot()
+        px.stop()
         sleep(.2)
         print("Robot stopped.")
 

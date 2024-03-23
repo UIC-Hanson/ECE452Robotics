@@ -63,6 +63,7 @@ def main():
                 outHandle()
 
     finally:
+        initialize_robot()
         px.stop()
         print("stop and exit")
         sleep(0.1)
