@@ -45,7 +45,7 @@ def main():
     distance = 0
     alpha = 0.000332
     wheelsize = 0.0205  # wheel diameter in meters
-    px_power_for_alpha=px_power*1.2 #during testing it stopped short of 2m, use this to adjust
+    px_power_for_alpha=px_power*1.5 #during testing it stopped short of 2m, use this to adjust
     run=True
 
     try:
