@@ -63,7 +63,7 @@ def get_status(val_list):
 if __name__ == '__main__':
     initialize_robot()
     #get_power_level()  # Get the power level from user input
-    px_power_modifier=12000
+    px_power_modifier=20000
 
     try:
         while True:
