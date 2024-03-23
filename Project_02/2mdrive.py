@@ -3,33 +3,21 @@ from time import sleep
 
 px = Picarx()
 
+offset = 20  # Steering angle offset for left/right corrections
+px_power = .25 #speed
+
 def initialize_robot():
-    # Initialize settings
+    #Set all to zero
     px.set_dir_servo_angle(0)
     px.set_cam_pan_angle(0)
     px.set_cam_tilt_angle(0)
 
-def get_power_level():
-    """Prompts the user for a power level between 1 and 100."""
-    while True:
-        try:
-            px_power = int(input("Enter power level (1-100): "))
-            if 1 <= px_power <= 100:
-                return px_power
-            else:
-                print("Please enter a value between 1 and 100.")
-        except ValueError:
-            print("Invalid input. Please enter a numerical value between 1 and 100.")
-
 def main():
-    px_power = .25
-
+    global offset, px_power
     px_power_for_alpha =px_power #/2200
-    print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
     alpha = 0.000332
     wheelsize = 0.0205  # wheel diameter in meters
-    offset = 20  # Steering angle offset for left/right corrections
     run=True
 
     try:
@@ -44,10 +32,8 @@ def main():
             sleep(0.01)  # Sleep at the end of the loop to ensure some delay
 
     finally:
-        px.set_cam_tilt_angle(0)
-        px.set_cam_pan_angle(0)  
-        px.set_dir_servo_angle(0)  
         px.stop()
+        initialize_robot()
         sleep(.2)
         print("Robot stopped.")
 
