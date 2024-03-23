@@ -22,7 +22,7 @@ def get_power_level():
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
 def main():
-    px_power = get_power_level()
+    px_power = .25
 
     px_power_for_alpha =px_power #/2200
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
