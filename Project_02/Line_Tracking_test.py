@@ -38,12 +38,12 @@ def turn():
     outboard_wheel = px_power
 
     if current_state == 'left':
-        px.set_dir_servo_angle(-offset)
+        #px.set_dir_servo_angle(-offset)
         px.set_motor_speed(1, inboard_wheel)
         px.set_motor_speed(2, outboard_wheel)
         print("Turning left. Outboard wheel, inboard wheel: %s, %s" % (outboard_wheel, inboard_wheel))
     elif current_state == 'right':
-        px.set_dir_servo_angle(offset)
+        #px.set_dir_servo_angle(offset)
         px.set_motor_speed(1, outboard_wheel)
         px.set_motor_speed(2, inboard_wheel)
         print("Turning right. Outboard wheel, inboard wheel: %s, %s" % (outboard_wheel, inboard_wheel))
