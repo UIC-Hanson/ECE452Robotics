@@ -24,7 +24,7 @@ def get_power_level():
 def main():
     px_power = get_power_level()
 
-    px_power_for_alpha =px_power/100
+    px_power_for_alpha =px_power/10000
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
     alpha = 0.017881989
