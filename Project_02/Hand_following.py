@@ -20,7 +20,7 @@ def initialize_robot():
 def calculate_potential_field(distance):
     # Function to calculate the potential field
     attractive_potential = 0.5 * (GOAL_LOCATION - distance) ** 2
-    force = min(2 * attractive_potential, FMAX)  # Limit the force to FMAX
+    force = max(2 * attractive_potential, FMAX)  # Limit the force to FMAX
     return force
 
 #Use these two functions to make the def main easier to read.
