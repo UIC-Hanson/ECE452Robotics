@@ -2,6 +2,8 @@ from picarx import Picarx
 import time
 from robot_hat import Pin
 
+px = Picarx()
+
 #Define initial variables
 maxDistance = 0 # Maximum distance ultrasonic sensor can read
 distance = 0 # Current reading from 
@@ -26,7 +28,7 @@ def calculate_potential_field(distance):
 def main():
     try:
         
-        px = Picarx()
+        
         
         #Read distance and calculate force based on distance
         while(True):
