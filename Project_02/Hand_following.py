@@ -11,6 +11,12 @@ goal_location = 0.1  # Goal location (distance from the robot)
 led = Pin('LED')
 led.value(0)
 
+def initialize_robot():
+    #Set all to zero
+    px.set_dir_servo_angle(0)
+    px.set_cam_pan_angle(0)
+    px.set_cam_tilt_angle(0)
+
 # Function to calculate the potential field
 def calculate_potential_field(distance):
     attractive_potential = 0.5 * (goal_location - distance) ** 2
@@ -58,4 +64,5 @@ def main():
         px.stop()
         
 if __name__ == '__main__':
+    initialize_robot()
     main()
