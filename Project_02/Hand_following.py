@@ -7,7 +7,7 @@ px = Picarx()
 # Constants
 MAX_DISTANCE = 120  # Maximum reliable reading distance of the ultrasonic sensor
 GOAL_LOCATION = 1  # Goal location (distance from the robot)
-FMAX = 1.0  # Maximum force
+FMAX = 50.0  # Maximum force
 
 led = Pin('LED')
 led.value(0)
