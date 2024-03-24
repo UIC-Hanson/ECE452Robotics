@@ -27,9 +27,7 @@ def calculate_potential_field(distance):
 
 def main():
     try:
-        
-        
-        
+              
         #Read distance and calculate force based on distance
         while(True):
             distance = round(px.ultrasonic.read())
@@ -40,7 +38,7 @@ def main():
             force = calculate_potential_field(distance)
             
         # Turn on LED if hand is detected
-        if (distance > goal_location and distance <= maxDistance:
+        if (distance > goal_location and distance <= maxDistance):
             led.value(1)
         else:
             led.value(0)
