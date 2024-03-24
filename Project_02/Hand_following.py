@@ -6,7 +6,7 @@ from robot_hat import Pin
 maxDistance = 0 # Maximum distance ultrasonic sensor can read
 distance = 0 # Current reading from 
 fmax = 1.0  # Maximum force
-goal_location = 0.1  # Goal location (distance from the robot)
+goal_location = 1  # Goal location (distance from the robot)
 
 led = Pin('LED')
 led.value(0)
@@ -31,21 +31,21 @@ def main():
         #Read distance and calculate force based on distance
         while(True):
             distance = round(px.ultrasonic.read())
-            if (distance >= 2 and distance <= 400):
+            if (distance >= 1 and distance <= 120): # 120 was determined to be the max range that the ultrasonic sensor could read
                 maxDistance = distance
             
-            print(distance)
+            #print(distance)
             force = calculate_potential_field(distance)
             
         # Turn on LED if hand is detected
-        if distance < goal_location:
+        if (distance > goal_location and distance <= maxDistance:
             led.value(1)
         else:
             led.value(0)
             
         # Control forward velocity proportional to the force
         # Stop if object is too close
-        if(distance == goal_location):
+        if(distance == goal_location or distance >= maxDistance):
             px.stop()
                 
         # Move forward if obect is detected
