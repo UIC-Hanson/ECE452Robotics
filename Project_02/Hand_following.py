@@ -10,7 +10,6 @@ GOAL_LOCATION = 1  # Goal location (distance from the robot)
 FMAX = 1.0  # Maximum force
 
 led = Pin('LED')
-led.value(0)
 
 def initialize_robot():
     #Set all to zero
@@ -18,14 +17,25 @@ def initialize_robot():
     px.set_cam_pan_angle(0)
     px.set_cam_tilt_angle(0)
 
-# Function to calculate the potential field
 def calculate_potential_field(distance):
+    # Function to calculate the potential field
     attractive_potential = 0.5 * (GOAL_LOCATION - distance) ** 2
     force = min(2 * attractive_potential, FMAX)  # Limit the force to FMAX
     return force
 
+#Use these two functions to make the def main easier to read.
+def MoveForward(force):
+    global led
+    led.value(1)
+    px.forward(force)
+
+def StopMovement():
+    global led
+    led.value(0)
+    px.stop()
+
 def main():
-    
+    led.value(0)
     try:
         while True:
             distance = round(px.ultrasonic.read())
@@ -37,16 +47,13 @@ def main():
                 
                 # Turn on LED if the goal location is beyond the current distance but within sensor's max range
                 if GOAL_LOCATION < distance <= MAX_DISTANCE:
-                    led.value(1)
-                    px.forward(force)
+                    MoveForward(force)
                 else:
-                    led.value(0)
-                    px.stop()
+                    StopMovement()
             else:
-                led.value(0)
-                px.stop()
+                StopMovement()
 
-            time.sleep(0.1)  # Adjust as needed for smoother operation
+            time.sleep(0.01)  # Adjust as needed
                 
     except KeyboardInterrupt:
         px.stop()
