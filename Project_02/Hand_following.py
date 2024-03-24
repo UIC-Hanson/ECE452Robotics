@@ -20,8 +20,9 @@ def initialize_robot():
 def calculate_potential_field(distance):
     # Function to calculate the potential field
     global FMAX
-    
+
     velocity=1.5*distance
+    print("Velocity:", velocity)
     force = min(velocity, FMAX)  # Limit the force to FMAX
     return force
 
