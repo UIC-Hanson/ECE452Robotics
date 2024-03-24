@@ -34,7 +34,7 @@ def main():
             if (distance >= 1 and distance <= 120): # 120 was determined to be the max range that the ultrasonic sensor could read
                 maxDistance = distance
             
-            #print(distance)
+            print(distance)
             force = calculate_potential_field(distance)
             
         # Turn on LED if hand is detected
