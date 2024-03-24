@@ -27,9 +27,11 @@ def get_status():
         current_state = 'forward'
     
     else:
+        # Handle unexpected state
         print("Charlie is in the bad place, State was: ", state)
         current_state = 'stop'
         return current_state
+    # Print sensor data and current state
     print("val_list, state, current_state: %s, %s, %s" % (val_list, state, current_state))
     return current_state
 
@@ -51,6 +53,7 @@ def turn(px_power, offset):
         sleep(.2)
 
 def outHandle(offset):
+    """Handle when robot is out of state"""
     global current_state
     last_state = current_state
     px.forward(0)
@@ -60,6 +63,7 @@ def outHandle(offset):
         px.set_dir_servo_angle(offset)
     px.forward(-5)
     sleep(.1)
+    # Wait until the state changes
     while current_state == last_state:
         sleep(0.001)  # Short delay before checking again
         current_state = get_status()
@@ -77,6 +81,7 @@ def get_power_level():
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
 def main():
+    """Main function to control the robot."""
     global current_state
     px_power = get_power_level()
 
@@ -116,9 +121,10 @@ def main():
             else:
                 print("Frank let's play nightcrawlers: ", current_state)
 
-            sleep(0.01)  # Sleep at the end of the loop to ensure some delay
+            sleep(0.01)  # ensure small delay
 
     finally:
+        # Reset servo and camera angles, stop motors
         px.set_cam_tilt_angle(0)
         px.set_cam_pan_angle(0)  
         px.set_dir_servo_angle(0)  
