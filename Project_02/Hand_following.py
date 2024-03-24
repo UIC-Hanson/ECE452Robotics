@@ -7,7 +7,7 @@ px = Picarx()
 # Constants
 MAX_DISTANCE = 120  # Maximum reliable reading distance of the ultrasonic sensor
 GOAL_LOCATION = 1  # Goal location (distance from the robot)
-FMAX = 50.0  # Maximum force
+FMAX = 1.0  # Maximum force
 
 led = Pin('LED')
 led.value(0)
@@ -21,7 +21,7 @@ def initialize_robot():
 # Function to calculate the potential field
 def calculate_potential_field(distance):
     attractive_potential = 0.5 * (GOAL_LOCATION - distance) ** 2
-    force = min(2 * attractive_potential, FMAX)  # Limit the force to FMAX
+    force = max(2 * attractive_potential, FMAX)  # Limit the force to FMAX
     return force
 
 def main():
