@@ -10,10 +10,11 @@ px_power = 0 #start at 0
 offset = 30  # Steering angle offset for left/right corrections
 csv_file_path = "/home/452Lab/alpha_data.csv"  # Define the CSV file path
 
-# Initialize servos
-px.set_dir_servo_angle(0)
-px.set_cam_pan_angle(0)
-px.set_cam_tilt_angle(0)
+def initialize_robot():
+    # Initialize settings
+    px.set_dir_servo_angle(0)
+    px.set_cam_pan_angle(0)
+    px.set_cam_tilt_angle(0)
 
 def get_power_level():
     """Prompts the user for a power level between 1 and 100."""
@@ -99,4 +100,5 @@ def main():
         sleep(0.2)
 
 if __name__ == '__main__':
+    initialize_robot()
     main()
