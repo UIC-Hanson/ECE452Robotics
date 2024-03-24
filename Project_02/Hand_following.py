@@ -20,7 +20,7 @@ def initialize_robot():
     px.set_cam_tilt_angle(0)
 
 # Function to calculate the potential field
-def calculate_potential_field(distance):
+def calculate_potential_field():
     global goal_location, distance, fmax
     attractive_potential = 0.5 * (goal_location - distance) ** 2
     force = min(2 * attractive_potential, fmax)  # Limit the force to fmax
@@ -37,7 +37,7 @@ def main():
                 maxDistance = distance
             
             print(distance)
-            force = calculate_potential_field(distance)
+            force = calculate_potential_field()
             
         # Turn on LED if hand is detected
         if (distance > goal_location and distance <= maxDistance):
