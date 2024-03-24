@@ -4,11 +4,10 @@ from robot_hat import Pin
 
 px = Picarx()
 
-#Define initial variables
-maxDistance = 0 # Maximum distance ultrasonic sensor can read
-distance = 0 # Current reading from 
-fmax = 1.0  # Maximum force
-goal_location = 1  # Goal location (distance from the robot)
+# Constants
+MAX_DISTANCE = 120  # Maximum reliable reading distance of the ultrasonic sensor
+GOAL_LOCATION = 1  # Goal location (distance from the robot)
+FMAX = 1.0  # Maximum force
 
 led = Pin('LED')
 led.value(0)
@@ -20,49 +19,39 @@ def initialize_robot():
     px.set_cam_tilt_angle(0)
 
 # Function to calculate the potential field
-def calculate_potential_field():
-    global goal_location, distance, fmax
-    attractive_potential = 0.5 * (goal_location - distance) ** 2
-    force = min(2 * attractive_potential, fmax)  # Limit the force to fmax
+def calculate_potential_field(distance):
+    attractive_potential = 0.5 * (GOAL_LOCATION - distance) ** 2
+    force = min(2 * attractive_potential, FMAX)  # Limit the force to FMAX
     return force
 
 def main():
-    global goal_location, distance, fmax
+    
     try:
-              
-        #Read distance and calculate force based on distance
-        while(True):
+        while True:
             distance = round(px.ultrasonic.read())
-            if (distance >= 1 and distance <= 120): # 120 was determined to be the max range that the ultrasonic sensor could read
-                maxDistance = distance
+            print("Distance:", distance)
             
-            print(distance)
-            force = calculate_potential_field()
-            
-        # Turn on LED if hand is detected
-        if (distance > goal_location and distance <= maxDistance):
-            led.value(1)
-        else:
-            led.value(0)
-            
-        # Control forward velocity proportional to the force
-        # Stop if object is too close
-        if(distance == goal_location or distance >= maxDistance):
-            px.stop()
+            if 1 <= distance <= MAX_DISTANCE:
+                force = calculate_potential_field(distance)
+                print("Force:", force)
                 
-        # Move forward if obect is detected
-        elif(distance >= goal_location and distance <= maxDistance):
-            px.forward(force)
-            
-            time.sleep(0.1)
-                
-    #If user uses keyboard input such as ctrl + c, then the robot will stop
+                # Turn on LED if the goal location is beyond the current distance but within sensor's max range
+                if GOAL_LOCATION < distance <= MAX_DISTANCE:
+                    led.value(1)
+                    px.forward(force)
+                else:
+                    led.value(0)
+                    px.stop()
+            else:
+                led.value(0)
+                px.stop()
 
+            time.sleep(0.1)  # Adjust as needed for smoother operation
+                
     except KeyboardInterrupt:
         px.stop()
 
     finally:
-                
         px.stop()
         
 if __name__ == '__main__':
