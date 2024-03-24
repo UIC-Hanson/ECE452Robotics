@@ -21,11 +21,13 @@ def initialize_robot():
 
 # Function to calculate the potential field
 def calculate_potential_field(distance):
+    global goal_location, distance, fmax
     attractive_potential = 0.5 * (goal_location - distance) ** 2
     force = min(2 * attractive_potential, fmax)  # Limit the force to fmax
     return force
 
 def main():
+    global goal_location, distance, fmax
     try:
               
         #Read distance and calculate force based on distance
