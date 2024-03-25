@@ -12,7 +12,6 @@ AVOIDANCE_TIME = 1  # Time after clearing an obstacle before taking further acti
 def avoidance_maneuver():
     """Executes the avoidance maneuver and logs the duration."""
     start_time = time.time()
-    px.forward(TURN_SPEED)
     px.set_dir_servo_angle(30)  # Turn right to avoid the obstacle
     
     while round(px.ultrasonic.read(), 2) < SAFE_DISTANCE:
@@ -25,9 +24,9 @@ def avoidance_maneuver():
 
 def reciprocal_maneuver(duration):
     """Executes the reciprocal maneuver based on the duration of the initial avoidance."""
-    px.forward(TURN_SPEED)
-    px.set_dir_servo_angle(-30)  # Turn left to initiate reciprocal maneuver
-    time.sleep(.25)
+    
+    px.set_dir_servo_angle(-60)  # Turn left to initiate reciprocal maneuver
+    time.sleep(duration*1.2)
     px.set_dir_servo_angle(0)
     time.sleep(AVOIDANCE_TIME)
     px.set_dir_servo_angle(30)  # Turn right to get back on the original course
@@ -46,6 +45,7 @@ def main():
             else:
                 print("Distance:", distance)
                 # Obstacle detected, execute avoidance maneuver
+                px.forward(TURN_SPEED)
                 duration = avoidance_maneuver()
                 print("duration:", duration)
                 # After avoiding, execute reciprocal maneuver to attempt to return to original path
