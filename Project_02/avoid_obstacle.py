@@ -12,6 +12,7 @@ def initialize_robot():
     px.set_cam_tilt_angle(0)
   
 def main():
+    initialize_robot()
     try:
         px = Picarx()
         # px = Picarx(ultrasonic_pins=['D2','D3']) # tring, echo
