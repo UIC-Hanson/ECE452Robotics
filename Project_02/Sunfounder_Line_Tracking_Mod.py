@@ -102,7 +102,7 @@ if __name__=='__main__':
                 px.set_dir_servo_angle(-offset)
                 px.forward(px_power)
             else:
-                outHandle(gm_val_list)
+                outHandle()
     finally:
         # Reset servo and camera angles, stop motors
         px.set_cam_tilt_angle(0)
