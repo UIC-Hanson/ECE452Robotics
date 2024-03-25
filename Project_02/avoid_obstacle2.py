@@ -9,6 +9,12 @@ FORWARD_SPEED = 50
 TURN_SPEED = 30
 AVOIDANCE_TIME = 1  # Time after clearing an obstacle before taking further action
 
+def initialize_robot():
+    #Set all to zero
+    px.set_dir_servo_angle(0)
+    px.set_cam_pan_angle(0)
+    px.set_cam_tilt_angle(0)
+
 def avoidance_maneuver():
     """Executes the avoidance maneuver and logs the duration."""
     start_time = time.time()
@@ -55,4 +61,5 @@ def main():
         px.stop()
 
 if __name__ == '__main__':
+    initialize_robot()
     main()
