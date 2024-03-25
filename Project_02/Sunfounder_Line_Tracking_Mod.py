@@ -72,7 +72,7 @@ if __name__=='__main__':
     initialize_robot()
     px_power = get_power_level()
     
-    px_power_for_alpha = px_power*.0011
+    px_power_for_alpha = px_power*.0011765
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
     alpha = 0.011283717
