@@ -98,6 +98,7 @@ def main():
         while run==True:
             current_state = get_status()
             distance += alpha * px_power_for_alpha  # Increment distance based on power
+            print("Distance: " + str(distance))
             
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
