@@ -29,7 +29,7 @@ def get_power_level():
         except ValueError:
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
-def outHandle(val_list):
+def outHandle():
     global last_state, current_state
     if last_state == 'left':
         px.set_dir_servo_angle(-30)
@@ -46,7 +46,7 @@ def outHandle(val_list):
             break
     sleep(0.001)
 
-def get_status():
+def get_status(val_list):
     """Determine the robot's state based on grayscale sensor data."""
     global current_state
     val_list = px.get_grayscale_data()
