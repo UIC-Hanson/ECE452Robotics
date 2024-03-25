@@ -5,10 +5,10 @@ px = Picarx()
 
 # Constants
 SAFE_DISTANCE = 40  # Distance considered safe before taking avoidance measures
-TOO_CLOSE_DISTANCE = 10  # Distance considered too close, requiring immediate stop
+TOO_CLOSE_DISTANCE = 20  # Distance considered too close, requiring immediate stop
 FORWARD_SPEED = 70
 TURN_SPEED = 30
-REVERSE_INTERVAL = 1  # Time to continue on the course after the object is out of detection range
+REVERSE_INTERVAL = 2  # Time to continue on the course after the object is out of detection range
 
 # Movement memory for mirroring the motion
 movements = []
