@@ -4,7 +4,7 @@ import time
 px = Picarx()
 
 # Constants
-DANGER_DISTANCE =15
+DANGER_DISTANCE = 15
 SAFE_DISTANCE = 40
 FORWARD_SPEED = 60
 TURN_SPEED = 30
@@ -44,8 +44,6 @@ def main():
                 px.forward(FORWARD_SPEED)
                 time.sleep(0.1)
 
-            elif distance <= DANGER_DISTANCE:
-                run = FALSE
             else:
                 print("Distance:", distance)
                 # Obstacle detected, execute avoidance maneuver
@@ -55,7 +53,6 @@ def main():
                 # After avoiding, execute reciprocal maneuver to attempt to return to original path
                 reciprocal_maneuver(duration)
                 px.forward(FORWARD_SPEED)
-                break
 
     except KeyboardInterrupt:
         px.stop()
