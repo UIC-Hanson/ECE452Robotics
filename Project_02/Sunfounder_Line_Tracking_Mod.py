@@ -78,10 +78,10 @@ if __name__=='__main__':
     alpha = 0.000332
     wheelsize = 0.0205  # Wheel diameter in meters
     offset = 20  # Steering angle offset for left/right corrections
-    #current_state = get_status(val_list) #initial setup
+    run = True
     
     try:
-        while True:
+        while run == True:
             gm_val_list = px.get_grayscale_data()
             current_state = get_status(gm_val_list)
             distance += alpha * px_power_for_alpha  # Increment distance based on power
@@ -89,7 +89,7 @@ if __name__=='__main__':
 
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
-                run=False
+                run = False
 
             if current_state != "stop":
                 last_state = current_state
