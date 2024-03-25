@@ -65,14 +65,14 @@ def get_status(val_list):
         current_state = 'stop'
         return current_state
     # Print sensor data and current state
-    print("val_list, state, current_state: %s, %s, %s" % (val_list, _state, current_state))
+    # print("val_list, state, current_state: %s, %s, %s" % (val_list, _state, current_state))
     return current_state
 
 if __name__=='__main__':
     initialize_robot()
     px_power = get_power_level()
     
-    px_power_for_alpha = px_power*.001025
+    px_power_for_alpha = px_power*.001
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
     alpha = 0.011283717
@@ -95,17 +95,17 @@ if __name__=='__main__':
             elif current_state == 'left':
                 px.set_dir_servo_angle(offset)
                 px.forward(px_power)
-                distance = (alpha * px_power_for_alpha) + (distance/3)  # Increment distance based on power
+                distance = (alpha * px_power_for_alpha) + (distance/2)  # Increment distance based on power
             elif current_state == 'right':
                 px.set_dir_servo_angle(-offset)
                 px.forward(px_power)
-                distance = (alpha * px_power_for_alpha) + (distance/3)   # Increment distance based on power
+                distance = (alpha * px_power_for_alpha) + (distance/2)   # Increment distance based on power
             else:
                 outHandle()
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
                 run = False
-            print("Distance: " + str(distance))
+            print("Distance: " + str(distance / wheelsize))
     finally:
         # Reset servo and camera angles, stop motors
         px.set_cam_tilt_angle(0)
