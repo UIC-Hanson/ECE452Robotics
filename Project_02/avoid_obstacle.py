@@ -5,8 +5,8 @@ from robot_hat import Pin
 px = Picarx()
 
 # Constants
-MAX_DISTANCE = 120  # Maximum reliable reading distance of the ultrasonic sensor
-GOAL_LOCATION = 1  # Goal location (distance from the robot)
+MAX_DISTANCE = 25  # Maximum reliable reading distance of the ultrasonic sensor
+GOAL_LOCATION = 5  # Goal location (distance from the robot)
 FMAX = 100  # Maximum force
 K_R = 1  # Constant for repulsive force calculation
 GAMMA = 2  # Integer determining the shape of the piecewise function
@@ -88,7 +88,8 @@ def main():
                     stop_movement()
                     
                 # Implement rectilinear motion and record y_threshold and Θ_threshold
-
+                
+                
                 # After avoiding the obstacle and waiting for ∆t, mirror the previous movements
                 mirror_motion(V_list, Θ_list)
 
