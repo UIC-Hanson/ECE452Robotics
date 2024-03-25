@@ -84,10 +84,10 @@ if __name__=='__main__':
     
     try:
         while True:
-            current_state = get_status()
+            gm_val_list = px.get_grayscale_data()
+            current_state = get_status(gm_val_list)
             distance += alpha * px_power_for_alpha  # Increment distance based on power
             print("Distance: " + str(distance))
-            gm_val_list = px.get_grayscale_data()
 
             if current_state != "stop":
                 last_state = current_state
