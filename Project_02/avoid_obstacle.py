@@ -5,7 +5,7 @@ from robot_hat import Pin
 px = Picarx()
 
 # Constants
-MAX_DISTANCE = 25  # Maximum reliable reading distance of the ultrasonic sensor
+MAX_DISTANCE = 125  # Maximum reliable reading distance of the ultrasonic sensor
 GOAL_LOCATION = 5  # Goal location (distance from the robot)
 FMAX = 100  # Maximum force
 K_R = 1  # Constant for repulsive force calculation
