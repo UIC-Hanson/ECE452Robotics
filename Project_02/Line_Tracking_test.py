@@ -28,7 +28,7 @@ def outHandle():
 def get_status():
     val_list=px.get_grayscale_data()
     _state = px.get_line_status(val_list)  # [bool, bool, bool], 0 means line, 1 means background
-    print("val_list, _state: %s %s"%(val_list, _state))
+    #print("val_list, _state: %s %s"%(val_list, _state))
     if _state == [0, 0, 0]:
         return 'stop'
     elif _state[2] == 1:
