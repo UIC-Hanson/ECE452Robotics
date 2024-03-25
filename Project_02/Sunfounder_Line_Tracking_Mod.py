@@ -80,7 +80,7 @@ if __name__=='__main__':
     alpha = 0.017881989
     wheelsize = 0.064  # Wheel diameter in meters
     offset = 20  # Steering angle offset for left/right corrections
-    current_state = get_status() #initial setup
+    #current_state = get_status(val_list) #initial setup
     
     try:
         while True:
