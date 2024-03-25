@@ -42,14 +42,16 @@ def turn(px_power, offset):
 
     if current_state == 'left':
         px.set_dir_servo_angle(offset)
-        px.set_motor_speed(1,inboard_wheel)
-        px.set_motor_speed(2,px_power)
+        px.forward(px_power)
+        #px.set_motor_speed(1,inboard_wheel)
+        #px.set_motor_speed(2,px_power)
         sleep(.2)
 
     elif current_state == 'right':
         px.set_dir_servo_angle(-offset)
-        px.set_motor_speed(2,inboard_wheel)
-        px.set_motor_speed(1,px_power)
+        px.forward(px_power)
+        #px.set_motor_speed(2,inboard_wheel)
+        #px.set_motor_speed(1,px_power)
         sleep(.2)
 
 def outHandle(offset):
@@ -58,10 +60,14 @@ def outHandle(offset):
     last_state = current_state
     px.forward(0)
     if last_state == 'left':
-        px.set_dir_servo_angle(-offset)
+        #px.set_dir_servo_angle(-offset)
+        px.set_dir_servo_angle(-30)
+        px.backward(10)
     elif last_state == 'right':
-        px.set_dir_servo_angle(offset)
-    px.forward(-5)
+        #px.set_dir_servo_angle(offset)
+        px.set_dir_servo_angle(30)
+        px.backward(10)
+    #`px.forward(-5)
     sleep(.1)
     # Wait until the state changes
     while current_state == last_state:
@@ -105,8 +111,8 @@ def main():
                 run=False
 
             if current_state == 'forward':
-                px.forward(px_power)
                 px.set_dir_servo_angle(0)
+                px.forward(px_power)
             elif current_state == 'outstate':
                 outHandle(offset)
             elif current_state == 'stop':
