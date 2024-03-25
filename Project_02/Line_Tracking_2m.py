@@ -59,11 +59,9 @@ def outHandle(offset):
     px.forward(0)
     if last_state == 'left':
         px.set_dir_servo_angle(-offset)
-        px.backward(10)
     elif last_state == 'right':
         px.set_dir_servo_angle(offset)
-        px.backward(10)
-    #`px.forward(-5)
+    px.forward(-5)
     sleep(.1)
     # Wait until the state changes
     while current_state == last_state:
