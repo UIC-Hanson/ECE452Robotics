@@ -49,7 +49,7 @@ def outHandle():
 def get_status(val_list):
     # Determine the robot's state based on grayscale sensor data.
     # val_list = px.get_grayscale_data()
-    state = px.get_line_status(val_list)
+    _state = px.get_line_status(val_list)
     if state == [0, 0, 0]:
         return 'stop'
     elif _state[1] == 1:
