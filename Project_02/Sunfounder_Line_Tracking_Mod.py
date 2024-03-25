@@ -84,6 +84,7 @@ if __name__=='__main__':
         while run == True:
             gm_val_list = px.get_grayscale_data()
             current_state = get_status(gm_val_list)
+            distance += alpha * px_power_for_alpha  # Increment distance based on power
 
             if current_state != "stop":
                 last_state = current_state
@@ -91,7 +92,6 @@ if __name__=='__main__':
             if current_state == 'forward':
                 px.set_dir_servo_angle(0)
                 px.forward(px_power)
-                distance += alpha * px_power_for_alpha  # Increment distance based on power
             elif current_state == 'left':
                 px.set_dir_servo_angle(offset)
                 px.forward(px_power)
