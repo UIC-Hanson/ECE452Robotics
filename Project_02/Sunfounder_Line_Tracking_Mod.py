@@ -87,6 +87,10 @@ if __name__=='__main__':
             distance += alpha * px_power_for_alpha  # Increment distance based on power
             print("Distance: " + str(distance))
 
+            if distance / wheelsize >= 2:
+                print("We have crossed the desert to the holy land, 2 meters away.")
+                run=False
+
             if current_state != "stop":
                 last_state = current_state
 
