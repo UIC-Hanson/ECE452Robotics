@@ -8,7 +8,7 @@ SAFE_DISTANCE = 40  # Distance considered safe before taking avoidance measures
 TOO_CLOSE_DISTANCE = 10  # Distance considered too close, requiring immediate stop
 FORWARD_SPEED = 50
 TURN_SPEED = 30
-REVERSE_INTERVAL = 2  # Time to continue on the course after the object is out of detection range
+REVERSE_INTERVAL = .5  # Time to continue on the course after the object is out of detection range
 
 # Movement memory for mirroring the motion
 movements = []
@@ -25,7 +25,7 @@ def reverse_course():
         angle, speed, duration = movements.pop()
         # Reverse the steering angle for mirroring the turn
         px.set_dir_servo_angle(-angle)
-        px.forward(speed if speed > 0 else -speed)
+        px.forward(TURN_SPEED)
         time.sleep(duration)
     px.stop()
 
@@ -53,6 +53,7 @@ def main():
             else:
                 if logging:
                     # Continue straight for a short interval after avoiding the obstacle
+                    px.set_dir_servo_angle(0)
                     time.sleep(REVERSE_INTERVAL)
                     logging = False
                     reverse_course()  # Reverse the course
