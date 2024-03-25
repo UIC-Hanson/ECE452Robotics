@@ -5,7 +5,12 @@ POWER = 50
 SafeDistance = 40   # > 40 safe
 DangerDistance = 20 # > 20 && < 40 turn around,
                     # < 20 backward
-
+def initialize_robot():
+    # Initialize settings
+    px.set_dir_servo_angle(0)
+    px.set_cam_pan_angle(0)
+    px.set_cam_tilt_angle(0)
+  
 def main():
     try:
         px = Picarx()
