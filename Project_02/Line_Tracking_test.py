@@ -41,7 +41,7 @@ def get_status():
 def main():
     global last_state
     px_power=10
-    px_power_for_alpha=px_power*.85
+    px_power_for_alpha=px_power
     distance = 0
     alpha = 0.011283717
     wheelsize = 0.065
