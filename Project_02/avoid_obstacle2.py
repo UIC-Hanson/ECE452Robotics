@@ -51,8 +51,8 @@ def main():
             else:
                 # Obstacle detected, execute avoidance maneuver
                 duration = avoidance_maneuver()
-                
-                px.set_dir_servo_angle(-30)
+
+                px.set_dir_servo_angle(0)
                 time.sleep(AVOIDANCE_TIME)  # Wait after avoiding the obstacle
 
                 # After avoiding, execute reciprocal maneuver to attempt to return to original path
