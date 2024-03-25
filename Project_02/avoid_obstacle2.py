@@ -4,7 +4,7 @@ import time
 px = Picarx()
 
 # Constants
-DANGER_DISTANCE = 15
+DANGER_DISTANCE = 20
 SAFE_DISTANCE = 40
 FORWARD_SPEED = 60
 TURN_SPEED = 30
@@ -43,10 +43,10 @@ def main():
                 px.set_dir_servo_angle(0)
                 px.forward(FORWARD_SPEED)
                 time.sleep(0.1)
-
-            elif distance <= DANGER_DISTANCE:
+            elif distance < DANGER_DISTANCE:
+                print("Danger!!:", distance)
+                px.forward(0)
                 time.sleep(1)
-
             else:
                 print("Distance:", distance)
                 # Obstacle detected, execute avoidance maneuver
