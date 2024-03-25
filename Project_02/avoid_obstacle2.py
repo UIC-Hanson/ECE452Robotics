@@ -21,7 +21,7 @@ def initialize_robot():
     px.set_cam_tilt_angle(0)
 
 def reverse_course():
-    px.set_dir_servo_angle(-angle)
+    px.set_dir_servo_angle(-30)
     while movements:
         angle, speed, duration = movements.pop()
         # Reverse the steering angle for mirroring the turn
