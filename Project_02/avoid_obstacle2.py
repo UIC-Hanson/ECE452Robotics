@@ -7,7 +7,7 @@ px = Picarx()
 SAFE_DISTANCE = 40
 FORWARD_SPEED = 50
 TURN_SPEED = 30
-AVOIDANCE_TIME = 1  # Time after clearing an obstacle before taking further action
+AVOIDANCE_TIME = 0.5  # Time after clearing an obstacle before taking further action
 
 def initialize_robot():
     #Set all to zero
