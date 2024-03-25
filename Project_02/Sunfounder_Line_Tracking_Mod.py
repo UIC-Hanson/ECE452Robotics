@@ -61,11 +61,11 @@ def get_status(val_list):
     
     else:
         # Handle unexpected state
-        print("Charlie is in the bad place, State was: ", state)
+        print("Charlie is in the bad place, State was: ", _state)
         current_state = 'stop'
         return current_state
     # Print sensor data and current state
-    print("val_list, state, current_state: %s, %s, %s" % (val_list, state, current_state))
+    print("val_list, state, current_state: %s, %s, %s" % (val_list, _state, current_state))
     return current_state
 
 if __name__=='__main__':
