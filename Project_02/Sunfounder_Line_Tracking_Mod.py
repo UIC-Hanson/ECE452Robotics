@@ -2,11 +2,6 @@ from picarx import Picarx
 from time import sleep
 
 px = Picarx()
-# px = Picarx(grayscale_pins=['A0', 'A1', 'A2'])
-
-# Please run ./calibration/grayscale_calibration.py to Auto calibrate grayscale values
-# or manual modify reference value by follow code
-# px.set_line_reference([1400, 1400, 1400])
 
 current_state = None
 last_state = "stop"
@@ -48,7 +43,6 @@ def outHandle():
 
 def get_status(val_list):
     # Determine the robot's state based on grayscale sensor data.
-    # val_list = px.get_grayscale_data()
     _state = px.get_line_status(val_list)
     if _state == [0, 0, 0]:
         return 'stop'
@@ -65,7 +59,6 @@ def get_status(val_list):
         current_state = 'stop'
         return current_state
     # Print sensor data and current state
-    # print("val_list, state, current_state: %s, %s, %s" % (val_list, _state, current_state))
     return current_state
 
 if __name__=='__main__':
