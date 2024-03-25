@@ -29,7 +29,7 @@ def get_power_level():
         except ValueError:
             print("Invalid input. Please enter a numerical value between 1 and 100.")
 
-def outHandle():
+def outHandle(val_list):
     global last_state, current_state
     if last_state == 'left':
         px.set_dir_servo_angle(-30)
