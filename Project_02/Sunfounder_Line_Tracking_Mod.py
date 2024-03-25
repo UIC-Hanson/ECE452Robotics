@@ -95,11 +95,11 @@ if __name__=='__main__':
             elif current_state == 'left':
                 px.set_dir_servo_angle(offset)
                 px.forward(px_power)
-                distance = (alpha * px_power_for_alpha) + (distance/4)  # Increment distance based on power
+                #distance = (alpha * px_power_for_alpha) + (distance/2)  # Increment distance based on power
             elif current_state == 'right':
                 px.set_dir_servo_angle(-offset)
                 px.forward(px_power)
-                distance = (alpha * px_power_for_alpha) + (distance/4)   # Increment distance based on power
+                #distance = (alpha * px_power_for_alpha) + (distance/2)   # Increment distance based on power
             else:
                 outHandle()
             if distance / wheelsize >= 2:
