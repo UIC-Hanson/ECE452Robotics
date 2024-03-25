@@ -23,7 +23,7 @@ def avoidance_maneuver():
     while round(px.ultrasonic.read(), 2) < SAFE_DISTANCE:
         time.sleep(0.1)
     duration = time.time() - start_time
-    px.set_dir_servo_angle(0)  # Reset to straight ahead after avoiding the obstacle
+    px.set_dir_servo_angle(-30)  # Reset to straight ahead after avoiding the obstacle
     time.sleep(AVOIDANCE_TIME)  # Wait for 1 second after avoiding the obstacle
     return duration
 
