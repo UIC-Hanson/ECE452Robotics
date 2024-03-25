@@ -34,7 +34,7 @@ def reciprocal_maneuver(duration):
     time.sleep(duration)  # Match the duration of the initial avoidance
 
 def main():
-    run == True
+    run = True
     try:
         while run == True:
             distance = round(px.ultrasonic.read(), 2)
