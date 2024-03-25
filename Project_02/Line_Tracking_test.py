@@ -3,8 +3,6 @@ from time import sleep
 
 px = Picarx()
 
-px_power = .25
-offset = 20
 last_state = "stop"
 
 def initialize_robot():
@@ -27,14 +25,10 @@ def outHandle():
             break
     sleep(0.001)
 
-def TallyHo(speed):
-    px.set_motor_speed(1, speed)
-    px.set_motor_speed(2, -1*speed)   
-
 def get_status():
     val_list=px.get_grayscale_data()
     _state = px.get_line_status(val_list)  # [bool, bool, bool], 0 means line, 1 means background
-    #print("val_list, _state: %s %s"%(val_list, _state))
+    print("val_list, _state: %s %s"%(val_list, _state))
     if _state == [0, 0, 0]:
         return 'stop'
     elif _state[2] == 1:
@@ -45,25 +39,24 @@ def get_status():
         return 'forward'
 
 def main():
-    global px_power, offset, last_state
+    global last_state
+    px_power=10
+    px_power_for_alpha=px_power
     distance = 0
-    alpha = 0.000332
-    wheelsize = 0.0205  # wheel diameter in meters
-    px_power_for_alpha=px_power*.65 #during testing it stopped short of 2m, use this to adjust
-    run=True
+    alpha = 0.011283717
+    wheelsize = 0.065
+    offset = 20  # Steering angle offset for left/right corrections
+    run = True
+    run == True
 
     try:
-        while run==True:
-            distance += alpha * px_power_for_alpha  # Increment distance based on power
-            px.forward(px_power)
+        while True:
+            gm_state = get_status()
+            print("distance: %s"%(distance))
 
             if distance / wheelsize >= 2:
                 print("We have crossed the desert to the holy land, 2 meters away.")
-                run=False
-            
-
-            gm_state = get_status()
-            #print("current_state: %s"%(gm_state))
+                run = False
 
             if gm_state != "stop":
                 last_state = gm_state
@@ -73,10 +66,10 @@ def main():
                 px.forward(px_power) 
             elif gm_state == 'left':
                 px.set_dir_servo_angle(offset)
-                TallyHo(px_power) 
+                px.forward(px_power) 
             elif gm_state == 'right':
                 px.set_dir_servo_angle(-offset)
-                TallyHo(px_power) 
+                px.forward(px_power) 
             else:
                 outHandle()
 
@@ -90,3 +83,4 @@ def main():
 if __name__=='__main__':
     initialize_robot()
     main()
+
