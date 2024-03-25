@@ -8,7 +8,7 @@ SAFE_DISTANCE = 40  # Distance considered safe before taking avoidance measures
 TOO_CLOSE_DISTANCE = 10  # Distance considered too close, requiring immediate stop
 FORWARD_SPEED = 70
 TURN_SPEED = 30
-REVERSE_INTERVAL = .5  # Time to continue on the course after the object is out of detection range
+REVERSE_INTERVAL = 1  # Time to continue on the course after the object is out of detection range
 
 # Movement memory for mirroring the motion
 movements = []
@@ -21,10 +21,11 @@ def initialize_robot():
     px.set_cam_tilt_angle(0)
 
 def reverse_course():
+    px.set_dir_servo_angle(-angle)
     while movements:
         angle, speed, duration = movements.pop()
         # Reverse the steering angle for mirroring the turn
-        px.set_dir_servo_angle(-angle)
+        px.set_dir_servo_angle(-2*angle)
         px.forward(TURN_SPEED)
         time.sleep(duration)
     px.stop()
