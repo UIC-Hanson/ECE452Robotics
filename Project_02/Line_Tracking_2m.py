@@ -42,16 +42,14 @@ def turn(px_power, offset):
 
     if current_state == 'left':
         px.set_dir_servo_angle(offset)
-        px.forward(px_power)
-        #px.set_motor_speed(1,inboard_wheel)
-        #px.set_motor_speed(2,px_power)
+        px.set_motor_speed(1,inboard_wheel)
+        px.set_motor_speed(2,px_power)
         sleep(.2)
 
     elif current_state == 'right':
         px.set_dir_servo_angle(-offset)
-        px.forward(px_power)
-        #px.set_motor_speed(2,inboard_wheel)
-        #px.set_motor_speed(1,px_power)
+        px.set_motor_speed(2,inboard_wheel)
+        px.set_motor_speed(1,px_power)
         sleep(.2)
 
 def outHandle(offset):
