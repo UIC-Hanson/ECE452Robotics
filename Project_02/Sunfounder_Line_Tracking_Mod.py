@@ -72,10 +72,10 @@ if __name__=='__main__':
     initialize_robot()
     px_power = get_power_level()
     
-    px_power_for_alpha = px_power/1000
+    px_power_for_alpha=px_power*.65
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
-    alpha = 0.017881989
+    alpha = 0.000332
     wheelsize = 0.0205  # Wheel diameter in meters
     offset = 20  # Steering angle offset for left/right corrections
     #current_state = get_status(val_list) #initial setup
