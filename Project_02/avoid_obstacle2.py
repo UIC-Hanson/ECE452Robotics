@@ -6,7 +6,7 @@ px = Picarx()
 # Constants
 SAFE_DISTANCE = 40  # Distance considered safe before taking avoidance measures
 TOO_CLOSE_DISTANCE = 10  # Distance considered too close, requiring immediate stop
-FORWARD_SPEED = 50
+FORWARD_SPEED = 70
 TURN_SPEED = 30
 REVERSE_INTERVAL = .5  # Time to continue on the course after the object is out of detection range
 
@@ -54,7 +54,6 @@ def main():
                 if logging:
                     # Continue straight for a short interval after avoiding the obstacle
                     px.set_dir_servo_angle(0)
-                    time.sleep(REVERSE_INTERVAL)
                     logging = False
                     reverse_course()  # Reverse the course
                 else:
