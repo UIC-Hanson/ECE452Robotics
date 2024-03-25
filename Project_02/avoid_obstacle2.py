@@ -4,6 +4,7 @@ import time
 px = Picarx()
 
 # Constants
+DANGER_DISTANCE =15
 SAFE_DISTANCE = 40
 FORWARD_SPEED = 60
 TURN_SPEED = 30
@@ -33,8 +34,9 @@ def reciprocal_maneuver(duration):
     time.sleep(duration)  # Match the duration of the initial avoidance
 
 def main():
+    run == True
     try:
-        while True:
+        while run == True:
             distance = round(px.ultrasonic.read(), 2)
             
             if distance >= SAFE_DISTANCE:
@@ -42,6 +44,8 @@ def main():
                 px.forward(FORWARD_SPEED)
                 time.sleep(0.1)
 
+            elif distance <= DANGER_DISTANCE:
+                run = FALSE
             else:
                 print("Distance:", distance)
                 # Obstacle detected, execute avoidance maneuver
