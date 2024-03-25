@@ -84,12 +84,6 @@ if __name__=='__main__':
         while run == True:
             gm_val_list = px.get_grayscale_data()
             current_state = get_status(gm_val_list)
-            distance += alpha * px_power_for_alpha  # Increment distance based on power
-            print("Distance: " + str(distance))
-
-            if distance / wheelsize >= 2:
-                print("We have crossed the desert to the holy land, 2 meters away.")
-                run = False
 
             if current_state != "stop":
                 last_state = current_state
@@ -97,14 +91,21 @@ if __name__=='__main__':
             if current_state == 'forward':
                 px.set_dir_servo_angle(0)
                 px.forward(px_power)
+                distance += alpha * px_power_for_alpha  # Increment distance based on power
             elif current_state == 'left':
                 px.set_dir_servo_angle(offset)
                 px.forward(px_power)
+                distance = (alpha * px_power_for_alpha) + (distance/2)  # Increment distance based on power
             elif current_state == 'right':
                 px.set_dir_servo_angle(-offset)
                 px.forward(px_power)
+                distance = (alpha * px_power_for_alpha) + (distance/2)   # Increment distance based on power
             else:
                 outHandle()
+            if distance / wheelsize >= 2:
+                print("We have crossed the desert to the holy land, 2 meters away.")
+                run = False
+            print("Distance: " + str(distance))
     finally:
         # Reset servo and camera angles, stop motors
         px.set_cam_tilt_angle(0)
