@@ -18,7 +18,7 @@ def initialize_robot():
     px.set_cam_tilt_angle(0)
 
 def get_power_level():
-    """Prompts the user for a power level between 1 and 100."""
+    # Prompts the user for a power level between 1 and 100.
     while True:
         try:
             px_power = int(input("Enter power level (1-100): "))
@@ -28,7 +28,7 @@ def get_power_level():
                 print("Please enter a value between 1 and 100.")
         except ValueError:
             print("Invalid input. Please enter a numerical value between 1 and 100.")
-
+           
 def outHandle():
     global last_state, current_state
     if last_state == 'left':
@@ -47,19 +47,17 @@ def outHandle():
     sleep(0.001)
 
 def get_status(val_list):
-    """Determine the robot's state based on grayscale sensor data."""
-    global current_state
-    val_list = px.get_grayscale_data()
+    # Determine the robot's state based on grayscale sensor data.
+    # val_list = px.get_grayscale_data()
     state = px.get_line_status(val_list)
-    
     if state == [0, 0, 0]:
-        current_state = 'outstate'
-    elif state[0] == 1:
-        current_state = 'right'
-    elif state[2] == 1:
-        current_state = 'left'
-    elif state[1] == 1:
-        current_state = 'forward'
+        return 'stop'
+    elif _state[1] == 1:
+        return 'forward'
+    elif _state[0] == 1:
+        return 'right'
+    elif _state[2] == 1:
+        return 'left'
     
     else:
         # Handle unexpected state
