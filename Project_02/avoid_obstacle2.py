@@ -4,60 +4,49 @@ import time
 px = Picarx()
 
 # Constants
-SAFE_DISTANCE = 50  # Distance considered safe before taking avoidance measures
-TOO_CLOSE_DISTANCE = 10  # Distance considered too close, requiring immediate stop
-FORWARD_SPEED = 60
+SAFE_DISTANCE = 40
+FORWARD_SPEED = 50
 TURN_SPEED = 30
-REVERSE_INTERVAL = 2  # Time to continue on the course after the object is out of detection range
+AVOIDANCE_TIME = 1  # Time after clearing an obstacle before taking further action
 
-# Movement memory for mirroring the motion
-movements = []
-logging = False  # Flag to start logging movements
+def avoidance_maneuver():
+    """Executes the avoidance maneuver and logs the duration."""
+    start_time = time.time()
+    px.set_dir_servo_angle(30)  # Turn right to avoid the obstacle
+    px.forward(TURN_SPEED)
+    while round(px.ultrasonic.read(), 2) < SAFE_DISTANCE:
+        time.sleep(0.1)
+    duration = time.time() - start_time
+    px.set_dir_servo_angle(0)  # Reset to straight ahead after avoiding the obstacle
+    time.sleep(AVOIDANCE_TIME)  # Wait for 1 second after avoiding the obstacle
+    return duration
 
-def reverse_course():
-    while movements:
-        angle, speed, duration = movements.pop()
-        # Reverse the steering angle for mirroring the turn
-        px.set_dir_servo_angle(-angle)
-        # No need to change the speed as we're only interested in reversing the turns
-        time.sleep(duration)
-    px.stop()
+def reciprocal_maneuver(duration):
+    """Executes the reciprocal maneuver based on the duration of the initial avoidance."""
+    px.set_dir_servo_angle(-30)  # Turn left to initiate reciprocal maneuver
+    time.sleep(duration)  # Match the duration of the initial avoidance
+    px.set_dir_servo_angle(0)  # Straighten up
+    px.forward(FORWARD_SPEED)
+    time.sleep(3)  # Continue straight for 3 seconds
+    px.set_dir_servo_angle(30)  # Turn right to get back on the original course
+    time.sleep(duration)  # Match the duration to complete the reciprocal course
 
 def main():
-    global logging
     try:
         while True:
             distance = round(px.ultrasonic.read(), 2)
             print("Distance:", distance)
 
-            if distance < TOO_CLOSE_DISTANCE:
-                # Too close, stop immediately
-                px.stop()
-                time.sleep(1)  # Brief pause for any potential adjustment or decision
-            elif distance < SAFE_DISTANCE:
-                if not logging:
-                    # Start logging movements as soon as an object is detected
-                    logging = True
-                    movements.clear()  # Ensure previous movements are cleared
-                
-                # Avoidance maneuver: Turn right
-                px.set_dir_servo_angle(30)  # Adjust angle to turn right
-                px.forward(TURN_SPEED)
-                movements.append((30, TURN_SPEED, 0.1))  # Log movement
+            if distance >= SAFE_DISTANCE:
+                px.set_dir_servo_angle(0)
+                px.forward(FORWARD_SPEED)
                 time.sleep(0.1)
             else:
-                if logging:
-                    # Continue straight for a short interval after avoiding the obstacle
-                    logging = False  # Stop logging movements
-                    px.forward(TURN_SPEED)
-                    px.set_dir_servo_angle(-30)
-                    time.sleep(REVERSE_INTERVAL)
-                    reverse_course()  # Reverse the course
-                else:
-                    # Safe, move forward
-                    px.set_dir_servo_angle(0)
-                    px.forward(FORWARD_SPEED)
-                    time.sleep(0.1)
+                # Obstacle detected, execute avoidance maneuver
+                duration = avoidance_maneuver()
+                # After avoiding, execute reciprocal maneuver to attempt to return to original path
+                reciprocal_maneuver(duration)
+                break  # End loop after executing maneuvers; adjust as necessary for continuous operation
 
     except KeyboardInterrupt:
         px.stop()
