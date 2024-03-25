@@ -44,6 +44,9 @@ def main():
                 px.forward(FORWARD_SPEED)
                 time.sleep(0.1)
 
+            elif distance <= DANGER_DISTANCE:
+                time.sleep(1)
+
             else:
                 print("Distance:", distance)
                 # Obstacle detected, execute avoidance maneuver
