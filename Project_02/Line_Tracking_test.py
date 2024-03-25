@@ -41,16 +41,15 @@ def get_status():
 def main():
     global last_state
     px_power=10
-    px_power_for_alpha=px_power
+    px_power_for_alpha=px_power*.85
     distance = 0
     alpha = 0.011283717
     wheelsize = 0.065
     offset = 20  # Steering angle offset for left/right corrections
     run = True
-    run == True
 
     try:
-        while True:
+        while run == True:
             gm_state = get_status()
             print("distance: %s"%(distance))
             distance += alpha * px_power_for_alpha
