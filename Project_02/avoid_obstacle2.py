@@ -29,7 +29,7 @@ def reciprocal_maneuver(duration):
     px.set_dir_servo_angle(-60)  # Turn left to initiate reciprocal maneuver
     time.sleep(duration*1.5)
     px.set_dir_servo_angle(0)
-    time.sleep(3*AVOIDANCE_TIME)
+    time.sleep(1.5*AVOIDANCE_TIME)
     px.set_dir_servo_angle(20)  # Turn right to get back on the original course
     time.sleep(duration)  # Match the duration of the initial avoidance
 
