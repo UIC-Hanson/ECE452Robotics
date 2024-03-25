@@ -76,7 +76,7 @@ if __name__=='__main__':
     print(f"Power level set to: {px_power}, Alpha power calc value: {px_power_for_alpha}")
     distance = 0
     alpha = 0.000332
-    wheelsize = 0.0205  # Wheel diameter in meters
+    wheelsize = 0.064  # Wheel diameter in meters
     offset = 20  # Steering angle offset for left/right corrections
     run = True
     
