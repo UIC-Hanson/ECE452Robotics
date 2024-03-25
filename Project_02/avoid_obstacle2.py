@@ -29,7 +29,7 @@ def reciprocal_maneuver(duration):
     px.set_dir_servo_angle(-60)  # Turn left to initiate reciprocal maneuver
     time.sleep(duration*1.5)
     px.set_dir_servo_angle(0)
-    time.sleep(1.5*AVOIDANCE_TIME)
+    time.sleep(1.25*AVOIDANCE_TIME)
     px.set_dir_servo_angle(20)  # Turn right to get back on the original course
     time.sleep(duration)  # Match the duration of the initial avoidance
 
@@ -56,6 +56,7 @@ def main():
                 # After avoiding, execute reciprocal maneuver to attempt to return to original path
                 reciprocal_maneuver(duration)
                 px.forward(FORWARD_SPEED)
+                time.sleep(0.1)
 
     except KeyboardInterrupt:
         px.stop()
