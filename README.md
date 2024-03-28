@@ -115,6 +115,7 @@ nano ~/.bashrc
 
 At the end add: eval $(keychain --eval --noask 452SSH)
 
+Add peers to meshnet https://meshnet.nordvpn.com/features/linking-devices-in-meshnet/adding-external-meshnet-devices-on-linux
 
 
 <b>Project 02:</b>
