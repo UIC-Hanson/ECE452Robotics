@@ -1,6 +1,8 @@
 import cv2
 import os
 from vilib import Vilib
+#from picamera.array import PiRGBArray
+#from picamera import PiCamera
 
 count = 0
 
@@ -36,7 +38,7 @@ while True:
     count += 1
 
 # Release the camera
-Vilib.close()
+Vilib.camera_close()
 
 # Close all OpenCV windows
 cv2.destroyAllWindows()
