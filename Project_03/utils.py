@@ -7,29 +7,36 @@ import math
 
 def vec2hat(x):
     # Find x^
-    x_hat = 
+    x_hat = np.array([[0, -x[2], x[1]],
+                      [x[2], 0, -x[0]],
+                      [-x[1], x[0], 0]])
     return x_hat
 
 def cvdata2transmtx(rvec,tvec):
     # Rotation and translation of Camera to ArUco
-    R_temp = 
-    p_temp = 
+    R_temp = cv2.Rodrigues(rvec)[0]
+    p_temp = tvec.reshape((3, 1))
     # Find the Rotation and translation of ArUco to Camera
-    R = 
-    p = 
-    g = 
+    R = np.transpose(R_temp) # R_T
+    p = -np.dot(R, p_temp) # -R_T.p
+    g = np.vstack((np.hstack((R, p)), [0, 0, 0, 1]))
     return g, R, p
 
 def transmtx2twist(g):
     # Rotation and translation from g
-    R = 
-    p = 
+    R = g[:3, :3]
+    p = g[:3, 3]
     # Convert the rotation matrix to rotation vector (including theta)
-    rvec = 
+    rvec = cv2.Rodrigues(R)[0]
     # Find the twist coordinate
-    th = 
-    w = 
-    v = 
+    th = np.linalg.norm(p)
+    # Compute angular velocity (w) and linear velocity (v)
+    if th < 1e-6:  # Check if translation vector is close to zero
+        w = np.zeros(3)
+        v = np.zeros(3)
+    else:
+        w = rvec / th
+        v = np.dot(np.linalg.inv(np.eye(3) - R), p) / th
     return v, w, th
 
 def twist2screw(v,w,th):
