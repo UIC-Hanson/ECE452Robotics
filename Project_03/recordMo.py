@@ -14,9 +14,10 @@ if not os.path.exists(path):
 # Start the camera capture using Vilib
 Vilib.camera_start(vflip=False, hflip=False)
 
+# Display the frame
+Vilib.display(frame)
+
 while True:
-    # Display the frame
-    Vilib.display(frame)
 
     # Read a frame from the camera
     frame = Vilib.take_photo(path)
