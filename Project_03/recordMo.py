@@ -1,5 +1,6 @@
 import cv2
 import os
+from vilib import Vilib
 
 count = 0
 
@@ -8,7 +9,8 @@ path = 'calib_images/'
 if not os.path.exists(path):
     os.makedirs(path)
 
-cap = cv2.VideoCapture(cv2.0)
+#cap = cv2.VideoCapture(cv2.0)
+cap = Vilib.Camera_start()
 
 while cap.isOpened():
     # Read and display each frame
