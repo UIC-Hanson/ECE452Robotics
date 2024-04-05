@@ -36,7 +36,7 @@ while True:
     count += 1
 
 # Release the camera
-Vilib.camera_stop()
+Vilib.close()
 
 # Close all OpenCV windows
 cv2.destroyAllWindows()
