@@ -18,7 +18,7 @@ while True:
     frame = Vilib.take_photo(path)
     
     # Display the frame
-    Vilib.display_frame(frame)
+    Vilib.display(frame)
 
     # Press 'q' to stop the recording
     k = cv2.waitKey(2) & 0xFF
