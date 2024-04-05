@@ -14,9 +14,6 @@ if not os.path.exists(path):
 # Start the camera capture using Vilib
 Vilib.camera_start(vflip=False, hflip=False)
 
-# Display the frame
-Vilib.display(frame)
-
 while True:
 
     # Read a frame from the camera
@@ -26,6 +23,9 @@ while True:
     if frame is None:
         print("Error: Failed to capture frame")
         break
+
+    # Display the frame
+    Vilib.display(frame)
 
     # Press 'q' to stop the recording
     k = cv2.waitKey(2) & 0xFF
