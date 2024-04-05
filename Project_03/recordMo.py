@@ -15,7 +15,7 @@ Vilib.display(local=True, web=True)
 
 while True:
     # Read a frame from the camera
-    frame = Vilib.take_photo()
+    frame = Vilib.take_photo(path)
     
     # Display the frame
     Vilib.display_frame(frame)
