@@ -8,7 +8,7 @@ path = 'calib_images/'
 if not os.path.exists(path):
     os.makedirs(path)
 
-cap = cv2.VideoCapture(cv2.CAP_V4L)
+cap = cv2.VideoCapture(cv2.0)
 
 while cap.isOpened():
     # Read and display each frame
