@@ -11,11 +11,15 @@ if not os.path.exists(path):
 
 # Start the camera capture using Vilib
 Vilib.camera_start(vflip=False, hflip=False)
-Vilib.display(local=True, web=True)
 
 while True:
     # Read a frame from the camera
     frame = Vilib.take_photo(path)
+
+    # Check if frame is valid
+    if frame is None:
+        print("Error: Failed to capture frame")
+        break
     
     # Display the frame
     Vilib.display(frame)
