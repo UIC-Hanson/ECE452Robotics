@@ -9,24 +9,30 @@ path = 'calib_images/'
 if not os.path.exists(path):
     os.makedirs(path)
 
-#cap = cv2.VideoCapture(cv2.0)
-cap = Vilib.Camera_start()
+# Start the camera capture using Vilib
+Vilib.camera_start(vflip=False, hflip=False)
+Vilib.display(local=True, web=True)
 
-while cap.isOpened():
-    # Read and display each frame
-    ret, frame = cap.read()
-    if ret:
-        cv2.imshow('Current frame', frame)
-        k = cv2.waitKey(2) & 0xFF
-        # press 'q' to stop the recording
-        if k == ord('q'):
-           break
-        if count%10 == 0:
-            cv2.imwrite(path+str(count)+'.jpg',frame)
-        count += 1
+while True:
+    # Read a frame from the camera
+    frame = Vilib.take_photo(path)
+    
+    # Display the frame
+    Vilib.display_frame(frame)
 
-# close the camera
-cap.release()
-  
-# close all the opened windows
+    # Press 'q' to stop the recording
+    k = cv2.waitKey(2) & 0xFF
+    if k == ord('q'):
+        break
+
+    # Save every 10th frame
+    if count % 10 == 0:
+        cv2.imwrite(path + str(count) + '.jpg', frame)
+
+    count += 1
+
+# Release the camera
+Vilib.camera_stop()
+
+# Close all OpenCV windows
 cv2.destroyAllWindows()
