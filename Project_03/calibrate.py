@@ -22,7 +22,7 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 # Read the captured images from record.py
-images = glob.glob('/calib_images/*.jpg')
+images = glob.glob('calib_images/*.jpg')
 
 # count the number of images used for calibration
 count = 0
