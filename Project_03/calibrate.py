@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import glob
-import yaml
+import PyYAML as yaml
 
 # termination criteria
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
