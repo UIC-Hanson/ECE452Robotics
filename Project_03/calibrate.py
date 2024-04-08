@@ -1,81 +1,71 @@
-import numpy as np
 import cv2
 import glob
+import numpy as np
 import yaml
 
-# termination criteria
-criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+def load_images(image_path):
+    """Load images from a specified directory."""
+    return glob.glob(image_path)
 
-# square size of the chessboard
-square_length = 0.02
+def find_corners(images, board_size, square_length, criteria, max_images=20):
+    """Find and visualize chessboard corners in images."""
+    objp = np.zeros((board_size[1] * board_size[0], 3), np.float32)
+    objp[:, :2] = np.mgrid[0:board_size[0], 0:board_size[1]].T.reshape(-1, 2) * square_length
 
-# board size
-board_size = (7,6)
+    objpoints = []  # 3D points in real world space
+    imgpoints = []  # 2D points in image plane
+    image_size = None
 
-# prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-objp = np.zeros((board_size[1]*board_size[0],3), np.float32)
-objp[:,:2] = np.mgrid[0:board_size[0],0:board_size[1]].T.reshape(-1,2)
-objp = objp * square_length
+    count = 0
+    for fname in images:
+        img = cv2.imread(fname)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        if image_size is None:
+            image_size = gray.shape[::-1]
 
-# Arrays to store object points and image points from all the images.
-objpoints = [] # 3d point in real world space
-imgpoints = [] # 2d points in image plane.
+        ret, corners = cv2.findChessboardCorners(gray, board_size, None)
+        if ret:
+            if count < max_images:
+                objpoints.append(objp)
+                corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+                imgpoints.append(corners2)
+                cv2.drawChessboardCorners(img, board_size, corners2, ret)
+                cv2.imshow('img', img)
+                cv2.waitKey(500)
+                count += 1
+            else:
+                break
 
-# Read the captured images from record.py
-images_path = '/home/452Lab/ECE452Robotics/Project_03/calib_images/*.jpg'
-images = glob.glob(images_path)
+    cv2.destroyAllWindows()
+    return objpoints, imgpoints, image_size
 
-# count the number of images used for calibration
-count = 0
-
-# detecting the chessboard from the images
-for fname in images:
-    img = cv2.imread(fname)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    # Update the image_size variable with the dimensions of the first processed image
-    if image_size is None:
-        image_size = gray.shape[::-1]
-    
-    # Find the chess board corners
-    ret, corners = cv2.findChessboardCorners(gray, board_size, None)
-    # If found, add object points, image points (after refining them)
-    if ret == True:
-        # here you can change the number of images for calibration
-        if count < 20:
-            objpoints.append(objp)
-            corners2 = cv2.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
-            imgpoints.append(corners)
-            # Draw and display the corners
-            cv2.drawChessboardCorners(img, board_size, corners2, ret)
-            cv2.imshow('img', img)
-            cv2.waitKey(500)
-            count += 1
-        else:
-            break
-
-cv2.destroyAllWindows()
-
-if image_size is not None and len(objpoints) > 0 and len(imgpoints) > 0:
+def calibrate_camera(objpoints, imgpoints, image_size):
+    """Calibrate the camera given object points and image points."""
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, image_size, None, None)
-    # Your calibration code continues here...
-else:
-    print("Calibration was not successful. Make sure there are images and detected points.")
+    return ret, mtx, dist, rvecs, tvecs
 
-# Calibrating the camera
-ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+def save_calibration_data(mtx, dist, filename='calib_data.yaml'):
+    """Save the calibration data to a file."""
+    calib_data = {'camera_matrix': np.asarray(mtx).tolist(),
+                  'distortion_coefficients': np.asarray(dist).tolist()}
+    with open(filename, 'w') as file:
+        yaml.dump(calib_data, file)
 
-mean_error = 0
-for i in range(len(objpoints)):
-    imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
-    error = cv2.norm(imgpoints[i], imgpoints2, cv2.NORM_L2)/len(imgpoints2)
-    mean_error += error
-print( "total error: {}".format(mean_error/len(objpoints)) )
+def main():
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+    square_length = 0.02  # Square size of the chessboard
+    board_size = (7, 6)  # Board size
+    images_path = '/home/452Lab/ECE452Robotics/Project_03/calib_images/*.jpg'
+    
+    images = load_images(images_path)
+    objpoints, imgpoints, image_size = find_corners(images, board_size, square_length, criteria)
+    
+    if objpoints and imgpoints and image_size:
+        ret, mtx, dist, rvecs, tvecs = calibrate_camera(objpoints, imgpoints, image_size)
+        print("Calibration successful.")
+        save_calibration_data(mtx, dist)
+    else:
+        print("Calibration was not successful. Make sure there are images and detected points.")
 
-calib_data = {
-    'camera_matrix':np.asarray(mtx).tolist(),
-    'distortion_coefficients':np.asarray(dist).tolist()
-}
-
-with open(r'calib_data.yaml', 'w') as file:
-    yaml.dump(calib_data, file)
+if __name__ == '__main__':
+    main()
