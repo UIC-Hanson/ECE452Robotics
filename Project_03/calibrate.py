@@ -32,6 +32,11 @@ count = 0
 for fname in images:
     img = cv2.imread(fname)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Update the image_size variable with the dimensions of the first processed image
+    if image_size is None:
+        image_size = gray.shape[::-1]
+    
     # Find the chess board corners
     ret, corners = cv2.findChessboardCorners(gray, board_size, None)
     # If found, add object points, image points (after refining them)
@@ -50,6 +55,12 @@ for fname in images:
             break
 
 cv2.destroyAllWindows()
+
+if image_size is not None and len(objpoints) > 0 and len(imgpoints) > 0:
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, image_size, None, None)
+    # Your calibration code continues here...
+else:
+    print("Calibration was not successful. Make sure there are images and detected points.")
 
 # Calibrating the camera
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
