@@ -9,7 +9,7 @@ import math
 
 
 #========TO DO: DECLARE THE SERVO ========
-
+px = Picarx()
 
 
 #==============================================
