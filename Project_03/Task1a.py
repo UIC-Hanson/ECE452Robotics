@@ -19,8 +19,8 @@ import math
 #========TO DO========
 # define the initial and the next angle
 # amount of rotation (theta) = next angle - initial angle
-init_angle = #========SET A VALUE========
-next_angle = #========SET A VALUE========
+init_angle = 30
+next_angle = -30
 #================================================
 
 
@@ -42,6 +42,9 @@ cap = cv2.VideoCapture(cv2.CAP_V4L)
 
 #======== TO DO ========
 # move the camera to the initial angle  
+try:
+    px.set_camera_servo1_angle(init_angle)
+    time.sleep(0.01)
 
 time.sleep(3)
 #================================================
@@ -69,7 +72,9 @@ while cap.isOpened():
             
             #======== TO DO ========
             #Change the servo angle (you can use the value next_angle)
-
+            try:
+                px.set_camera_servo1_angle(next_angle)
+                time.sleep(0.01)
             
             #================================================
             time.sleep(3)
