@@ -43,7 +43,7 @@ cap = cv2.VideoCapture(cv2.CAP_V4L)
 #======== TO DO ========
 # move the camera to the initial angle  
 try:
-    px.set_camera_servo1_angle(init_angle)
+    px.set_cam_pan_angle(init_angle)
     time.sleep(0.01)
 except Exception as e:
     print("Error setting initial servo angle:", e)
@@ -78,7 +78,7 @@ while cap.isOpened():
             #======== TO DO ========
             #Change the servo angle (you can use the value next_angle)
             try:
-                px.set_camera_servo1_angle(next_angle)
+                px.set_cam_pan_angle(next_angle)
                 time.sleep(0.01)
             except Exception as e:
                 print("Error setting initial servo angle:", e)
