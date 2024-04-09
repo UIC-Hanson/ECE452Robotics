@@ -24,12 +24,17 @@ while cap.isOpened():
     if ret:
         # For Coral TPU inference: Convert frame to the input format expected by the model
         input_image = cv2.resize(frame, common.input_size(interpreter))
-        common.set_input(interpreter, input_image)
+        _, scale = common.set_resized_input(interpreter, input_image.shape[:2], lambda size: cv2.resize(input_image, size))
         interpreter.invoke()
-        # Example: Get object detection results
-        results = detect.get_objects(interpreter, threshold=0.5)
-        # Process results, e.g., draw bounding boxes or filter based on detection
         
+        # Get object detection results
+        results = detect.get_objects(interpreter, score_threshold=0.5, image_scale=scale)
+        
+        # Example processing results: Drawing bounding boxes around detected objects
+        for obj in results:
+            bbox = obj.bbox
+            cv2.rectangle(frame, (bbox.xmin, bbox.ymin), (bbox.xmax, bbox.ymax), (0, 255, 0), 2)
+
         cv2.imshow('Current frame', frame)
         if cv2.waitKey(2) & 0xFF == ord('q'):
             break
