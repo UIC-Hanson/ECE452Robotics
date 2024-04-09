@@ -6,6 +6,9 @@ import yaml
 import utils
 import math
 
+# Initialize the Picar-X
+px = Picarx()
+
 
 
 #========TO DO: DECLARE THE SERVO ========
@@ -19,8 +22,8 @@ import math
 #========TO DO========
 # define the initial and the next angle
 # amount of rotation (theta) = next angle - initial angle
-init_angle = #========SET A VALUE========
-next_angle = #========SET A VALUE========
+init_angle = 0  # Initial angle, in degrees
+next_angle = 30  # Next angle, in degrees
 #================================================
 
 

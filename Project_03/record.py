@@ -1,30 +1,37 @@
+from pycoral.adapters import common
+from pycoral.adapters import detect
+from pycoral.utils.edgetpu import make_interpreter
 import cv2
 import os
 
-count = 0
+# Initialize Coral TPU interpreter with your TensorFlow Lite model
+interpreter = make_interpreter(args.model)
+interpreter.allocate_tensors()
 
+count = 0
+cap = cv2.VideoCapture(cv2.CAP_V4L)
 path = 'calib_images/'
 
 if not os.path.exists(path):
     os.makedirs(path)
 
-cap = cv2.VideoCapture(cv2.CAP_V4L)
-
 while cap.isOpened():
-    # Read and display each frame
     ret, frame = cap.read()
     if ret:
+        # For Coral TPU inference: Convert frame to the input format expected by the model
+        input_image = cv2.resize(frame, common.input_size(interpreter))
+        common.set_input(interpreter, input_image)
+        interpreter.invoke()
+        # Example: Get object detection results
+        results = detect.get_objects(interpreter, threshold=0.5)
+        # Process results, e.g., draw bounding boxes or filter based on detection
+        
         cv2.imshow('Current frame', frame)
-        k = cv2.waitKey(2) & 0xFF
-        # press 'q' to stop the recording
-        if k == ord('q'):
-           break
-        if count%10 == 0:
-            cv2.imwrite(path+str(count)+'.jpg',frame)
+        if cv2.waitKey(2) & 0xFF == ord('q'):
+            break
+        if count % 10 == 0:
+            cv2.imwrite(os.path.join(path, f"{count}.jpg"), frame)
         count += 1
 
-# close the camera
 cap.release()
-  
-# close all the opened windows
 cv2.destroyAllWindows()
