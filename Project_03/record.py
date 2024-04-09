@@ -5,7 +5,7 @@ import cv2
 import os
 
 
-model_path = os.path.expanduser('~/ECE452Robotics/CoralModels/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite')
+model_path = os.path.expanduser('/home/452Lab/ECE452Robotics/CoralModels/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite')
 
 
 # Initialize Coral TPU interpreter with your TensorFlow Lite model
