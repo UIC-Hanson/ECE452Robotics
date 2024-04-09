@@ -4,8 +4,12 @@ from pycoral.utils.edgetpu import make_interpreter
 import cv2
 import os
 
+
+model_path = os.path.expanduser('~/ECE452Robotics/CoralModels/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite')
+
+
 # Initialize Coral TPU interpreter with your TensorFlow Lite model
-interpreter = make_interpreter(args.model)
+interpreter = make_interpreter(model_path)
 interpreter.allocate_tensors()
 
 count = 0
