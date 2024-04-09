@@ -24,7 +24,7 @@ next_angle = -30
 
 # The different ArUco dictionaries built into the OpenCV library. 
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
-aruco_params = cv2.aruco.DetectorParameters_create()
+aruco_params = cv2.aruco.DetectorParameters_create(aruco_dict)
 
 # Side length of the ArUco marker in meters 
 marker_length = 0.1
