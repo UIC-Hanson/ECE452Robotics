@@ -17,8 +17,8 @@ px = Picarx()
 #========TO DO========
 # define the initial and the next angle
 # amount of rotation (theta) = next angle - initial angle
-init_angle = 20
-next_angle = -20
+init_angle = 0
+next_angle = 20
 #================================================
 
 
