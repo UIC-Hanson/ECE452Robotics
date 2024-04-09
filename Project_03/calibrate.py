@@ -2,18 +2,6 @@ import cv2
 import glob
 import numpy as np
 import yaml
-import argparse
-from pycoral.adapters import common
-from pycoral.utils.edgetpu import make_interpreter
-from PIL import Image
-
-# Add argparse to handle command-line arguments
-parser = argparse.ArgumentParser(description='Camera calibration with Coral TPU preprocessing.')
-parser.add_argument('--model', help='Path to the TensorFlow Lite model file.', required=True)
-args = parser.parse_args()
-
-interpreter = make_interpreter(args.model)
-interpreter.allocate_tensors()
 
 def load_images(image_path):
     """Load images from a specified directory."""
@@ -30,13 +18,8 @@ def find_corners(images, board_size, square_length, criteria, max_images=20):
 
     count = 0
     for fname in images:
-        for fname in images:
-        # Preprocess the image using the Coral TPU model
-        enhanced_image = preprocess_image_with_model(fname)
-        # Convert the PIL image back to an OpenCV image if necessary
-        img = np.array(enhanced_image)
-        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
+        img = cv2.imread(fname)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         if image_size is None:
             image_size = gray.shape[::-1]
 
@@ -67,16 +50,6 @@ def save_calibration_data(mtx, dist, filename='calib_data.yaml'):
                   'distortion_coefficients': np.asarray(dist).tolist()}
     with open(filename, 'w') as file:
         yaml.dump(calib_data, file)
-
-def preprocess_image_with_model(image_path):
-    image = Image.open(image_path)
-    common.set_resized_input(interpreter, image.size, lambda size: image.resize(size, Image.ANTIALIAS))
-    interpreter.invoke()
-    # Example: Get the enhanced image from the model's output (Adjust based on your model)
-    output_data = interpreter.get_tensor(common.output_tensor(interpreter, 0))
-    # Process the output_data to get an enhanced image. This step depends on your model's specifics.
-    enhanced_image = Image.fromarray(output_data)
-    return enhanced_image
 
 def main():
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
