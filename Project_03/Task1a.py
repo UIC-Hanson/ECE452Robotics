@@ -62,10 +62,12 @@ while cap.isOpened():
         # Updated marker detection using ArucoDetector
         corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
 
-        if len(corners) != 0:  # if aruco marker detected
-            rvec, tvec, _ = cv2.solvePnP(corners, marker_length, mtx, dist)
+        if len(corners) > 0:  # if aruco marker detected
+            markerCorners2D = np.array(corners[0]).reshape(-1, 2)  # Using first detected marker
+            success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
             cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0,255,0))
             cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
+
         cv2.imshow("aruco", frame)
         key = cv2.waitKey(2) & 0xFF
         if key == ord('q'):
