@@ -7,21 +7,6 @@ import utils
 import math
 import cv2.aruco as aruco
 
-def drawAxes(img, corners, rvec, tvec, camera_matrix, dist_coeffs, axis_length=0.1):
-    # Define the axis points in 3D space
-    axis_points = np.float32([[axis_length, 0, 0], [0, axis_length, 0], [0, 0, axis_length]]).reshape(-1, 3)
-    
-    # Project the 3D points to the image plane
-    imgpts, _ = cv2.projectPoints(axis_points, rvec, tvec, camera_matrix, dist_coeffs)
-
-    # Draw the axes on the image
-    corner = tuple(corners.ravel())
-    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), (255, 0, 0), 5)  # X-Axis in red
-    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), (0, 255, 0), 5)  # Y-Axis in green
-    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), (0, 0, 255), 5)  # Z-Axis in blue
-
-    return img
-
 #========TO DO: DECLARE THE SERVO ========
 px = Picarx()
 
@@ -87,7 +72,7 @@ while cap.isOpened():
             markerCorners2D = np.array(corners[0]).reshape(-1, 2)  # Using first detected marker
             success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
             cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0,255,0))
-            frame = drawAxes(frame, corners[0], rvec, tvec, mtx, dist, axis_length=0.05)
+            cv2.drawFrameAxes(frame, corners[0], rvec, tvec, mtx, dist, axis_length=0.05)
 
         cv2.imshow("aruco", frame)
         key = cv2.waitKey(2) & 0xFF
