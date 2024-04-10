@@ -41,6 +41,14 @@ dist = np.asarray(calib_data["distortion_coefficients"])
 
 cap = cv2.VideoCapture(cv2.CAP_V4L)
 
+# Define 3D coordinates for ArUco marker corners
+markerCorners3D = np.array([
+    [-marker_length / 2, marker_length / 2, 0],  # top left
+    [marker_length / 2, marker_length / 2, 0],   # top right
+    [marker_length / 2, -marker_length / 2, 0],  # bottom right
+    [-marker_length / 2, -marker_length / 2, 0]  # bottom left
+])
+
 #======== TO DO ========
 # move the camera to the initial angle  
 try:
