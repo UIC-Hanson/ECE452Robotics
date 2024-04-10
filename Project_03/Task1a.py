@@ -74,7 +74,7 @@ while cap.isOpened():
             markerCorners2D = np.array(corners[0]).reshape(-1, 2)  # Using first detected marker
             success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
             cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0,255,0))
-            cv2.aruco.drawFrameAxis(frame, mtx, dist, rvec, tvec, 0.05)
+            cv2.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
 
         cv2.imshow("aruco", frame)
         key = cv2.waitKey(2) & 0xFF
