@@ -25,9 +25,9 @@ next_angle = 20
 
 # The different ArUco dictionaries built into the OpenCV library. 
 # Updated ArUco initialization
-aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
-aruco_params = cv2.aruco.DetectorParameters()
-detector = cv2.aruco.ArucoDetector(aruco_dict, aruco_params)
+aruco_dict = aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
+aruco_params = aruco.DetectorParameters()
+detector = aruco.ArucoDetector(aruco_dict, aruco_params)
 
 # Side length of the ArUco marker in meters 
 marker_length = 0.1
@@ -52,28 +52,34 @@ except Exception as e:
 time.sleep(3)
 #================================================
 
-#start detecting the aruco marker
-print("Press s to save the initial data or press q to quit...")
+# Start detecting the ArUco marker
+print("Press 's' to save the initial data or press 'q' to quit...")
 while cap.isOpened():
     ret, frame = cap.read()
     if ret:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # Updated marker detection using ArucoDetector
-        corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+        # Detect markers in the image
+        corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
 
-        if len(corners) != 0:  # if aruco marker detected
-            rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
-            cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0,255,0))
-            cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
+        if len(corners) > 0:  # If ArUco marker detected
+            # Estimate pose of single markers
+            rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
+            
+            # Draw detected markers and axes
+            aruco.drawDetectedMarkers(frame, corners, ids)
+            for rvec, tvec in zip(rvecs, tvecs):
+                aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
+
         cv2.imshow("aruco", frame)
         key = cv2.waitKey(2) & 0xFF
         if key == ord('q'):
             break
         elif key == ord('s'):
-            init_rvec = rvec
-            init_tvec = tvec
-            print("Initial data saved, press m to move the camera or q to quit...")
+            # Assuming you're interested in the first marker
+            init_rvec = rvecs[0]
+            init_tvec = tvecs[0]
+            print("Initial data saved, press 'm' to move the camera or 'q' to quit...")
         elif key == ord('m'):
             
             #======== TO DO ========
@@ -97,7 +103,7 @@ while cap.isOpened():
 cap.release()
 cv2.destroyAllWindows()
 
-if init_rvec.all() and next_rvec.all():
+if 'init_rvec' in locals() and 'next_rvec' in locals() and init_rvec.all() and next_rvec.all():
     # g(0)
     g0 = utils.cvdata2transmtx(init_rvec,init_tvec)[0]
     # g(th)
