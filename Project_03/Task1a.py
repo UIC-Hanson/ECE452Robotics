@@ -64,7 +64,7 @@ while cap.isOpened():
         corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
 
         if len(corners) != 0:  # if aruco marker detected
-            rvec, tvec, _ = cv2.objdetect.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
+            rvec, tvec, _ = cv2.solvePnP(corners, marker_length, mtx, dist)
             cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0,255,0))
             cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
         cv2.imshow("aruco", frame)
