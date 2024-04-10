@@ -81,7 +81,7 @@ while cap.isOpened():
 
             # Draw frame axes for each detected marker
             for rvec, tvec in zip(rvecs, tvecs):
-                cv2.drawFrameAxes(frame, mtx, dist, rvecs, tvecs, marker_length * 1.5, 2)
+                cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, marker_length * 1.5, 2)
 
              
         cv2.imshow("aruco", frame)
