@@ -73,7 +73,7 @@ while cap.isOpened():
 
             # Draw frame axes for each marker
             for i in range(len(ids)):
-                cv2.drawFrameAxes(frame, mtx, dist, rvecs[i], tvecs[i], marker_length * 1.5, 2)
+                cv2.drawFrameAxes(frame, mtx, dist, rvec[i], tvec[i], marker_length * 1.5, 2)
              
         cv2.imshow("aruco", frame)
         key = cv2.waitKey(2) & 0xFF
