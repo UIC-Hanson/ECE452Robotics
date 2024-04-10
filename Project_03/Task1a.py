@@ -5,7 +5,6 @@ import numpy as np
 import yaml
 import utils
 import math
-import cv2.aruco as aruco
 
 
 
@@ -25,9 +24,9 @@ next_angle = 20
 
 # The different ArUco dictionaries built into the OpenCV library. 
 # Updated ArUco initialization
-aruco_dict = aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
-aruco_params = aruco.DetectorParameters()
-detector = aruco.ArucoDetector(aruco_dict, aruco_params)
+aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
+aruco_params = cv2.aruco.DetectorParameters()
+detector = cv2.aruco.ArucoDetector(aruco_dict, aruco_params)
 
 # Side length of the ArUco marker in meters 
 marker_length = 0.1
@@ -52,7 +51,7 @@ except Exception as e:
 time.sleep(3)
 #================================================
 
-# Start detecting the ArUco marker
+# Start detecting the  marker
 print("Press 's' to save the initial data or press 'q' to quit...")
 while cap.isOpened():
     ret, frame = cap.read()
@@ -60,16 +59,16 @@ while cap.isOpened():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # Detect markers in the image
-        corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
+        corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
 
         if len(corners) > 0:  # If ArUco marker detected
             # Estimate pose of single markers
-            rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
+            rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
             
             # Draw detected markers and axes
-            aruco.drawDetectedMarkers(frame, corners, ids)
+            cv2.aruco.drawDetectedMarkers(frame, corners, ids)
             for rvec, tvec in zip(rvecs, tvecs):
-                aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
+                cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
 
         cv2.imshow("aruco", frame)
         key = cv2.waitKey(2) & 0xFF
