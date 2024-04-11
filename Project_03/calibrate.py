@@ -55,7 +55,7 @@ def main():
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     square_length = 0.02  # Square size of the chessboard
     board_size = (7, 6)  # Board size
-    images_path = '/home/452Lab/ECE452Robotics/Project_03/calib_images/*.jpg'
+    images_path = './calib_images/*.jpg'
     
     images = load_images(images_path)
     objpoints, imgpoints, image_size = find_corners(images, board_size, square_length, criteria)
