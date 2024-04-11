@@ -42,6 +42,25 @@ def move_camera_to_angle(angle):
     except Exception as e:
         print(f"Error setting camera angle to {angle}: {e}")
 
+def detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D):
+    """Detect ArUco markers and return their rotation and translation vectors."""
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+    rvecs, tvecs = [], []
+
+    if len(corners) > 0:
+        for corner in corners:
+            markerCorners2D = np.array(corner).reshape(-1, 2)
+            success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
+            rvecs.append(rvec)
+            tvecs.append(tvec)
+            
+        cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
+
+        # Draw frame axes for each detected marker
+        cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, MARKER_LENGTH * 1.5, 2)
+    return rvecs, tvecs
+
 def calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist):
     """Calculate the transformation matrix."""
     success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
