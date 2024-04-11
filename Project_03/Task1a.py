@@ -110,14 +110,14 @@ while cap.isOpened():
             next_tvec = tvec
             print("Current data saved, press q to quit and start the calculation...")
          
-    finally:
-        # Reset servo and camera angles, stop motors
-        px.set_cam_tilt_angle(0)
-        px.set_cam_pan_angle(0)  
-        px.set_dir_servo_angle(0)  
-        px.stop()
-        sleep(.2)
-        print("Robot stopped.")
+finally:
+    # Reset servo and camera angles, stop motors
+    px.set_cam_tilt_angle(0)
+    px.set_cam_pan_angle(0)  
+    px.set_dir_servo_angle(0)  
+    px.stop()
+    sleep(.2)
+    print("Robot stopped.")
 
 
 # Turn off the camera
