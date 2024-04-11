@@ -129,8 +129,6 @@ if init_rvec.all() and next_rvec.all():
     print("Estimated rotation angle: {} degrees".format(math.degrees(th)))
     print("Twist Coordinates:\n {}".format(np.vstack((v,w))*th))
     print("Screw motion:\n q:{},\n h:{},\n u:{},\n M:{}".format(q,h,u,M))
- 
-finally:
     # Reset servo and camera angles, stop motors
     px.set_cam_tilt_angle(0)
     px.set_cam_pan_angle(0)  
