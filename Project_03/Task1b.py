@@ -114,7 +114,7 @@ def main():
                             
                             actual_rot_angle = current_angle - INIT_ANGLE
                             print(f"current_angle: {current_angle}")
-                            print(f"current_angle: {INIT_ANGLE}")
+                            print(f"INIT_ANGLE: {INIT_ANGLE}")
                             break
 
             cv2.imshow('aruco', frame)
