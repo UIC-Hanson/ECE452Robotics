@@ -64,23 +64,20 @@ class ArUcoDetector:
     def draw_markers(self, frame, corners, ids):
         cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
     
-    def detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D):
+    def detect_and_draw_markers(self, frame, detector, mtx, dist, markerCorners3D):
         """Detect ArUco markers and return their rotation and translation vectors."""
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+        corners, ids, _ = cv2.aruco.detectMarkers(gray, self.aruco_dict, parameters=self.aruco_params)
         rvecs, tvecs = [], []
-
         if len(corners) > 0:
+            cv2.aruco.drawDetectedMarkers(frame, corners, ids)
             for corner in corners:
                 markerCorners2D = np.array(corner).reshape(-1, 2)
-                success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
+                success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, self.camera_matrix, self.distortion_coefficients)
                 rvecs.append(rvec)
                 tvecs.append(tvec)
-                
-            cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
-
-            # Draw frame axes for each detected marker
-            cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, MARKER_LENGTH * 1.5, 2)
+                # Optionally draw frame axes for each detected marker
+                cv2.drawFrameAxes(frame, self.camera_matrix, self.distortion_coefficients, rvec, tvec, marker_length * 1.5, 2)
         return rvecs, tvecs
 
     def calculate_transformation_matrix(self, corners, markerCorners3D):
@@ -122,13 +119,15 @@ class MarkerAlignmentApp:
             if ret:
                 corners, ids, _ = self.detector.detect_markers(frame)
                 if len(corners) > 0:
-                    gth = self.detector.calculate_transformation_matrix(corners[0], markerCorners3D)
-                    if g0 is None:
-                        g0 = gth
-                        print("Initial data saved...")
-                    else:
-                        exp_mtx = gth @ np.linalg.inv(g0)
-                # Display and quit mechanism
+                    for corner in corners:
+                        # Process each corner
+                        transformation_matrix = self.detector.calculate_transformation_matrix(corner, markerCorners3D)
+                        if g0 is None:
+                            g0 = transformation_matrix
+                            print("Initial data saved...")
+                        else:
+                            exp_mtx = transformation_matrix @ np.linalg.inv(g0)
+                            # Now perform your calculations with exp_mtx
                 cv2.imshow('aruco', frame)
                 if cv2.waitKey(2) & 0xFF == ord('q'):
                     break
@@ -141,7 +140,7 @@ class MarkerAlignmentApp:
         gth = utils.cvdata2transmtx(next_rvec,next_tvec)[0] 
         # ======== TO DO ========
         #find exp^(hat(xi)*th) using g(0) and g(th)
-        exp_mtx = gth * np.linalg.inv(g0)
+        exp_mtx = gth @ np.linalg.inv(g0)
         #================================================
         # The twist coordinate and screw motion of the servo
         v,w,th = utils.transmtx2twist(exp_mtx)
