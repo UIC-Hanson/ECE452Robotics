@@ -8,7 +8,7 @@ from picarx import Picarx
 from time import sleep
 
 # Constants
-INIT_ANGLE = -10
+INIT_ANGLE = -60
 DESIRED_THETA = 10
 MARKER_LENGTH = 0.1
 CALIB_DATA_FILE = 'calib_data.yaml'
@@ -90,7 +90,7 @@ def main():
     
     print("Start scanning the marker, you may quit the program by pressing q ...")
 
-    for current_angle in range(INIT_ANGLE, 181, 2):
+    for current_angle in range(INIT_ANGLE, 181, 10):
         move_camera_to_angle(current_angle)
         ret, frame = cap.read()
         if ret:
