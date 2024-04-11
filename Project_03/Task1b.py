@@ -155,5 +155,6 @@ class MarkerAlignmentApp:
         cv2.destroyAllWindows()        
 
 if __name__ == "__main__":
+    initialize_robot()
     app = MarkerAlignmentApp()
     app.run()
