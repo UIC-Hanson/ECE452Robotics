@@ -94,36 +94,33 @@ def main():
         move_camera_to_angle(current_angle)
         ret, frame = cap.read()
         if ret:
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+            # Direct call to detect_and_draw_markers
+            rvecs, tvecs = detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D)
 
-            if len(corners) != 0:
-                # Direct integration of detect_and_draw_markers()
-                markerCorners2D = np.array(corners[0]).reshape(-1, 2)
-                success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
-                cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
-                cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, MARKER_LENGTH * 1.5, 2)
-
+            if len(rvecs) > 0 and len(tvecs) > 0:  # Ensuring at least one marker was detected
                 if g0 is None:
-                    g0 = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
+                    # Initial setup with the first detected marker's pose
+                    g0 = utils.cvdata2transmtx(rvecs[0], tvecs[0])[0]
                     print("Initial data saved...")
                 else:
-                    gth = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
-                    exp_mtx = gth @ np.linalg.inv(g0)
-                    _, _, theta = utils.transmtx2twist(exp_mtx)
-                    error = np.square(DESIRED_THETA - math.degrees(theta))
-                    print(f"error: {error}")
-                    if error <= 10:
-                        actual_rot_angle = current_angle - INIT_ANGLE
-                        break
+                    # Subsequent processing with new marker poses
+                    for rvec, tvec in zip(rvecs, tvecs):
+                        gth = utils.cvdata2transmtx(rvec, tvec)[0]
+                        exp_mtx = gth @ np.linalg.inv(g0)
+                        _, _, theta = utils.transmtx2twist(exp_mtx)
+                        error = np.square(DESIRED_THETA - math.degrees(theta))
+                        print(f"error: {error}")
+                        if error <= 10:
+                            actual_rot_angle = current_angle - INIT_ANGLE
+                            break
 
-        cv2.imshow('aruco', frame)
-        
-        # Key event handling
-        key = cv2.waitKey(2) & 0xFF
-        if key == ord('q'):
-            break
-        cv2.waitKey(3000)
+            cv2.imshow('aruco', frame)
+            
+            # Key event handling
+            key = cv2.waitKey(2) & 0xFF
+            if key == ord('q'):
+                break
+            cv2.waitKey(1)  # Reduced delay for more responsive feedback
 
     print("Finished rotation...")
     print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
