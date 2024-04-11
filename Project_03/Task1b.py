@@ -72,6 +72,7 @@ def main():
     mtx = np.asarray(calib_data["camera_matrix"])
     dist = np.asarray(calib_data["distortion_coefficients"])
     cap = cv2.VideoCapture(cv2.CAP_V4L)
+    # Define 3D coordinates for ArUco marker corners
     markerCorners3D = np.array([
         [-MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0],
         [MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0],
@@ -79,6 +80,7 @@ def main():
         [-MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0]])
     move_camera_to_angle(INIT_ANGLE)
     time.sleep(1)
+    # Initialize g(0)
     g0 = None
     actual_rot_angle = 0
     
@@ -87,29 +89,35 @@ def main():
         move_camera_to_angle(current_angle)
         ret, frame = cap.read()
         if ret:
+            # Direct call to detect_and_draw_markers
             rvecs, tvecs = detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D)
-            if len(rvecs) > 0 and len(tvecs) > 0:
+            if len(rvecs) > 0 and len(tvecs) > 0:  # Ensuring at least one marker was detected
                 if g0 is None:
+                    # Initial setup with the first detected marker's pose
                     g0 = utils.cvdata2transmtx(rvecs[0], tvecs[0])[0]
                     print("Initial data saved...")
                 else:
+                    # Subsequent processing with new marker poses
                     for rvec, tvec in zip(rvecs, tvecs):
                         gth = utils.cvdata2transmtx(rvec, tvec)[0]
                         exp_mtx = gth @ np.linalg.inv(g0)
                         _, _, theta = utils.transmtx2twist(exp_mtx)
-                        estimated_rot_angle = math.degrees(theta)  # Using math.degrees for conversion
-                        error = (DESIRED_THETA - estimated_rot_angle) ** 2  # Keeping the squared error calculation
+                        error = np.square(DESIRED_THETA - math.degrees(theta))
                         print(f"error: {error}")
-                        if error <= 100:  # This matches the threshold for a 10-degree error, squared
+                        if error <= 10:
                             actual_rot_angle = current_angle - INIT_ANGLE
                             break
             cv2.imshow('aruco', frame)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):  # Efficient key event handling
+            
+            # Key event handling
+            key = cv2.waitKey(2) & 0xFF
+            if key == ord('q'):
                 break
+            cv2.waitKey(100)  # Reduced delay for more responsive feedback
+            cv2.waitKey(300)  # Reduced delay for more responsive feedback
 
     print("Finished rotation...")
-    print(f"Estimated rotation angle: {estimated_rot_angle} degrees")
+    print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
     print(f"Actual rotation angle: {actual_rot_angle} degrees")
     cap.release()
     cv2.destroyAllWindows()
