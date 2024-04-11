@@ -5,6 +5,7 @@ import yaml
 import utils
 import math
 from picarx import Picarx
+from time import sleep
 
 # Constants
 INIT_ANGLE = -10
@@ -20,6 +21,7 @@ def initialize_robot():
     px.set_dir_servo_angle(0)
     px.set_cam_pan_angle(0)
     px.set_cam_tilt_angle(0)
+    sleep(.5)
 
 def load_calibration_data(file_path):
     """Load camera calibration data from YAML file."""
@@ -55,7 +57,7 @@ def main():
                                 [MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0], [-MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0]])
 
     move_camera_to_angle(INIT_ANGLE)
-    time.sleep(3)
+    time.sleep(1)
     g0 = None
     actual_rot_angle = 0
     print("Start scanning the marker, you may quit the program by pressing q ...")
@@ -73,7 +75,7 @@ def main():
                     print("Initial data saved...")
                 else:
                     gth = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
-                    exp_mtx = gth * np.linalg.inv(g0)
+                    exp_mtx = gth @ np.linalg.inv(g0)
                     _, _, theta = utils.transmtx2twist(exp_mtx)
                     error = np.square(DESIRED_THETA - math.degrees(theta))
                     print(f"error: {error}")
