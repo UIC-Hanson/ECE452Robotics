@@ -120,7 +120,7 @@ def main():
             key = cv2.waitKey(2) & 0xFF
             if key == ord('q'):
                 break
-            cv2.waitKey(1)  # Reduced delay for more responsive feedback
+            cv2.waitKey(100)  # Reduced delay for more responsive feedback
 
     print("Finished rotation...")
     print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
