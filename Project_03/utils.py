@@ -41,7 +41,7 @@ def transmtx2twist(g):
         w = np.zeros(3)
         v = np.zeros(3)
     else:
-        w = np.flatten(rvec / th)
+        w = (rvec / th).flatten()
         v = np.dot(np.linalg.inv(np.eye(3) - R), p) / th
 
     print("v shape:", v.shape)
