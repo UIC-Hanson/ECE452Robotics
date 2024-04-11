@@ -12,15 +12,15 @@ px = Picarx()
 #========TO DO========
 # define the initial and the next angle
 # amount of rotation (theta) = next angle - initial angle
-init_angle = 0
-next_angle = 20
+init_angle = -10
+next_angle = 10
 #================================================
 
 
 # define the initial and the desired angle of rotation
 # amount of rotation (theta) = goal angle - initial angle
-init_angle = 0
-desired_th = 20
+init_angle = -10
+desired_th = 10
 
 # The different ArUco dictionaries built into the OpenCV library. 
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
