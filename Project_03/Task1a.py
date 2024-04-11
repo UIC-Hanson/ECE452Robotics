@@ -47,11 +47,13 @@ def detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D):
         for corner in corners:
             markerCorners2D = np.array(corner).reshape(-1, 2)
             success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
-            if success:
-                rvecs.append(rvec)
-                tvecs.append(tvec)
-                cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
-                cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, MARKER_LENGTH * 1.5, 2)
+            rvecs.append(rvec)
+            tvecs.append(tvec)
+            
+        cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
+
+        # Draw frame axes for each detected marker
+        cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, MARKER_LENGTH * 1.5, 2)
     return rvecs, tvecs
 
 def main():
@@ -59,14 +61,16 @@ def main():
     calib_data = load_calibration_data(CALIB_DATA_FILE)
     mtx = np.asarray(calib_data["camera_matrix"])
     dist = np.asarray(calib_data["distortion_coefficients"])
+    cap = cv2.VideoCapture(cv2.CAP_V4L)
+    
+    # Define 3D coordinates for ArUco marker corners
     markerCorners3D = np.array([
         [-MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0], 
         [MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0],
         [MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0],
         [-MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0]
     ])
-
-    cap = cv2.VideoCapture(cv2.CAP_V4L)
+    
     move_camera_to_angle(INIT_ANGLE)
     time.sleep(3)
 
@@ -81,6 +85,8 @@ def main():
 
         rvecs, tvecs = detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D)
 
+        cv2.imshow("aruco", frame)
+        
         # Key event handling
         key = cv2.waitKey(2) & 0xFF
         if key == ord('q'):
