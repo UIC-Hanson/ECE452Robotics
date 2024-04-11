@@ -109,16 +109,6 @@ while cap.isOpened():
             next_rvec = rvec
             next_tvec = tvec
             print("Current data saved, press q to quit and start the calculation...")
-         
-finally:
-    # Reset servo and camera angles, stop motors
-    px.set_cam_tilt_angle(0)
-    px.set_cam_pan_angle(0)  
-    px.set_dir_servo_angle(0)  
-    px.stop()
-    sleep(.2)
-    print("Robot stopped.")
-
 
 # Turn off the camera
 cap.release()
@@ -131,7 +121,7 @@ if init_rvec.all() and next_rvec.all():
     gth = utils.cvdata2transmtx(next_rvec,next_tvec)[0] 
     # ======== TO DO ========
     #find exp^(hat(xi)*th) using g(0) and g(th)
-    exp_mtx = gth * numpy.linalg.inv(g0)
+    exp_mtx = gth * np.linalg.inv(g0)
     #================================================
     # The twist coordinate and screw motion of the servo
     v,w,th = utils.transmtx2twist(exp_mtx)
@@ -139,3 +129,12 @@ if init_rvec.all() and next_rvec.all():
     print("Estimated rotation angle: {} degrees".format(math.degrees(th)))
     print("Twist Coordinates:\n {}".format(np.vstack((v,w))*th))
     print("Screw motion:\n q:{},\n h:{},\n u:{},\n M:{}".format(q,h,u,M))
+ 
+finally:
+    # Reset servo and camera angles, stop motors
+    px.set_cam_tilt_angle(0)
+    px.set_cam_pan_angle(0)  
+    px.set_dir_servo_angle(0)  
+    px.stop()
+    sleep(.2)
+    print("Robot stopped.")
