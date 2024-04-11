@@ -97,9 +97,13 @@ def main():
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
 
-            
             if len(corners) != 0:
+                # Direct integration of detect_and_draw_markers()
                 markerCorners2D = np.array(corners[0]).reshape(-1, 2)
+                success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
+                cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
+                cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, MARKER_LENGTH * 1.5, 2)
+
                 if g0 is None:
                     g0 = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
                     print("Initial data saved...")
@@ -112,6 +116,7 @@ def main():
                     if error <= 10:
                         actual_rot_angle = current_angle - INIT_ANGLE
                         break
+
         cv2.imshow('aruco', frame)
         
         # Key event handling
