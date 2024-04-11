@@ -1,5 +1,11 @@
 import cv2
 import os
+from picarx import Picarx
+px = Picarx()
+
+px.set_cam_tilt_angle(0)
+px.set_cam_pan_angle(0)  
+px.set_dir_servo_angle(0)
 
 count = 0
 
