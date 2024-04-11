@@ -110,8 +110,8 @@ for current_angle in range(init_angle,181,2):
                 
                 # if the estimated rotation angle is closed to the desired rotation angle
                 # the program will stop and find the error
+                print(f"error: {np.square(desired_th-math.degrees(th))}")
                 if np.square(desired_th-math.degrees(th)) <= 10:
-                    print(f"error: {np.square(desired_th-math.degrees(th))}")
                     actual_rot_angle = current_angle-init_angle
                     break
     cv2.imshow('aruco',frame)
