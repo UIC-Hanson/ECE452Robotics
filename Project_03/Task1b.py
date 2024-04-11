@@ -80,6 +80,9 @@ for current_angle in range(init_angle,181,2):
     if ret:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+
+        rvecs, tvecs = [], []  # Initialize rotation and translation vectors for all detected markers
+        
         if len(corners)!=0: # if aruco marker detected
             for corner in corners:
                 markerCorners2D = np.array(corner).reshape(-1, 2)
