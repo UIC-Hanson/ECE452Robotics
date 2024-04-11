@@ -115,8 +115,8 @@ def main():
             key = cv2.waitKey(2) & 0xFF
 
             cv2.waitKey(100)  # Reduced delay for more responsive feedback
-            cv2.waitKey(300)  # Reduced delay for more responsive feedback
 
+    move_camera_to_angle(theta)
     print("Finished rotation...")
     print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
     print(f"Actual rotation angle: {actual_rot_angle} degrees")
