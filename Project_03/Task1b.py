@@ -7,17 +7,13 @@ import utils
 import math
 
 #========TO DO: DECLARE THE SERVO ========
-
-
-
-#==========================================
-
+px = Picarx()
 
 #========TO DO========
 # define the initial and the next angle
 # amount of rotation (theta) = next angle - initial angle
-init_angle = #========SET A VALUE========
-next_angle = #========SET A VALUE========
+init_angle = 0
+next_angle = 20
 #================================================
 
 
@@ -44,7 +40,12 @@ cap = cv2.VideoCapture(cv2.CAP_V4L)
 
 #======== TO DO ========
 # move the camera to the initial angle  
-
+try:
+    px.set_cam_pan_angle(init_angle)
+    time.sleep(0.01)
+except Exception as e:
+    print("Error setting initial servo angle:", e)
+ 
 time.sleep(3)
 #================================================
 
@@ -57,7 +58,11 @@ print("Start scanning the marker, you may quit the program by pressing q ...")
 for current_angle in range(init_angle,181,2):
     #======== TO DO ========
     # move the camera to current_angle
-    
+    try:
+        px.set_cam_pan_angle(next_angle)
+        time.sleep(0.01)
+    except Exception as e:
+        print("Error setting next servo angle:", e)
     
     #================================================
     
@@ -80,7 +85,7 @@ for current_angle in range(init_angle,181,2):
                 
                 #======== TO DO ========
                 #find exp^(hat(xi)*th) using g(0) and g(th)
-                exp_mtx = 
+                exp_mtx = gth * np.linalg.inv(g0)
                 #================================================
                 
                 
