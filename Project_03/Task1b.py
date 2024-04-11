@@ -25,6 +25,7 @@ desired_th = 25
 # The different ArUco dictionaries built into the OpenCV library. 
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
 aruco_params = cv2.aruco.DetectorParameters()
+detector = cv2.aruco.ArucoDetector(aruco_dict, aruco_params)
 
 # Side length of the ArUco marker in meters 
 marker_length = 0.1
@@ -37,6 +38,14 @@ mtx = np.asarray(calib_data["camera_matrix"])
 dist = np.asarray(calib_data["distortion_coefficients"])
 
 cap = cv2.VideoCapture(cv2.CAP_V4L)
+
+# Define 3D coordinates for ArUco marker corners
+markerCorners3D = np.array([
+    [-marker_length / 2, marker_length / 2, 0],  # top left
+    [marker_length / 2, marker_length / 2, 0],   # top right
+    [marker_length / 2, -marker_length / 2, 0],  # bottom right
+    [-marker_length / 2, -marker_length / 2, 0]  # bottom left
+])
 
 #======== TO DO ========
 # move the camera to the initial angle  
@@ -59,7 +68,7 @@ for current_angle in range(init_angle,181,2):
     #======== TO DO ========
     # move the camera to current_angle
     try:
-        px.set_cam_pan_angle(next_angle)
+        px.set_cam_pan_angle(desired_th)
         time.sleep(0.01)
     except Exception as e:
         print("Error setting next servo angle:", e)
@@ -70,7 +79,7 @@ for current_angle in range(init_angle,181,2):
     ret, frame = cap.read()
     if ret:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
+        corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
         if len(corners)!=0: # if aruco marker detected
             rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
             cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
