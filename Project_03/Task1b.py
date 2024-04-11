@@ -100,20 +100,21 @@ def main():
                 if len(rvecs) > 0 and len(tvecs) > 0:
                     if g0 is None:
                         # Initial setup with the first detected marker's pose
-                        g0 = calculate_transformation_matrix(markerCorners3D, corners[0].reshape(-1, 2), mtx, dist)
+                        g0 = utils.cvdata2transmtx(rvecs[0], tvecs[0])[0]  # Adjusted to match the method used in the second snippet
                         print("Initial data saved...")
                     else:
                         # Calculating the transformation matrix for the current detection
-                        gth = calculate_transformation_matrix(markerCorners3D, corners[0].reshape(-1, 2), mtx, dist)
-                        exp_mtx = gth @ np.linalg.inv(g0)
-                        _, _, theta = utils.transmtx2twist(exp_mtx)
-                        estimated_rot_angle = math.degrees(theta)
-                        error = abs(DESIRED_THETA - estimated_rot_angle)
-                        print(f"Estimated rotation angle: {estimated_rot_angle} degrees, error: {error}")
-                        if error <= 10:
-                            actual_rot_angle = current_angle - INIT_ANGLE
-                            break
-                
+                        for rvec, tvec in zip(rvecs, tvecs):  # Process each detected marker
+                            gth = utils.cvdata2transmtx(rvec, tvec)[0]  # This line is adjusted
+                            exp_mtx = gth @ np.linalg.inv(g0)
+                            _, _, theta = utils.transmtx2twist(exp_mtx)
+                            estimated_rot_angle = math.degrees(theta)
+                            error = np.square(DESIRED_THETA - estimated_rot_angle)  # Adjusted to calculate squared error
+                            print(f"Error: {error}")
+                            if error <= 10:  # Assuming the threshold is the same, though the meaning of '10' has changed
+                                actual_rot_angle = current_angle - INIT_ANGLE
+                                break
+
                 cv2.imshow('aruco', frame)
                 
                 key = cv2.waitKey(1)
