@@ -84,7 +84,7 @@ def main():
     g0 = None
     actual_rot_angle = 0
     
-    print("Start scanning the marker, you may quit the program by pressing q ...")
+    print("Start scanning the marker")
     for current_angle in range(INIT_ANGLE, 181, 10):
         move_camera_to_angle(current_angle)
         ret, frame = cap.read()
@@ -102,17 +102,17 @@ def main():
                         gth = utils.cvdata2transmtx(rvec, tvec)[0]
                         exp_mtx = gth @ np.linalg.inv(g0)
                         _, _, theta = utils.transmtx2twist(exp_mtx)
-                        error = np.square(DESIRED_THETA - math.degrees(theta))
+                        estimated_rot_angle = math.degrees(theta)
+                        error = (DESIRED_THETA - estimated_rot_angle) ** 2
                         print(f"error: {error}")
-                        if error <= 10:
+                        if error <= 100:
                             actual_rot_angle = current_angle - INIT_ANGLE
                             break
             cv2.imshow('aruco', frame)
             
             # Key event handling
             key = cv2.waitKey(2) & 0xFF
-            if key == ord('q'):
-                break
+
             cv2.waitKey(100)  # Reduced delay for more responsive feedback
             cv2.waitKey(300)  # Reduced delay for more responsive feedback
 
