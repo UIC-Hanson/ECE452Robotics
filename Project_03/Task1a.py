@@ -122,7 +122,7 @@ if init_rvec.all() and next_rvec.all():
     gth = utils.cvdata2transmtx(next_rvec,next_tvec)[0] 
     # ======== TO DO ========
     #find exp^(hat(xi)*th) using g(0) and g(th)
-    #exp_mtx = 
+    exp_mtx = gth * numpy.linalg.inv(g0)
     #================================================
     # The twist coordinate and screw motion of the servo
     v,w,th = utils.transmtx2twist(exp_mtx)
