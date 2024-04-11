@@ -19,8 +19,8 @@ next_angle = 20
 
 # define the initial and the desired angle of rotation
 # amount of rotation (theta) = goal angle - initial angle
-init_angle = 55
-desired_th = 25
+init_angle = 0
+desired_th = 20
 
 # The different ArUco dictionaries built into the OpenCV library. 
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
@@ -111,6 +111,7 @@ for current_angle in range(init_angle,181,2):
                 # if the estimated rotation angle is closed to the desired rotation angle
                 # the program will stop and find the error
                 if np.square(desired_th-math.degrees(th)) <= 10:
+                    print(f"error: {np.square(desired_th-math.degrees(th))}")
                     actual_rot_angle = current_angle-init_angle
                     break
     cv2.imshow('aruco',frame)
