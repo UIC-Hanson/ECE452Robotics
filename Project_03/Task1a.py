@@ -8,7 +8,7 @@ import math
 import cv2.aruco as aruco
 
 # Constants
-INIT_ANGLE = 0
+INIT_ANGLE = -90
 NEXT_ANGLE = 20
 MARKER_LENGTH = 0.1
 CALIB_DATA_FILE = 'calib_data.yaml'
