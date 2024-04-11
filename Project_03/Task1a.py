@@ -109,6 +109,7 @@ while cap.isOpened():
             next_rvec = rvec
             next_tvec = tvec
             print("Current data saved, press q to quit and start the calculation...")
+         
     finally:
         # Reset servo and camera angles, stop motors
         px.set_cam_tilt_angle(0)
