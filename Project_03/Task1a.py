@@ -73,7 +73,7 @@ def main():
     init_rvec, init_tvec = None, None
     print("Press 's' to save the initial data or 'q' to quit...")
 
-   while cap.isOpened():
+    while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             print("Failed to read from camera.")
