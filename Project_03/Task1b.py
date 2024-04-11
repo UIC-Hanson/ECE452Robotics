@@ -67,18 +67,27 @@ def calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
     return utils.cvdata2transmtx(rvec, tvec)[0]
 
 def main():
+    detector = setup_aruco_detector()
     calib_data = load_calibration_data(CALIB_DATA_FILE)
     mtx = np.asarray(calib_data["camera_matrix"])
     dist = np.asarray(calib_data["distortion_coefficients"])
-    detector = setup_aruco_detector()
     cap = cv2.VideoCapture(cv2.CAP_V4L)
-    markerCorners3D = np.array([[-MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0], [MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0],
-                                [MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0], [-MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0]])
+
+    # Define 3D coordinates for ArUco marker corners
+    markerCorners3D = np.array([
+        [-MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0],
+        [MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0],
+        [MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0],
+        [-MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0]])
 
     move_camera_to_angle(INIT_ANGLE)
     time.sleep(1)
+
+    # Initialize g(0)
     g0 = None
     actual_rot_angle = 0
+
+    
     print("Start scanning the marker, you may quit the program by pressing q ...")
 
     for current_angle in range(INIT_ANGLE, 181, 2):
@@ -87,6 +96,8 @@ def main():
         if ret:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+
+            
             if len(corners) != 0:
                 markerCorners2D = np.array(corners[0]).reshape(-1, 2)
                 if g0 is None:
@@ -102,6 +113,7 @@ def main():
                         actual_rot_angle = current_angle - INIT_ANGLE
                         break
         cv2.imshow('aruco', frame)
+        
         # Key event handling
         key = cv2.waitKey(2) & 0xFF
         if key == ord('q'):
