@@ -117,8 +117,6 @@ class MarkerAlignmentApp:
             [-self.marker_length / 2, -self.marker_length / 2, 0]])
 
         for current_angle in range(self.init_angle, 181, 2):
-
-        for current_angle in range(self.init_angle, 181, 2):
             self.robot.move_camera_to_angle(current_angle)
             ret, frame = self.cap.read()
             if ret:
