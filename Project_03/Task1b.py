@@ -1,126 +1,89 @@
-from picarx import Picarx
 import time
 import cv2
 import numpy as np
 import yaml
 import utils
 import math
+from picarx import Picarx
 
-#========TO DO: DECLARE THE SERVO ========
+# Constants
+INIT_ANGLE = -10
+DESIRED_THETA = 10
+MARKER_LENGTH = 0.1
+CALIB_DATA_FILE = 'calib_data.yaml'
+
+# Initialize Picarx
 px = Picarx()
 
-#========TO DO========
-# define the initial and the next angle
-# amount of rotation (theta) = next angle - initial angle
-init_angle = -10
-next_angle = 10
-#================================================
+def load_calibration_data(file_path):
+    """Load camera calibration data from YAML file."""
+    with open(file_path) as file:
+        return yaml.load(file, Loader=yaml.FullLoader)
 
+def setup_aruco_detector():
+    """Setup the ArUco marker detector."""
+    aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
+    aruco_params = cv2.aruco.DetectorParameters()
+    return cv2.aruco.ArucoDetector(aruco_dict, aruco_params)
 
-# define the initial and the desired angle of rotation
-# amount of rotation (theta) = goal angle - initial angle
-init_angle = -10
-desired_th = 10
-
-# The different ArUco dictionaries built into the OpenCV library. 
-aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
-aruco_params = cv2.aruco.DetectorParameters()
-detector = cv2.aruco.ArucoDetector(aruco_dict, aruco_params)
-
-# Side length of the ArUco marker in meters 
-marker_length = 0.1
- 
-# Calibration parameters yaml file
-with open(r'calib_data.yaml') as file:
-    calib_data = yaml.load(file, Loader=yaml.FullLoader)
-
-mtx = np.asarray(calib_data["camera_matrix"])
-dist = np.asarray(calib_data["distortion_coefficients"])
-
-cap = cv2.VideoCapture(cv2.CAP_V4L)
-
-# Define 3D coordinates for ArUco marker corners
-markerCorners3D = np.array([
-    [-marker_length / 2, marker_length / 2, 0],  # top left
-    [marker_length / 2, marker_length / 2, 0],   # top right
-    [marker_length / 2, -marker_length / 2, 0],  # bottom right
-    [-marker_length / 2, -marker_length / 2, 0]  # bottom left
-])
-
-#======== TO DO ========
-# move the camera to the initial angle  
-try:
-    px.set_cam_pan_angle(init_angle)
-    time.sleep(0.01)
-except Exception as e:
-    print("Error setting initial servo angle:", e)
- 
-time.sleep(3)
-#================================================
-
-init_rvec = None
-init_tvec = None
-g0 = None
-
-print("Start scanning the marker, you may quit the program by pressing q ...")
-
-for current_angle in range(init_angle,181,2):
-    #======== TO DO ========
-    # move the camera to current_angle
+def move_camera_to_angle(angle):
+    """Move the camera to the specified angle."""
     try:
-        px.set_cam_pan_angle(current_angle)
+        px.set_cam_pan_angle(angle)
         time.sleep(0.01)
     except Exception as e:
-        print("Error setting next servo angle:", e)
-    
-    #================================================
-    
-    
-    ret, frame = cap.read()
-    if ret:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+        print(f"Error setting camera angle to {angle}: {e}")
 
-        rvecs, tvecs = [], []  # Initialize rotation and translation vectors for all detected markers
-        
-        if len(corners)!=0: # if aruco marker detected
-            for corner in corners:
-                markerCorners2D = np.array(corner).reshape(-1, 2)
-                success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
-                
-                # Append the rotation and translation vectors for each detected marker
-                rvecs.append(rvec)
-                tvecs.append(tvec)
-            if g0 is None:
-                init_rvec = rvec
-                init_tvec = tvec
-                g0 = utils.cvdata2transmtx(init_rvec,init_tvec)[0] # g(0)
-                print("Initial data saved...")
-            else:
-                gth = utils.cvdata2transmtx(rvec,tvec)[0] # g(th)
-                
-                
-                #======== TO DO ========
-                #find exp^(hat(xi)*th) using g(0) and g(th)
-                exp_mtx = gth * np.linalg.inv(g0)
-                #================================================
-                
-                
-                v,w,th = utils.transmtx2twist(exp_mtx)
-                
-                # if the estimated rotation angle is closed to the desired rotation angle
-                # the program will stop and find the error
-                print(f"error: {np.square(desired_th-math.degrees(th))}")
-                if np.square(desired_th-math.degrees(th)) <= 10:
-                    actual_rot_angle = current_angle-init_angle
-                    break
-    cv2.imshow('aruco',frame)
-    cv2.waitKey(3000) # program halts for 3 seconds
-                
-print("Finished rotation...")
-print("Estimated rotation angle: {} degrees".format(math.degrees(th)))
-print("Actual rotation angle: {} degrees".format(actual_rot_angle))
+def calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist):
+    """Calculate the transformation matrix."""
+    success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
+    return utils.cvdata2transmtx(rvec, tvec)[0]
 
-# Turn off the camera
-cap.release()
-cv2.destroyAllWindows()
+def main():
+    calib_data = load_calibration_data(CALIB_DATA_FILE)
+    mtx = np.asarray(calib_data["camera_matrix"])
+    dist = np.asarray(calib_data["distortion_coefficients"])
+    detector = setup_aruco_detector()
+    cap = cv2.VideoCapture(cv2.CAP_V4L)
+    markerCorners3D = np.array([[-MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0], [MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0],
+                                [MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0], [-MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0]])
+
+    move_camera_to_angle(INIT_ANGLE)
+    time.sleep(3)
+    g0 = None
+    actual_rot_angle = 0
+    print("Start scanning the marker, you may quit the program by pressing q ...")
+
+    for current_angle in range(INIT_ANGLE, 181, 2):
+        move_camera_to_angle(current_angle)
+        ret, frame = cap.read()
+        if ret:
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+            if len(corners) != 0:
+                markerCorners2D = np.array(corners[0]).reshape(-1, 2)
+                if g0 is None:
+                    g0 = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
+                    print("Initial data saved...")
+                else:
+                    gth = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
+                    exp_mtx = gth * np.linalg.inv(g0)
+                    _, _, theta = utils.transmtx2twist(exp_mtx)
+                    error = np.square(DESIRED_THETA - math.degrees(theta))
+                    print(f"error: {error}")
+                    if error <= 10:
+                        actual_rot_angle = current_angle - INIT_ANGLE
+                        break
+        cv2.imshow('aruco', frame)
+        cv2.waitKey(3000)
+
+    print("Finished rotation...")
+    print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
+    print(f"Actual rotation angle: {actual_rot_angle} degrees")
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
+
