@@ -58,20 +58,27 @@ def main():
     calib_data = load_calibration_data(CALIB_DATA_FILE)
     mtx = np.asarray(calib_data["camera_matrix"])
     dist = np.asarray(calib_data["distortion_coefficients"])
+    markerCorners3D = np.array([
+        [-MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0], 
+        [MARKER_LENGTH / 2, MARKER_LENGTH / 2, 0],
+        [MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0],
+        [-MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0]
+    ])
+
     cap = cv2.VideoCapture(cv2.CAP_V4L)
     move_camera_to_angle(INIT_ANGLE)
     time.sleep(3)
+
+    init_rvec, init_tvec = None, None
     print("Press 's' to save the initial data or 'q' to quit...")
-    
-    init_rvec, init_tvec, next_rvec = None, None, None
 
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
+            print("Failed to read from camera.")
             continue
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        rvecs, tvecs = detect_and_draw_markers(gray, detector, mtx, dist)
+        rvecs, tvecs = detect_and_draw_markers(frame, detector, mtx, dist)
 
         # Key event handling
         key = cv2.waitKey(2) & 0xFF
