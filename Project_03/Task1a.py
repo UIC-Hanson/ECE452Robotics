@@ -100,7 +100,7 @@ while cap.isOpened():
                 px.set_cam_pan_angle(next_angle)
                 time.sleep(0.01)
             except Exception as e:
-                print("Error setting initial servo angle:", e)
+                print("Error setting next servo angle:", e)
             
             #================================================
             time.sleep(3)
