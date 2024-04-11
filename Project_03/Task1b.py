@@ -99,12 +99,15 @@ def main():
             ret, frame = cap.read()
             if ret:
                 rvecs, tvecs = detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D)
-                if len(rvecs) > 0 and len(tvecs) > 0:
+                if len(rvecs) > 0 and len(tvecs) > 0:  # Checks if at least one marker is detected
+                    # You should use corners here instead. 
+                    # Assuming corners are being returned by detect_and_draw_markers, but it needs to be adjusted to do so.
+                    corners = corners[0]  # Use the first detected marker's corners
                     if g0 is None:
-                        g0 = calculate_transformation_matrix(markerCorners3D, np.array(rvecs[0]).reshape(-1,2), mtx, dist)
+                        g0 = calculate_transformation_matrix(markerCorners3D, corners.reshape(-1, 2), mtx, dist)
                         print("Initial data saved...")
                     else:
-                        gth = calculate_transformation_matrix(markerCorners3D, np.array(rvecs[0]).reshape(-1,2), mtx, dist)
+                        gth = calculate_transformation_matrix(markerCorners3D, corners.reshape(-1, 2), mtx, dist)
                         exp_mtx = gth @ np.linalg.inv(g0)
                         _, _, theta = utils.transmtx2twist(exp_mtx)
                         estimated_rot_angle = math.degrees(theta)
