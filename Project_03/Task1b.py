@@ -15,6 +15,12 @@ CALIB_DATA_FILE = 'calib_data.yaml'
 # Initialize Picarx
 px = Picarx()
 
+def initialize_robot():
+    # Initialize settings
+    px.set_dir_servo_angle(0)
+    px.set_cam_pan_angle(0)
+    px.set_cam_tilt_angle(0)
+
 def load_calibration_data(file_path):
     """Load camera calibration data from YAML file."""
     with open(file_path) as file:
@@ -85,5 +91,6 @@ def main():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+    initialize_robot()
     main()
 
