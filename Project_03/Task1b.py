@@ -68,7 +68,7 @@ for current_angle in range(init_angle,181,2):
     #======== TO DO ========
     # move the camera to current_angle
     try:
-        px.set_cam_pan_angle(desired_th)
+        px.set_cam_pan_angle(current_angle)
         time.sleep(0.01)
     except Exception as e:
         print("Error setting next servo angle:", e)
