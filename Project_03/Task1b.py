@@ -111,7 +111,10 @@ def main():
                         error = np.square(DESIRED_THETA - math.degrees(theta))
                         print(f"error: {error}")
                         if error <= 10:
+                            
                             actual_rot_angle = current_angle - INIT_ANGLE
+                            print(f"current_angle: {current_angle}")
+                            print(f"current_angle: {INIT_ANGLE}")
                             break
 
             cv2.imshow('aruco', frame)
