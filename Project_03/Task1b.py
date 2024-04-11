@@ -83,6 +83,10 @@ def main():
                         actual_rot_angle = current_angle - INIT_ANGLE
                         break
         cv2.imshow('aruco', frame)
+        # Key event handling
+        key = cv2.waitKey(2) & 0xFF
+        if key == ord('q'):
+            break
         cv2.waitKey(3000)
 
     print("Finished rotation...")
