@@ -86,51 +86,47 @@ def main():
     # Initialize g(0)
     g0 = None
     actual_rot_angle = 0
+    init_data_saved = False  # To keep track if initial data is saved
 
-    
-    print("Start scanning the marker, you may quit the program by pressing q ...")
+    print("Start scanning the marker, you may quit the program by pressing 'q' ...")
 
-    for current_angle in range(INIT_ANGLE, 181, 2):
-        move_camera_to_angle(current_angle)
+    while cap.isOpened():
         ret, frame = cap.read()
-        if ret:
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            corners, ids, rejectedImgPoints = detector.detectMarkers(gray)
+        if not ret:
+            print("Failed to read from camera.")
+            continue
 
-            if len(corners) != 0:
-                # Direct integration of detect_and_draw_markers()
-                markerCorners2D = np.array(corners[0]).reshape(-1, 2)
-                success, rvec, tvec = cv2.solvePnP(markerCorners3D, markerCorners2D, mtx, dist)
-                cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
-                cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, MARKER_LENGTH * 1.5, 2)
-
-                if g0 is None:
-                    g0 = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
-                    print("Initial data saved...")
-                else:
-                    gth = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
-                    exp_mtx = gth @ np.linalg.inv(g0)
-                    _, _, theta = utils.transmtx2twist(exp_mtx)
-                    error = np.square(DESIRED_THETA - math.degrees(theta))
-                    print(f"error: {error}")
-                    if error <= 10:
-                        actual_rot_angle = current_angle - INIT_ANGLE
-                        break
-
+        rvecs, tvecs = detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D)
         cv2.imshow('aruco', frame)
-        
+
         # Key event handling
         key = cv2.waitKey(2) & 0xFF
         if key == ord('q'):
             break
-        cv2.waitKey(3000)
-
-    print("Finished rotation...")
-    print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
-    print(f"Actual rotation angle: {actual_rot_angle} degrees")
+        elif key == ord('s') and rvecs:
+            # Assuming the saving of initial data means capturing the first transformation matrix
+            if not init_data_saved:
+                markerCorners2D = np.array(corners[0]).reshape(-1, 2)
+                g0 = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
+                print("Initial data saved...")
+                init_data_saved = True
+        elif key == ord('m'):
+            # Logic to change the camera angle here, if necessary
+            move_camera_to_angle(NEXT_ANGLE)
+            print("Camera position changed, press 'r' to save current data or 'q' to quit...")
+        elif key == ord('r') and rvecs:
+            # Assuming 'saving current data' means calculating and displaying the error or updating the transformation matrix
+            markerCorners2D = np.array(corners[0]).reshape(-1, 2)
+            gth = calculate_transformation_matrix(markerCorners3D, markerCorners2D, mtx, dist)
+            exp_mtx = gth @ np.linalg.inv(g0)
+            _, _, theta = utils.transmtx2twist(exp_mtx)
+            error = np.square(DESIRED_THETA - math.degrees(theta))
+            print(f"error: {error}")
+            # You might want to update g0 or perform another action here based on the new data
 
     cap.release()
     cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
     initialize_robot()
