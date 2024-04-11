@@ -80,54 +80,59 @@ def main():
         [MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0],
         [-MARKER_LENGTH / 2, -MARKER_LENGTH / 2, 0]])
 
-    move_camera_to_angle(INIT_ANGLE)
-    time.sleep(1)
-
-    # Initialize g(0)
-    g0 = None
-    actual_rot_angle = 0
-
+    runs = 5  # Number of runs for the experiment
+    errors = []  # List to record errors for each run
     
-    print("Start scanning the marker, you may quit the program by pressing q ...")
+    for run in range(runs):
+        print(f"Run {run + 1}/{runs}")
+        initialize_robot()  # Initialize the robot for each run
+        
+        # Reset or reinitialize variables as needed
+        g0 = None
+        actual_rot_angle = 0
+        estimated_rot_angle = 0  # Variable to hold the estimated rotation angle based on ArUco detection
 
-    for current_angle in range(INIT_ANGLE, 181, 10):
-        move_camera_to_angle(current_angle)
-        ret, frame = cap.read()
-        if ret:
-            # Direct call to detect_and_draw_markers
-            rvecs, tvecs = detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D)
-
-            if len(rvecs) > 0 and len(tvecs) > 0:  # Ensuring at least one marker was detected
-                if g0 is None:
-                    # Initial setup with the first detected marker's pose
-                    g0 = utils.cvdata2transmtx(rvecs[0], tvecs[0])[0]
-                    print("Initial data saved...")
-                else:
-                    # Subsequent processing with new marker poses
-                    for rvec, tvec in zip(rvecs, tvecs):
-                        gth = utils.cvdata2transmtx(rvec, tvec)[0]
+        for current_angle in range(INIT_ANGLE, 181, 10):
+            move_camera_to_angle(current_angle)
+            print(f"Current camera angle: {current_angle}")  # Print current angle for verification
+            
+            ret, frame = cap.read()
+            if ret:
+                rvecs, tvecs = detect_and_draw_markers(frame, detector, mtx, dist, markerCorners3D)
+                if len(rvecs) > 0 and len(tvecs) > 0:
+                    if g0 is None:
+                        g0 = calculate_transformation_matrix(markerCorners3D, np.array(rvecs[0]).reshape(-1,2), mtx, dist)
+                        print("Initial data saved...")
+                    else:
+                        gth = calculate_transformation_matrix(markerCorners3D, np.array(rvecs[0]).reshape(-1,2), mtx, dist)
                         exp_mtx = gth @ np.linalg.inv(g0)
                         _, _, theta = utils.transmtx2twist(exp_mtx)
-                        error = np.square(DESIRED_THETA - math.degrees(theta))
-                        print(f"error: {error}")
+                        estimated_rot_angle = math.degrees(theta)
+                        error = abs(DESIRED_THETA - estimated_rot_angle)
+                        print(f"Estimated rotation angle: {estimated_rot_angle} degrees, error: {error}")
                         if error <= 10:
-                            
                             actual_rot_angle = current_angle - INIT_ANGLE
-                            print(f"current_angle: {current_angle}")
-                            print(f"INIT_ANGLE: {INIT_ANGLE}")
+                            print(f"Actual rotation angle: {actual_rot_angle} degrees")
                             break
+                
+                cv2.imshow('aruco', frame)
+                
+                key = cv2.waitKey(2) & 0xFF
+                if key == ord('q'):
+                    break
+                cv2.waitKey(300)  # Reduced delay for more responsive feedback
+        
+        error = abs(actual_rot_angle - estimated_rot_angle)
+        errors.append(error)
+        
+        print(f"Run {run + 1} error: {error} degrees")
+        time.sleep(2)  # Short pause between runs, adjust as necessary
 
-            cv2.imshow('aruco', frame)
-            
-            # Key event handling
-            key = cv2.waitKey(2) & 0xFF
-            if key == ord('q'):
-                break
-            cv2.waitKey(300)  # Reduced delay for more responsive feedback
-
-    print("Finished rotation...")
-    print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
-    print(f"Actual rotation angle: {actual_rot_angle} degrees")
+    average_error = np.mean(errors)
+    std_dev_error = np.std(errors)
+    
+    print(f"Average Error: {average_error} degrees")
+    print(f"Standard Deviation of Error: {std_dev_error} degrees")
 
     cap.release()
     cv2.destroyAllWindows()
