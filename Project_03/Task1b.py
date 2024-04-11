@@ -102,10 +102,11 @@ def main():
                         gth = utils.cvdata2transmtx(rvec, tvec)[0]
                         exp_mtx = gth @ np.linalg.inv(g0)
                         _, _, theta = utils.transmtx2twist(exp_mtx)
+                        print(f"theta: {math.degrees(theta)} degrees")
                         estimated_rot_angle = math.degrees(theta)
                         error = (DESIRED_THETA - estimated_rot_angle) ** 2
                         print(f"error: {error}")
-                        if error <= 100:
+                        if error <= 10:
                             actual_rot_angle = current_angle - INIT_ANGLE
                             break
             cv2.imshow('aruco', frame)
