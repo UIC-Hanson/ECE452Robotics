@@ -48,8 +48,8 @@ def main():
     cap = initialize_camera()
     
     # Define initial conditions
-    init_angle = -10
-    desired_th_deg = 10
+    init_angle = -20
+    desired_th_deg = 20
     g0 = None
     first_detected_angle = None
     last_detected_angle = None
@@ -59,7 +59,7 @@ def main():
     set_camera_angle(init_angle)
     print("Start scanning the marker, you may quit the program by pressing 'q'...")
 
-    for current_angle in range(init_angle, desired_th_deg, 2):
+    for current_angle in range(init_angle, desired_th_deg, 1):
         set_camera_angle(current_angle)
         ret, frame = cap.read()
         if not ret:
