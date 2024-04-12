@@ -93,16 +93,16 @@ def main():
         if cv2.waitKey(100) & 0xFF == ord('q'):  # Wait for 'q' key to stop
             break
     
-        print("Finished rotation...")
-    if theta is not None:  # Check if theta was set
-        print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
-    else:
-        print("Estimated rotation angle not determined.")
-    
-    if actual_rot_angle is not None:  # Check if actual_rot_angle was set
-        print(f"Actual rotation angle: {actual_rot_angle} degrees")
-    else:
-        print("Actual rotation angle not determined.")
+    print("Finished rotation...")
+if theta is not None:  # Check if theta was set
+    print(f"Estimated rotation angle: {math.degrees(theta)} degrees")
+else:
+    print("Estimated rotation angle not determined.")
+
+if actual_rot_angle is not None:  # Check if actual_rot_angle was set
+    print(f"Actual rotation angle: {actual_rot_angle} degrees")
+else:
+    print("Actual rotation angle not determined.")
 
     cap.release()
     cv2.destroyAllWindows()
