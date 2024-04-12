@@ -82,7 +82,7 @@ def main():
             th = get_rotation_angle(exp_mtx)
             estimated_th_deg = math.degrees(th)
             
-            if abs(desired_th_deg - estimated_th_deg) <= 10:
+            if abs(desired_th_deg - estimated_th_deg) <= 5:
                 theta = th
                 print(f"Desired angle reached: {estimated_th_deg} degrees")
                 break
