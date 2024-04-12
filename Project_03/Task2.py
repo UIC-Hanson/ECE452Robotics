@@ -52,6 +52,7 @@ lw_flag = 0 # Indicates if the robot should move along the width or length of
 
 goal_z = 0 # We assume that the origin is the initial position of the robot
 goal_x = 0
+<<<<<<< HEAD
 try:
     while cap.isOpened():
         ret, frame = cap.read()
@@ -85,6 +86,39 @@ try:
                         px.set_dir_servo_angle(0)
                         state_flag = 0
                 else: # This should never happen
+=======
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if ret:
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
+        if len(corners)!=0: # if aruco marker detected
+            rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
+            g,_,p = utils.cvdata2transmtx(rvec,tvec)
+            _,_,th = utils.transmtx2twist(g)
+            if state_flag == 0: # Determine goal
+                if lw_flag == 0:
+                    goal_z += width
+                else:
+                    goal_z += height
+                print("Goal point: x:{} z:{}".format(goal_x,goal_z))
+                curr_id = (curr_id + 1) % 4
+                state_flag = 1
+            elif state_flag == 1: # Move towards goal
+                xdiff = p[0]-goal_x
+                zdiff = p[2]-goal_z
+                cur_dist = utils.distance(xdiff,zdiff)
+                if cur_dist > 0.1:
+                    px.forward(10)
+                else:
+                    state_flag = 2
+            elif state_flag == 2: # Rotate
+                if abs(th) < 0.5 and curr_id == ids :
+                    px.set_dir_servo_angle(-35)
+                else:
+                    px.set_dir_servo_angle(0)
+>>>>>>> refs/remotes/origin/main
                     state_flag = 0
             time.sleep(1)
     #         cv2.imshow('aruco',frame)
