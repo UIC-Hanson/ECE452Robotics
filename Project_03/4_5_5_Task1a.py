@@ -41,7 +41,7 @@ def detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist, marker_l
         cv2.aruco.drawDetectedMarkers(frame, corners, ids)
         for rvec, tvec in zip(rvecs, tvecs):
             cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
-    return rvecs, tvecs
+    return rvec, tvec
 
 def main():
     aruco_dict, aruco_params = setup_aruco_detector()
