@@ -57,13 +57,13 @@ def main():
     move_camera_to_angle(INIT_ANGLE)
     time.sleep(3)
     
+    rvec, tvec = [ ],[ ]
     print("Press 's' to save the initial data or 'q' to quit...")
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             print("Failed to read from camera.")
             continue
-        rvec, tvec = [ ],[ ]
         rvec, tvec = detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist, MARKER_LENGTH)
         cv2.imshow("aruco", frame)
 
