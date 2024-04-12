@@ -48,8 +48,8 @@ def main():
     cap = initialize_camera()
     
     # Define initial conditions
-    init_angle = -60
-    desired_th_deg = 60
+    init_angle = -10
+    desired_th_deg = 10
     g0 = None
     first_detected_angle = None
     last_detected_angle = None
