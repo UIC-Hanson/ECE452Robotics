@@ -45,7 +45,7 @@ height = 0.3
 
 state_flag = 0 # flag to change between the two states
 rot_flag = 0 # flag to check if the robot has rotated 90 degrees recently
-count = 0 # flag to check whether it is operating with the current id of the ArUco marker
+curr_id = 0 # flag to check whether it is operating with the current id of the ArUco marker
 
 lw_flag = 0 # Indicates if the robot should move along the width or length of
             # the rectangle. Default (0) is width
@@ -68,6 +68,7 @@ while cap.isOpened():
                 else:
                     goal_z += height
                 print("Goal point: x:{} z:{}".format(goal_x,goal_z))
+                curr_id = (curr_id + 1) % 4
                 state_flag = 1
             elif state_flag == 1: # Move towards goal
                 xdiff = p[0]-goal_x
@@ -78,7 +79,7 @@ while cap.isOpened():
                 else:
                     state_flag = 2
             elif state_flag == 2: # Rotate
-                if abs(th) < 0.5 : # ignore this for now bc idk why this is here
+                if abs(th) < 0.5 and curr_id == ids :
                     px.set_dir_servo_angle(-35)
                 else:
                     px.set_dir_servo_angle(0)
