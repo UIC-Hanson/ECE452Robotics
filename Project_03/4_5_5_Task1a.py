@@ -38,9 +38,8 @@ def move_camera_to_angle(angle):
 def detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist, marker_length):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
-    rvecs, tvecs = [], []
     if len(corners)!=0: # if aruco marker detected
-        rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, MARKER_LENGTH, mtx, dist)
+        rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
         cv2.aruco.drawDetectedMarkers(frame, corners, ids)
         cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
     return rvec, tvec
@@ -57,8 +56,6 @@ def main():
 
     move_camera_to_angle(INIT_ANGLE)
     time.sleep(3)
-
-    init_rvec, init_tvec = None, None
     
     print("Press 's' to save the initial data or 'q' to quit...")
     while cap.isOpened():
@@ -67,14 +64,14 @@ def main():
             print("Failed to read from camera.")
             continue
 
-        rvecs, tvecs = detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist, MARKER_LENGTH)
+        rvec, tvec = detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist, MARKER_LENGTH)
         cv2.imshow("aruco", frame)
 
         key = cv2.waitKey(2) & 0xFF
         if key == ord('q'):
             break
         elif key == ord('s'):
-            init_rvec, init_tvec = rvecs[-1], tvecs[-1]
+            init_rvec, init_tvec = rvec, tvec
             print("Initial data saved, press 'm' to move the camera or 'q' to quit...")
         elif key == ord('m'):
             move_camera_to_angle(NEXT_ANGLE)
