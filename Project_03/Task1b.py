@@ -52,6 +52,8 @@ def main():
     init_angle = -60
     desired_th_deg = 60
     g0 = None
+    first_detected_angle = None
+    last_detected_angle = None
     actual_rot_angle = None  # Variable to store the actual rotated angle
     theta = None # Variable to store the estimated rotation
     
@@ -74,10 +76,11 @@ def main():
             
             if g0 is None:
                 g0 = get_initial_transformation(rvec, tvec)
-                return_to_angle = current_angle  # Save the angle where the marker is first detected
-                print("Initial data saved...")
+                first_detected_angle = current_angle  # Save the angle where the marker is first detected
+                print("First detection at angle:", first_detected_angle)
                 continue
 
+            last_detected_angle = current_angle
             gth = get_initial_transformation(rvec, tvec)
             exp_mtx = calculate_rotation_matrix(g0, gth)
             th = get_rotation_angle(exp_mtx)
@@ -86,19 +89,18 @@ def main():
             # Check if the estimated angle is close to the desired angle
             if abs(desired_th_deg - estimated_th_deg) <= 10:
                 print(f"Desired angle reached: {estimated_th_deg} degrees")
-                actual_rot_angle = current_angle - init_angle
-                theta = th
                 break
         
         cv2.imshow('Frame', frame)
         if cv2.waitKey(100) & 0xFF == ord('q'):  # Wait for 'q' key to stop
             break
     
-    if return_to_angle is not None:
-        set_camera_angle(return_to_angle)
-        print(f"Returned to initial marker position at angle: {return_to_angle}")
+    if first_detected_angle is not None and last_detected_angle is not None:
+        midpoint_angle = (first_detected_angle + last_detected_angle) // 2
+        set_camera_angle(midpoint_angle)
+        print(f"Returned to midpoint angle: {midpoint_angle} degrees")
     else:
-        print("Marker was never detected; cannot return to initial position.")
+        print("Marker was not consistently detected; cannot return to midpoint position.")
 
     cap.release()
     cv2.destroyAllWindows()
