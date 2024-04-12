@@ -87,6 +87,7 @@ def main():
     print("Start scanning the marker")
     for current_angle in range(INIT_ANGLE, 181, 10):
         move_camera_to_angle(current_angle)
+        print(f"Current angle: {current_angle} degrees")
         ret, frame = cap.read()
         if ret:
             # Direct call to detect_and_draw_markers
@@ -114,7 +115,7 @@ def main():
             # Key event handling
             key = cv2.waitKey(2) & 0xFF
 
-            cv2.waitKey(100)  # Reduced delay for more responsive feedback
+            cv2.waitKey(500)  # Reduced delay for more responsive feedback
 
     move_camera_to_angle(theta)
     print("Finished rotation...")
