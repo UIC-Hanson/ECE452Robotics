@@ -38,6 +38,7 @@ def move_camera_to_angle(angle):
 def detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist, marker_length):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
+    rvec, tvec = None, None  # Initialize rvec and tvec to None
     if len(corners)!=0: # if aruco marker detected
         rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
         cv2.aruco.drawDetectedMarkers(frame, corners, ids)
