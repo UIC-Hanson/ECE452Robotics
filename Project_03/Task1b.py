@@ -40,8 +40,8 @@ def get_rotation_angle(exp_mtx):
 def main():
     px = Picarx()
     mtx, dist = load_calibration_data('calib_data.yaml')
-    aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
-    aruco_params = cv2.aruco.DetectorParameters_create()
+    aruco_dict = aruco.Dictionary_get(aruco.DICT_5X5_250)
+    aruco_params = aruco.DetectorParameters_create()
     
     cap = initialize_camera()
     
