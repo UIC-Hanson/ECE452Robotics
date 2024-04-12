@@ -1,31 +1,28 @@
+
 import cv2
 import numpy as np
 import yaml
 import time
+from picarx import Picarx  # This should be available in the PiCar-X package
 
+# Utils module containing necessary transformations and distance calculations
 import utils
 
 class RobotController:
     def __init__(self):
-        self.px = Picarx()  # Assuming Picarx is properly defined and imported elsewhere
-        self.state_flag = 0
-        self.rot_flag = 0
-        self.count = 0
-        self.goal_x = 0
-        self.goal_z = 0
+        self.px = Picarx()
+        self.marker_counter = 0  # To keep track of the markers detected
 
     def move_forward(self, duration, speed=30):
         self.px.forward(speed)
         time.sleep(duration)
         self.px.forward(0)
 
-    def rotate_to_angle(self, start_angle, end_angle, step=1):
-        for angle in range(start_angle, end_angle + step, step):
-            self.px.set_dir_servo_angle(angle)
-            time.sleep(0.01)
-
-    def stop(self):
-        self.px.forward(0)
+    def rotate_90_degrees(self):
+        # Rotate 90 degrees; this is just an example and will likely need calibration
+        self.px.set_dir_servo_angle(90)
+        time.sleep(1)  # Assuming it takes 1 second to rotate; this will need to be tested and calibrated
+        self.px.set_dir_servo_angle(0)  # Reset the steering angle
 
     def detect_aruco_marker(self, frame):
         aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
@@ -35,8 +32,8 @@ class RobotController:
         if len(corners) > 0:
             rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, 0.05, self.mtx, self.dist)
             g, _, p = utils.cvdata2transmtx(rvec, tvec)
-            return corners, ids, rvec, tvec, p
-        return None, None, None, None, None
+            return p
+        return None
 
     def load_calibration(self, file_path='calib_data.yaml'):
         with open(file_path) as file:
@@ -47,35 +44,23 @@ class RobotController:
     def run(self):
         self.load_calibration()
         cap = cv2.VideoCapture(cv2.CAP_V4L)
+        goal_reached = False
 
         try:
-            while cap.isOpened():
+            while cap.isOpened() and self.marker_counter < 4:
                 ret, frame = cap.read()
                 if not ret:
                     continue
 
-                corners, ids, rvec, tvec, p = self.detect_aruco_marker(frame)
-                if corners is not None:
-                    if self.state_flag == 0:
-                        self.goal_x, self.goal_z = p[0], p[2]
-                        self.move_forward(1)
-                        self.state_flag = 1
-                        self.rot_flag = 0
-                        print(f"Goal point: x:{self.goal_x} z:{self.goal_z}")
-                    elif self.state_flag == 1:
-                        xdiff = p[0] - self.goal_x
-                        zdiff = p[2] - self.goal_z
-                        cur_dist = utils.distance(xdiff, zdiff)
-                        if cur_dist > 0.05:  # Arbitrary threshold for distance
-                            self.rotate_to_angle(-90, 0)
-                            self.move_forward(0.5)
-                        elif cur_dist < -0.05:
-                            self.rotate_to_angle(90, 0)
-                            self.move_forward(0.5)
-                        else:
-                            self.move_forward(1)
-                else:
-                    self.stop()
+                p = self.detect_aruco_marker(frame)
+                if p is not None and not goal_reached:
+                    # Assuming goal position is the position of the marker detected
+                    self.move_forward(1)  # Move towards the marker
+                    goal_reached = True
+                elif goal_reached:
+                    self.rotate_90_degrees()
+                    self.marker_counter += 1
+                    goal_reached = False
         finally:
             cap.release()
             cv2.destroyAllWindows()
