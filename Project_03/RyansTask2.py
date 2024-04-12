@@ -1,70 +1,68 @@
-
+from picarx import Picarx
 import cv2
 import numpy as np
 import yaml
-import time
-from picarx import Picarx  # This should be available in the PiCar-X package
-
-# Utils module containing necessary transformations and distance calculations
 import utils
+import time
 
-class RobotController:
-    def __init__(self):
-        self.px = Picarx()
-        self.marker_counter = 0  # To keep track of the markers detected
+def initialize_robot():
+    # Initialize Picarx robot
+    px = Picarx()
+    return px
 
-    def move_forward(self, duration, speed=30):
-        self.px.forward(speed)
-        time.sleep(duration)
-        self.px.forward(0)
+def load_calibration_data(filepath):
+    # Load camera calibration data from a YAML file
+    with open(filepath) as file:
+        calib_data = yaml.load(file, Loader=yaml.FullLoader)
+    mtx = np.asarray(calib_data["camera_matrix"])
+    dist = np.asarray(calib_data["distortion_coefficients"])
+    return mtx, dist
 
-    def rotate_90_degrees(self):
-        # Rotate 90 degrees; this is just an example and will likely need calibration
-        self.px.set_dir_servo_angle(90)
-        time.sleep(1)  # Assuming it takes 1 second to rotate; this will need to be tested and calibrated
-        self.px.set_dir_servo_angle(0)  # Reset the steering angle
+def initialize_camera():
+    # Initialize the camera
+    cap = cv2.VideoCapture(cv2.CAP_V4L)
+    if not cap.isOpened():
+        raise IOError("Cannot open video camera")
+    return cap
 
-    def detect_aruco_marker(self, frame):
+def main():
+    try:
+        px = initialize_robot()
+        mtx, dist = load_calibration_data('calib_data.yaml')
+        cap = initialize_camera()
+        
         aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
         aruco_params = cv2.aruco.DetectorParameters_create()
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
-        if len(corners) > 0:
-            rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, 0.05, self.mtx, self.dist)
-            g, _, p = utils.cvdata2transmtx(rvec, tvec)
-            return p
-        return None
+        
+        print("Start running task 2...")
+        
+        marker_length = 0.1  # Side length of the ArUco marker in meters
+        state_flag = 0  # Manage navigation states
+        
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                print("Failed to grab frame")
+                break
+            
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
+            
+            if len(corners) > 0:
+                rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
+                g, _, p = utils.cvdata2transmtx(rvec, tvec)
+                _, _, th = utils.transmtx2twist(g)
 
-    def load_calibration(self, file_path='calib_data.yaml'):
-        with open(file_path) as file:
-            calib_data = yaml.load(file, Loader=yaml.FullLoader)
-        self.mtx = np.asarray(calib_data["camera_matrix"])
-        self.dist = np.asarray(calib_data["distortion_coefficients"])
+                # Placeholder for state handling logic
+                print(f"Detected marker with ID: {ids[0][0]}")
+                # Additional navigation logic based on state_flag
+                
+            time.sleep(1)
 
-    def run(self):
-        self.load_calibration()
-        cap = cv2.VideoCapture(cv2.CAP_V4L)
-        goal_reached = False
-
-        try:
-            while cap.isOpened() and self.marker_counter < 4:
-                ret, frame = cap.read()
-                if not ret:
-                    continue
-
-                p = self.detect_aruco_marker(frame)
-                if p is not None and not goal_reached:
-                    # Assuming goal position is the position of the marker detected
-                    self.move_forward(1)  # Move towards the marker
-                    goal_reached = True
-                elif goal_reached:
-                    self.rotate_90_degrees()
-                    self.marker_counter += 1
-                    goal_reached = False
-        finally:
-            cap.release()
-            cv2.destroyAllWindows()
-
-# Example usage:
-# robot = RobotController()
-# robot.run()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    
+    finally:
+        px.forward(0)  # Ensure the robot stops moving
+        cap.release()
+        cv2.destroyAllWindows()
