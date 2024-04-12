@@ -80,7 +80,7 @@ while cap.isOpened():
                     state_flag = 2
             elif state_flag == 2: # Rotate
                 if abs(th) < 0.5 and curr_id == ids :
-                    px.set_dir_servo_angle(-35)
+                    px.set_dir_servo_angle(35)
                 else:
                     px.set_dir_servo_angle(0)
                     state_flag = 0
