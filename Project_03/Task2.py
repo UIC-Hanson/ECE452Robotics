@@ -62,8 +62,8 @@ def main():
     state_flag = 0
     count = 0
     goal_x, goal_z = 0, 0
-    mindist = 0.1  # Minimum distance to goal
-    speed = 10  # Speed setting for the robot
+    mindist = 0.05  # Adjusted minimum distance to goal for more frequent updates
+    speed = 10
 
     print("Start running task 2...")
 
@@ -73,40 +73,37 @@ def main():
             if ret:
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
-                cv2.aruco.drawDetectedMarkers(frame, corners, ids, (0, 255, 0))
-                if len(corners) != 0:  # If ArUco marker detected
+                cv2.aruco.drawDetectedMarkers(frame, corners, ids)
+                if len(corners) != 0:
                     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)
                     g, _, p = utils.cvdata2transmtx(rvec, tvec)
                     _, _, th = utils.transmtx2twist(g)
-                    cv2.imshow("aruco", frame)
-                    cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, 0.05)
 
                     if state_flag == 0:
                         goal_x = p[0]
                         goal_z = p[2]
                         state_flag = 1
-                        rot_flag = 0
-                        print("Goal point: x:{} z:{}".format(goal_x, goal_z))
+                        print("Initial goal point: x:{} z:{}".format(goal_x, goal_z))
 
                     elif state_flag == 1:
                         xdiff = p[0] - goal_x
                         zdiff = p[2] - goal_z
                         cur_dist = utils.distance(xdiff, zdiff)
+                        print("Current distance to goal: ", cur_dist)
                         if cur_dist > mindist:
                             move_forward(px, cur_dist, speed)
                         else:
-                            rotate_left(px, 90, speed)
+                            rotate_left(px, 90)
                             state_flag = 0
                             count += 1
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
 
     finally:
-        px.forward(0)  # Ensure the robot stops
+        px.forward(0)
         cap.release()
         cv2.destroyAllWindows()
         print("Navigation task completed.")
 
 if __name__ == '__main__':
     main()
-
