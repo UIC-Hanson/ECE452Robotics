@@ -63,7 +63,7 @@ def main():
         if not ret:
             print("Failed to read from camera.")
             continue
-
+        rvec, tvec = [ ],[ ]
         rvec, tvec = detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist, MARKER_LENGTH)
         cv2.imshow("aruco", frame)
 
