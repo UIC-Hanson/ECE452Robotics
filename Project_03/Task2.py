@@ -75,7 +75,7 @@ while cap.isOpened():
                 zdiff = p[2]-goal_z
                 cur_dist = utils.distance(xdiff,zdiff)
                 if cur_dist > 0.1:
-                    px.forwards(10)
+                    px.forward(10)
                 else:
                     state_flag = 2
             elif state_flag == 2: # Rotate
