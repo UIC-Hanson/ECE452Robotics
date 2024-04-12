@@ -79,11 +79,13 @@ def main():
                     g, _, p = utils.cvdata2transmtx(rvec, tvec)
                     _, _, th = utils.transmtx2twist(g)
                     cv2.imshow("aruco", frame)
+                    cv2.drawFrameAxes(frame, mtx, dist, rvec, tvec, 0.05)
 
                     if state_flag == 0:
                         goal_x = p[0]
                         goal_z = p[2]
                         state_flag = 1
+                        rot_flag = 0
                         print("Goal point: x:{} z:{}".format(goal_x, goal_z))
 
                     elif state_flag == 1:
