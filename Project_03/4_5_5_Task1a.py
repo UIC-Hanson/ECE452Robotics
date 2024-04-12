@@ -97,3 +97,5 @@ def main():
         # The twist coordinate and screw motion of the servo
         v, w, th = utils.transmtx2twist(exp_mtx)
         q, h, u
+if __name__ == "__main__":
+    main()
