@@ -93,6 +93,15 @@ def main():
         exp_mtx = gth @ np.linalg.inv(g0)
         # The twist coordinate and screw motion of the servo
         v, w, th = utils.transmtx2twist(exp_mtx)
-        q, h, u
+        q,h,u,M = utils.twist2screw(v,w,th)
+        print("Estimated rotation angle: {} degrees".format(math.degrees(th)))
+        print("Twist Coordinates:\n {}".format(np.vstack((v,w))*th))
+        print("Screw motion:\n q:{},\n h:{},\n u:{},\n M:{}".format(q,h,u,M))
+        # Reset servo and camera angles, stop motors
+        px.set_cam_tilt_angle(0)
+        px.set_cam_pan_angle(0)  
+        px.set_dir_servo_angle(0)  
+        px.stop()
+        print("Robot stopped.")
 if __name__ == "__main__":
     main()
