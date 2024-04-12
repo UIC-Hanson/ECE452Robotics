@@ -77,7 +77,7 @@ def main():
             move_camera_to_angle(NEXT_ANGLE)
             print("Camera position changed, press 'r' to save current data or 'q' to quit...")
         elif key == ord('r'):
-            next_rvec, next_tvec = rvecs[-1], tvecs[-1]
+            next_rvec, next_tvec = rvec[-1], tvec[-1]
             print("Current data saved, press 'q' to quit and start the calculation...")
 
     # Turn off the camera
