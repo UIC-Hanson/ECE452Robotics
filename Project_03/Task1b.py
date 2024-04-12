@@ -81,7 +81,7 @@ def main():
             exp_mtx = calculate_rotation_matrix(g0, gth)
             th = get_rotation_angle(exp_mtx)
             estimated_th_deg = math.degrees(th)
-            print(f"Desired angle reached: {estimated_th_deg} degrees")
+            print(f"estimated_th_deg: {estimated_th_deg} degrees")
             
             if abs(desired_th_deg - estimated_th_deg) <= 5:
                 theta = th
