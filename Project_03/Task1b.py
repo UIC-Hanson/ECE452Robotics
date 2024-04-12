@@ -74,6 +74,7 @@ def main():
             
             if g0 is None:
                 g0 = get_initial_transformation(rvec, tvec)
+                return_to_angle = current_angle  # Save the angle where the marker is first detected
                 print("Initial data saved...")
                 continue
 
@@ -93,6 +94,12 @@ def main():
         if cv2.waitKey(100) & 0xFF == ord('q'):  # Wait for 'q' key to stop
             break
     
+    if return_to_angle is not None:
+        set_camera_angle(return_to_angle)
+        print(f"Returned to initial marker position at angle: {return_to_angle}")
+    else:
+        print("Marker was never detected; cannot return to initial position.")
+
     cap.release()
     cv2.destroyAllWindows()
 
