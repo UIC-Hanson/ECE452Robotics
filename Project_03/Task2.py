@@ -26,7 +26,7 @@ aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
 aruco_params = cv2.aruco.DetectorParameters_create()
 
 # Side length of the ArUco marker in meters 
-marker_length = 0.05
+marker_length = 0.1
  
 # Calibration parameters yaml file
 with open(r'calib_data.yaml') as file:
