@@ -15,7 +15,7 @@ def vec2hat(x):
 
 def cvdata2transmtx(rvec,tvec):
     # Rotation and translation of Camera to ArUco
-    R_temp = cv2.Rodrigues(rvec)[0]
+    R_temp = cv2.Rodrigues(rvec)
     p_temp = tvec.reshape((3, 1))
     
     # Find the Rotation and translation of ArUco to Camera
@@ -31,7 +31,7 @@ def transmtx2twist(g):
     p = g[:3, 3]
     
     # Convert the rotation matrix to rotation vector (including theta)
-    rvec = cv2.Rodrigues(R)[0]
+    rvec = cv2.Rodrigues(R)
     
     # Find the twist coordinate
     th = np.linalg.norm(p)
