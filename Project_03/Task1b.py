@@ -50,7 +50,7 @@ def main():
     
     # Define initial conditions
     init_angle = -60
-    desired_th_deg = 10
+    desired_th_deg = 60
     g0 = None
     actual_rot_angle = None  # Variable to store the actual rotated angle
     theta = None # Variable to store the estimated rotation
