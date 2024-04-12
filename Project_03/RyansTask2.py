@@ -1,130 +1,85 @@
-import pigpio
-import time
 import cv2
 import numpy as np
 import yaml
+import time
+
 import utils
-import math
 
-#======== TO DO ========
-# define a list of functions that allows the robot to 
-#turn 90 degree
-#going forward/backward (or you can use the functions implemented in the examples)
-x = Picarx()
+class RobotController:
+    def __init__(self):
+        self.px = Picarx()  # Assuming Picarx is properly defined and imported elsewhere
+        self.state_flag = 0
+        self.rot_flag = 0
+        self.count = 0
+        self.goal_x = 0
+        self.goal_z = 0
 
-# Move forward for 1 seconds
-px.forward(1)
-time.sleep(1)
+    def move_forward(self, duration, speed=30):
+        self.px.forward(speed)
+        time.sleep(duration)
+        self.px.forward(0)
 
-# Rotate from 0 to 90 degrees
-for angle in range(0, 91):
-    px.set_dir_servo_angle(angle)
-    time.sleep(0.01)
+    def rotate_to_angle(self, start_angle, end_angle, step=1):
+        for angle in range(start_angle, end_angle + step, step):
+            self.px.set_dir_servo_angle(angle)
+            time.sleep(0.01)
 
-# Rotate from 90 to -90 degrees
-for angle in range(90, -91, -1):
-    px.set_dir_servo_angle(angle)
-    time.sleep(0.01)
+    def stop(self):
+        self.px.forward(0)
 
-# Rotate from -90 to 0 degrees
-for angle in range(-90, 1):
-    px.set_dir_servo_angle(angle)
-    time.sleep(0.01)
-
-# Stop moving
-px.forward(0)
-time.sleep(1)
-#=======================
-
-# The different ArUco dictionaries built into the OpenCV library. 
-aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
-aruco_params = cv2.aruco.DetectorParameters_create()
-
-# Side length of the ArUco marker in meters 
-marker_length = 0.05
- 
-# Calibration parameters yaml file
-with open(r'calib_data.yaml') as file:
-    calib_data = yaml.load(file, Loader=yaml.FullLoader)
-
-mtx = np.asarray(calib_data["camera_matrix"])
-dist = np.asarray(calib_data["distortion_coefficients"])
-
-cap = cv2.VideoCapture(cv2.CAP_V4L)
-
-print("Start running task 2...")
-
-# The width and height of the rectangle track
-width = 0.8
-height = 0.3
-
-state_flag = 0 # flag to change between the two states
-rot_flag = 0 # flag to check if the robot has rotated 90 degrees recently
-count = 0 # flag to check whether it is operating with the current id of the ArUco marker
-
-while cap.isOpened():
-    ret, frame = cap.read()
-    if ret:
+    def detect_aruco_marker(self, frame):
+        aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
+        aruco_params = cv2.aruco.DetectorParameters_create()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
-        if len(corners)!=0: # if aruco marker detected
-            rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
-            g,_,p = utils.cvdata2transmtx(rvec,tvec)
-            _,_,th = utils.transmtx2twist(g)
-            # cv2.aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.05)
-            if state_flag == 0 and count == ids:
-                #======== TO DO ========
-                #State 0. How should you set the goal points based on the moment when the robot 
-                #detects a marker?
-                px.forward(30)
-                time.sleep(1)
-                
-                state_flag = 1
-                rot_flag = 0
-                print("Goal point: x:{} z:{}".format(goal_x,goal_z))
-                #=======================
-            elif state_flag == 1 and count == ids:
-                xdiff = p[0]-goal_x
-                zdiff = p[2]-goal_z
-                cur_dist = utils.distance(xdiff,zdiff)
-                #======== TO DO ========
+        if len(corners) > 0:
+            rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners, 0.05, self.mtx, self.dist)
+            g, _, p = utils.cvdata2transmtx(rvec, tvec)
+            return corners, ids, rvec, tvec, p
+        return None, None, None, None, None
 
-# State 1. How should the robot move based on the information above?
-if cur_dist > 0:
-    px.set_dir_servo_angle(-90)
-    time.sleep(1)
-    px.forward(1)
-    time.sleep(1)
-    state_flag = 0
-    rot_flag = 1
-    count += 1
-elif cur_dist < 0:
-    px.set_dir_servo_angle(90)
-    time.sleep(1)
-    px.forward(1)
-    time.sleep(0.5)
-else:
-    px.forward(1)
-    time.sleep(1)
-    
-# =======================
-else:
-    px.forward(0)
-    time.sleep(1)
-    
-    # ======== TO DO ========
-    # How should the robot move when it misses the marker?
-    if rot_flag == 1:
-        left(Ab) # or it could be right, depends on how you set turn90()
-    # =======================
-    
-time.sleep(1)
-# cv2.imshow('aruco',frame)
-# key = cv2.waitKey(1500) & 0xFF
-# if key == ord('q'):
-#     break
-            
-# Turn off the camera
+    def load_calibration(self, file_path='calib_data.yaml'):
+        with open(file_path) as file:
+            calib_data = yaml.load(file, Loader=yaml.FullLoader)
+        self.mtx = np.asarray(calib_data["camera_matrix"])
+        self.dist = np.asarray(calib_data["distortion_coefficients"])
 
-cap.release()
-cv2.destroyAllWindows()
+    def run(self):
+        self.load_calibration()
+        cap = cv2.VideoCapture(cv2.CAP_V4L)
+
+        try:
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    continue
+
+                corners, ids, rvec, tvec, p = self.detect_aruco_marker(frame)
+                if corners is not None:
+                    if self.state_flag == 0:
+                        self.goal_x, self.goal_z = p[0], p[2]
+                        self.move_forward(1)
+                        self.state_flag = 1
+                        self.rot_flag = 0
+                        print(f"Goal point: x:{self.goal_x} z:{self.goal_z}")
+                    elif self.state_flag == 1:
+                        xdiff = p[0] - self.goal_x
+                        zdiff = p[2] - self.goal_z
+                        cur_dist = utils.distance(xdiff, zdiff)
+                        if cur_dist > 0.05:  # Arbitrary threshold for distance
+                            self.rotate_to_angle(-90, 0)
+                            self.move_forward(0.5)
+                        elif cur_dist < -0.05:
+                            self.rotate_to_angle(90, 0)
+                            self.move_forward(0.5)
+                        else:
+                            self.move_forward(1)
+                else:
+                    self.stop()
+        finally:
+            cap.release()
+            cv2.destroyAllWindows()
+
+# Example usage:
+# robot = RobotController()
+# robot.run()
