@@ -6,25 +6,25 @@ import yaml
 import utils
 import math
 
+px = Picarx()
+
 # Utility functions
-def move_forward(px, duration, speed=50):
+def move_forward(px, duration, speed=20):
     px.forward(speed)
     time.sleep(duration)
     px.forward(0)
 
-def move_backward(px, duration, speed=50):
+def move_backward(px, duration, speed=20):
     px.backward(speed)
     time.sleep(duration)
     px.forward(0)
 
-def turn_90_degrees(px, direction):
+def turn_90_degrees(px, direction, speed=20):
+    px.forward(speed)
     angle = 35 if direction == 'left' else -35
     px.set_dir_servo_angle(angle)
     time.sleep(0.5)  # Duration for a 90-degree turn; needs calibration
     px.set_dir_servo_angle(0)
-
-# Main code
-px = Picarx()
 
 # The different ArUco dictionaries built into the OpenCV library.
 aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
