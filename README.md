@@ -7,8 +7,8 @@ echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sud
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
 sudo apt update
-sudo apt install network-manager network-manager-gnome python3 git python3-pip python3-setuptools python3-smbus python3-opencv keychain python3-pandas python3-opencv python3-tflite-runtime libatlas-base-dev libgtk2.0-dev pkg-config python3-pycoral -y
-sudo pip3 install mediapipe mediapipe-rpi4 opencv-contrib-python opencv-python PyYAML
+sudo apt install network-manager network-manager-gnome python3 git python3-pip python3-setuptools python3-smbus keychain python3-pandas python3-tflite-runtime libatlas-base-dev libgtk2.0-dev pkg-config python3-pycoral -y
+sudo pip3 install mediapipe mediapipe-rpi4 PyYAML opencv-contrib-python==4.5.5.64 opencv-python==4.5.5.64
 sudo apt full-upgrade -y
 
 sudo systemctl disable --now dhcpcd
