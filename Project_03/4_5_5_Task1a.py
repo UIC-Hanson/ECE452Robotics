@@ -73,13 +73,13 @@ def main():
         key = cv2.waitKey(2) & 0xFF
         if key == ord('q'):
             break
-        elif key == ord('s') and rvecs:
+        elif key == ord('s'):
             init_rvec, init_tvec = rvecs[-1], tvecs[-1]
             print("Initial data saved, press 'm' to move the camera or 'q' to quit...")
         elif key == ord('m'):
             move_camera_to_angle(NEXT_ANGLE)
             print("Camera position changed, press 'r' to save current data or 'q' to quit...")
-        elif key == ord('r') and rvecs:
+        elif key == ord('r'):
             next_rvec, next_tvec = rvecs[-1], tvecs[-1]
             print("Current data saved, press 'q' to quit and start the calculation...")
 
