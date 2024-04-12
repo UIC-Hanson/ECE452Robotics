@@ -28,7 +28,7 @@ sudo reboot now
 nordvpn login --token XXXXXXXX
 
 nordvpn set meshnet on
-nordvpn meshnet set nickname ECE542Lab
+nordvpn meshnet set nickname ECE542LabTeam1
 nordvpn meshnet peer list
 
 sudo reboot now
@@ -73,7 +73,7 @@ nano ~/.bashrc
 At the end add: eval $(keychain --eval --noask 452SSH)
 
 nano ~/.bash_profile
-eval `keychain --agents ssh --eval 452SSH`
+eval $(keychain --eval 452SSH)
 
 cd ~/
 
@@ -81,6 +81,14 @@ git clone git@github.com:UIC-Hanson/ECE452Robotics.git
 
 Add peers to meshnet https://meshnet.nordvpn.com/features/linking-devices-in-meshnet/adding-external-meshnet-devices-on-linux
 
+<b>Notes:</b>
+Use the 64bit RaspberryPi OS
+The keychain is used to connect to git so changes made on the device can be synced.
+install the version of opencv project 3 was written for.
+Need a Nord token for login
+Need to reload certs after uploading to connect to UIC WiFi
+-https://acm.cs.uic.edu/uicwifi-linux
+-https://help.uillinois.edu/TDClient/37/uic/KB/ArticleDet?ID=2757
 
 <b>Project 02:</b>
 
