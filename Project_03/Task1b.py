@@ -60,7 +60,7 @@ def main():
     
     print("Start scanning the marker, you may quit the program by pressing 'q'...")
     
-    for current_angle in range(init_angle,181,2):
+    for current_angle in range(init_angle,desired_th_deg,2):
         set_camera_angle(current_angle)
         ret, frame = cap.read()
         if not ret:
