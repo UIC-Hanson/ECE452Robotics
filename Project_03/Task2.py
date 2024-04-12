@@ -52,7 +52,6 @@ lw_flag = 0 # Indicates if the robot should move along the width or length of
 
 goal_z = 0 # We assume that the origin is the initial position of the robot
 goal_x = 0
-<<<<<<< HEAD
 try:
     while cap.isOpened():
         ret, frame = cap.read()
