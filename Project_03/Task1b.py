@@ -49,7 +49,7 @@ def main():
     cap = initialize_camera()
     
     # Define initial conditions
-    init_angle = 55
+    init_angle = -60
     desired_th_deg = 10
     g0 = None
     actual_rot_angle = None  # Variable to store the actual rotated angle
@@ -103,7 +103,7 @@ def main():
         print(f"Actual rotation angle: {actual_rot_angle} degrees")
     else:
         print("Actual rotation angle not determined.")
-        
+
     cap.release()
     cv2.destroyAllWindows()
 
