@@ -204,7 +204,7 @@ def go_to_goal(px,cap,goal_id,goal,hit,deg_eps,dist_eps,last_proportional,angle_
                         else:
                             move_forwards(px)
                     else:
-                        pass # idk what to do here
+                        turn_left(px) # idk what to do here
             else:
                 if 'th' in locals(): # 
                     if th - angle_to_goal > 0:
@@ -274,7 +274,7 @@ def find_leave(px,cap,goal_id,helper1_id,helper2_id,goal,hit,leave,dist_eps,g_gh
             px.set_motor_speed(2,maximum - power_difference)
 
 
-        time.sleep(0.05)
+        time.sleep(0.5)
         stop(px)
         ret, frame = cap.read()
         # Current distance between goal and leave point
@@ -377,7 +377,7 @@ def go_to_leave(px,cap,goal_id,helper1_id,helper2_id,goal,leave,dist_eps,g_gh1,g
             px.set_motor_speed(1,maximum)
             px.set_motor_speed(2,maximum - power_difference)
 
-        time.sleep(0.05)
+        time.sleep(0.5)
         stop(px)
         ret, frame = cap.read()
         if ret:
@@ -450,8 +450,8 @@ with open(r'calib_data_bug1.yaml') as file:
 
 mtx = np.asarray(calib_data["camera_matrix"])
 dist = np.asarray(calib_data["distortion_coefficients"])
-#g_gh1 = np.asarray(calib_data["g_gh1"])
-#g_gh2 = np.asarray(calib_data["g_gh2"])
+g_gh1 = np.asarray(calib_data["g_gh1"])
+g_gh2 = np.asarray(calib_data["g_gh2"])
 
 cap = cv2.VideoCapture(cv2.CAP_V4L)
 
