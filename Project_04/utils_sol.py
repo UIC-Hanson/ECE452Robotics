@@ -39,23 +39,22 @@ def twist2screw(v,w,th):
     return q, h, u, M
 
 def distance(xdiff,zdiff):
-    dist = math.sqrt(xdiff**2 + zdiff**2)
-    return dist
+    return math.hypot(xdiff, zdiff)
 
+def test_transmtx2twist():
+    print("Test transmtx2twist function:")
+    gMatrix = np.array( [ [  0.5555,  0.5274,  0.6429,  6.0000 ],
+                          [ -0.3906,  0.8480, -0.3581,  1.4015 ],
+                          [ -0.7341, -0.0522,  0.6771, -1.3978 ],
+                          [       0,       0,       0,  1.0000 ] ] )
 
+    v, w, th = transmtx2twist(gMatrix)
 
-print("Test transmtx2twist function:")
-gMatrix = np.array( [ [  0.5555,  0.5274,  0.6429,  6.0000 ],
-                      [ -0.3906,  0.8480, -0.3581,  1.4015 ],
-                      [ -0.7341, -0.0522,  0.6771, -1.3978 ],
-                      [       0,       0,       0,  1.0000 ] ] )
+    print("test",w.dot(w.T))
 
-v, w, th = transmtx2twist(gMatrix)
+    print("  v = " + str(v))
+    print("  w = " + str(w))
+    print("  th = " + str(th))
 
-print("test",w.dot(w.T))
-
-print("  v = " + str(v))
-print("  w = " + str(w))
-print("  th = " + str(th))
-
-
+if __name__ == "__main__":
+    test_transmtx2twist()
