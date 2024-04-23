@@ -2,85 +2,86 @@ import cv2
 import numpy as np
 import yaml
 import utils
-import math
 
-# The different ArUco dictionaries built into the OpenCV library. 
-aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
-aruco_params = cv2.aruco.DetectorParameters_create()
-aruco_params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_CONTOUR
+# Constants
+MARKER_LENGTH = 0.05  # Side length of the ArUco marker in meters
+GOAL_ID = 2
+HELPER1_ID = 1
+HELPER2_ID = 0
 
-# Side length of the ArUco marker in meters 
-marker_length = 0.05
+def load_calibration_data(filepath):
+    """ Load camera calibration data from a YAML file. """
+    try:
+        with open(filepath, 'r') as file:
+            return yaml.safe_load(file)
+    except Exception as e:
+        print(f"Error loading calibration data: {e}")
+        return None
 
-# Calibration parameters yaml file
-with open(r'calib_data.yaml') as file:
-    calib_data = yaml.load(file, Loader=yaml.FullLoader)
+def save_calibration_data(filepath, data):
+    """ Save calibration data to a YAML file. """
+    try:
+        with open(filepath, 'w') as file:
+            yaml.dump(data, file)
+    except Exception as e:
+        print(f"Error saving calibration data: {e}")
 
-mtx = np.asarray(calib_data["camera_matrix"])
-dist = np.asarray(calib_data["distortion_coefficients"])
+def detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist):
+    """ Detect markers and draw them on the frame. """
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    corners, ids, _ = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
+    if corners:
+        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, MARKER_LENGTH, mtx, dist)
+        cv2.aruco.drawDetectedMarkers(frame, corners)
+        return corners, ids, rvecs, tvecs
+    return None, None, None, None
 
-cap = cv2.VideoCapture(cv2.CAP_V4L)
+def main():
+    calib_data = load_calibration_data('calib_data.yaml')
+    if calib_data is None:
+        return
 
-goal_id = 2
-helper1_id = 1
-helper2_id = 0
+    mtx = np.asarray(calib_data["camera_matrix"])
+    dist = np.asarray(calib_data["distortion_coefficients"])
 
-print("Press q to save the transformation between Goal and Helper 1")
-while cap.isOpened():
-    ret, frame = cap.read()
-    if ret:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
-        if (len(corners)!=0):
-            rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
-            cv2.aruco.drawDetectedMarkers(frame, corners)
-            for i,_ in enumerate(rvecs):
-                if ids[i] == goal_id:
-                    cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
-                    g_gc1 = utils.cvdata2transmtx(rvecs[i],tvecs[i])[0]
-                elif ids[i] == helper1_id:
-                    cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
-                    g_ch1 = utils.cvdata2transmtx2(rvecs[i],tvecs[i])[0]
-        cv2.imshow('aruco',frame)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            break
+    aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_250)
+    aruco_params = cv2.aruco.DetectorParameters_create()
+    aruco_params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_CONTOUR
 
-print("Press q to save the transformation between Goal and Helper 2")
-while cap.isOpened():
-    ret, frame = cap.read()
-    if ret:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
-        if (len(corners)!=0):
-            rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
-            cv2.aruco.drawDetectedMarkers(frame, corners)
-            for i,_ in enumerate(rvecs):
-                if ids[i] == goal_id:
-                    cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
-                    g_gc2 = utils.cvdata2transmtx(rvecs[i],tvecs[i])[0]
-                elif ids[i] == helper2_id:
-                    cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
-                    g_ch2 = utils.cvdata2transmtx2(rvecs[i],tvecs[i])[0]
-        cv2.imshow('aruco',frame)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            break
+    cap = cv2.VideoCapture(cv2.CAP_V4L)
 
-cap.release()
-cv2.destroyAllWindows()
+    transformations = {}
 
-g_gh1 = g_gc1.dot(g_ch1)
-print("Helper1 location x:{}, z:{}".format(g_gh1[0,3],g_gh1[2,3]))
-g_gh2 = g_gc2.dot(g_ch2)
-print("Helper2 location x:{}, z:{}".format(g_gh2[0,3],g_gh2[2,3]))
+    try:
+        print("Press 'q' to exit and save transformations.")
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                corners, ids, rvecs, tvecs = detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist)
+                if ids is not None:
+                    for i, marker_id in enumerate(ids):
+                        if marker_id in [GOAL_ID, HELPER1_ID, HELPER2_ID]:
+                            cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], MARKER_LENGTH)
+                            transformations[marker_id] = utils.cvdata2transmtx(rvecs[i], tvecs[i])[0]
+                cv2.imshow('aruco', frame)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+    finally:
+        cap.release()
+        cv2.destroyAllWindows()
 
-calib_data = {
-    'camera_matrix':np.asarray(mtx).tolist(),
-    'distortion_coefficients':np.asarray(dist).tolist(),
-    'g_gh1':np.asarray(g_gh1).tolist(),
-    'g_gh2':np.asarray(g_gh2).tolist()
-}
+    # Example usage of transformations
+    if GOAL_ID in transformations and HELPER1_ID in transformations:
+        g_gh1 = transformations[GOAL_ID].dot(transformations[HELPER1_ID])
+        print(f"Helper1 location x:{g_gh1[0, 3]}, z:{g_gh1[2, 3]}")
+        calib_data['g_gh1'] = np.asarray(g_gh1).tolist()
 
-with open(r'calib_data.yaml', 'w') as file:
-    yaml.dump(calib_data, file)
+    if GOAL_ID in transformations and HELPER2_ID in transformations:
+        g_gh2 = transformations[GOAL_ID].dot(transformations[HELPER2_ID])
+        print(f"Helper2 location x:{g_gh2[0, 3]}, z:{g_gh2[2, 3]}")
+        calib_data['g_gh2'] = np.asarray(g_gh2).tolist()
+
+    save_calibration_data('calib_data.yaml', calib_data)
+
+if __name__ == '__main__':
+    main()
