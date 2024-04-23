@@ -37,7 +37,7 @@ def detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist):
     return None, None, None, None
 
 def main():
-    calib_data = load_calibration_data('calib_data_bug1')
+    calib_data = load_calibration_data('calib_data_bug1.yaml')
     if calib_data is None:
         return
 
