@@ -83,48 +83,48 @@ ore the averaging.
 '''
 def readLine(white_line = 0):
 
-	sensor_values = px.get_grayscale_data()
-	avg = 0
-	sum = 0
-	on_line = 0
-	last_value=0
-	numSensors=3
+    sensor_values = px.get_grayscale_data()
+    avg = 0
+    sum = 0
+    on_line = 0
+    last_value=0
+    numSensors=3
     
     #======= TO DO ======= 
     #depending of your calibration you may want to modify these values
     coef1=1000
     treshold1=200
     treshold2=50
-	
+    
 
-	for i in range(0,numSensors):
-	    
-		value = sensor_values[i]
-	    
-		if(white_line):
-		    value = coef1-value
-	    # keep track of whether we see the line at all
-		if(value > treshold1):
-		    on_line = 1
+    for i in range(0,numSensors):
+        
+    value = sensor_values[i]
+        
+    if(white_line):
+        value = coef1-value
+        # keep track of whether we see the line at all
+    if(value > treshold1):
+        on_line = 1
 
-	    # only average in values that are above a noise threshold
-		if(value > treshold2):
-		    avg += value * (i * coef1);  # this is for the weighted total,
-		    sum += value;                  #this is for the denominator
+        # only average in values that are above a noise threshold
+    if(value > treshold2):
+        avg += value * (i * coef1);  # this is for the weighted total,
+        sum += value;                  #this is for the denominator
 
-	if(on_line != 1):
-		# If it last read to the left of center, return 0.
-		if(last_value < (numSensors - 1)*coef1/2):
-		#print("left")
-		    return 0;
+    if(on_line != 1):
+    # If it last read to the left of center, return 0.
+    if(last_value < (numSensors - 1)*coef1/2):
+    #print("left")
+        return 0;
 
-		# If it last read to the right of center, return the max.
-		else:
-		#print("right")
-		    return (numSensors - 1)*coef1
-	
-	last_value = avg/sum
-	return last_value
+    # If it last read to the right of center, return the max.
+    else:
+    #print("right")
+        return (numSensors - 1)*coef1
+    
+    last_value = avg/sum
+    return last_value
     
     
     
