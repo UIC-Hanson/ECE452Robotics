@@ -39,6 +39,7 @@ def turn_left(px):
     time.sleep(0.1)
     px.set_dir_servo_angle(0)
     px.forward(0)
+    time.sleep(0.1)
 
 def turn_right(px):
     px.set_dir_servo_angle(90)
@@ -46,18 +47,21 @@ def turn_right(px):
     time.sleep(0.1)
     px.set_dir_servo_angle(0)
     px.forward(0)
+    time.sleep(0.1)
 
 def move_forward(px):
     px.set_dir_servo_angle(0)
     px.forward(10);
     time.sleep(0.1);
     px.forward(0);
+    time.sleep(0.1)
 
 def move_backward(px):
     px.set_dir_servo_angle(0)
     px.backward(10);
     time.sleep(0.1);
     px.backward(0);
+    time.sleep(0.1)
 
 
 '''
