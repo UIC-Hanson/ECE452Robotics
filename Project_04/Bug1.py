@@ -34,8 +34,33 @@ def stop(px):
 #======= TO DO =======: define 5 methods as for the precedent project
 # turn, move left, move right, move forward, move backward
 
+def turn_left(px):
+    px.set_dir_servo_angle(-90)
+    px.forward(10)
+    time.sleep(0.1)
+    px.set_dir_servo_angle(0)
+    px.forward(0)
+    
+def turn_right(px):
+    px.set_dir_servo_angle(90)
+    px.forward(10)
+    time.sleep(0.1)
+    px.set_dir_servo_angle(0)
+    px.forward(0)
 
+def move_forward(px):
+    px.set_dir_servo_angle(0)
+    px.forward(10);
+    time.sleep(0.1);
+    px.forward(0);
 
+def move_backward(px):
+    px.set_dir_servo_angle(0)
+    px.backward(10);
+    time.sleep(0.1);
+    px.backward(0);
+
+    
 '''
 Returns an estimated position of the robot with respect to a line
 The estimate is made using a weighted average of the sensor indices
@@ -137,6 +162,9 @@ def go_to_goal(px,cap,goal_id,goal,hit,deg_eps,dist_eps,last_proportional,angle_
             hit.z = p_gc[2]
             
             #======= TO DO =======: the robots needs to turn, therefore call here the function implemented before
+
+            # Assume that we always go left
+            turn_left(px)
             
             
             return state, goal, hit, last_proportional, angle_to_goal
@@ -173,19 +201,20 @@ def go_to_goal(px,cap,goal_id,goal,hit,deg_eps,dist_eps,last_proportional,angle_
                         # ======= TO DO =======:: fill out the which movements (left, right, forward, etc) should be running
                         #       in each case
                         if zdiff < 0:
-                            
+                            move_backwards(px) # What???
                         else:
-                            
+                            move_forwards(px)
                     else:
-                        
+                        pass # idk what to do here
             else:
                 if 'th' in locals(): # 
                     if th - angle_to_goal > 0:
-                        
+                        turn_left(px) # Turn if not aligned with goal
+                                      # May need to be swapped
                     else:
-                        
+                        turn_right(px)
                 else:
-                    
+                    turn_left(px) # Look around for the goal      
                     
             cv2.imshow('aruco',frame)
             key = cv2.waitKey(100) & 0xFF
@@ -204,7 +233,7 @@ def find_leave(px,cap,goal_id,helper1_id,helper2_id,goal,hit,leave,dist_eps,g_gh
         #======= TO DO =======: call here the function to move the robot backward
         #
         #======================
-        
+        move_backward(px)
         
         #======= TO DO ======= 
         #depending of your calibration you may want to modify these values (you would also have to modify it in, find_leave
@@ -281,9 +310,9 @@ def find_leave(px,cap,goal_id,helper1_id,helper2_id,goal,hit,leave,dist_eps,g_gh
                     # ======= TO DO =======:: Please fill out when other markers are detected.
                     #       The code is very similar to above where the Goal marker is detected.
                     elif ids[i] == helper1_id:
-                        
+                        pass # what is this for
                     elif ids[i] == helper2_id:
-                        
+                        pass
 
             cv2.imshow('aruco',frame)
             key = cv2.waitKey(100) & 0xFF
@@ -307,7 +336,7 @@ def go_to_leave(px,cap,goal_id,helper1_id,helper2_id,goal,leave,dist_eps,g_gh1,g
         
         
         #======= TO DO =======: call here below your backward method
-        
+        move_backward(px)
         #======================
         
         
@@ -367,6 +396,7 @@ def go_to_leave(px,cap,goal_id,helper1_id,helper2_id,goal,leave,dist_eps,g_gh1,g
                             print("Reached leave point, going to the goal point again.")
                             for i in range(5):
                                 #======= TO DO =======: call your forward function here below
+                                move_forward(px)
                                 
                             state = 0
                             return state
@@ -375,9 +405,9 @@ def go_to_leave(px,cap,goal_id,helper1_id,helper2_id,goal,leave,dist_eps,g_gh1,g
                     # ======= TO DO =======:: Please fill out when other markers are detected.
                     #       The code is very similar to above where the Goal marker is detected.
                     elif ids[i] == helper1_id:
-                        
+                        pass # again, idk what to do here
                     elif ids[i] == helper2_id:
-                        
+                        pass
             cv2.imshow('aruco',frame)
             key = cv2.waitKey(100) & 0xFF
             if key == ord('q'):
