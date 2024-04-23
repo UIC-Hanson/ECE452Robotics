@@ -450,8 +450,8 @@ with open(r'calib_data_bug1.yaml') as file:
 
 mtx = np.asarray(calib_data["camera_matrix"])
 dist = np.asarray(calib_data["distortion_coefficients"])
-g_gh1 = np.asarray(calib_data["g_gh1"])
-g_gh2 = np.asarray(calib_data["g_gh2"])
+#g_gh1 = np.asarray(calib_data["g_gh1"])
+#g_gh2 = np.asarray(calib_data["g_gh2"])
 
 cap = cv2.VideoCapture(cv2.CAP_V4L)
 
