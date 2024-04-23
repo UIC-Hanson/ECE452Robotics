@@ -61,7 +61,7 @@ def save_calibration_data(mtx, dist, filename='calib_data_new.yaml'):
 def detect_and_draw_markers(frame, aruco_dict, aruco_params, mtx, dist):
     """ Detect markers and draw them on the frame. """
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
+    corners, ids = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
     if corners:
         rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, MARKER_LENGTH, mtx, dist)
         cv2.aruco.drawDetectedMarkers(frame, corners)
