@@ -308,10 +308,10 @@ def find_leave(px,cap,goal_id,helper1_id,helper2_id,goal,hit,leave,dist_eps,g_gh
 
                     # ======= TO DO =======:: Please fill out when other markers are detected.
                     #       The code is very similar to above where the Goal marker is detected.
-                    elif ids[i] == helper1_id:
-                        pass # what is this for
-                    elif ids[i] == helper2_id:
-                        pass
+                elif ids[i] == helper1_id:
+                    pass # what is this for
+                elif ids[i] == helper2_id:
+                    pass
 
             cv2.imshow('aruco',frame)
             key = cv2.waitKey(100) & 0xFF
@@ -403,10 +403,10 @@ def go_to_leave(px,cap,goal_id,helper1_id,helper2_id,goal,leave,dist_eps,g_gh1,g
 
                     # ======= TO DO =======:: Please fill out when other markers are detected.
                     #       The code is very similar to above where the Goal marker is detected.
-                    elif ids[i] == helper1_id:
-                        pass # again, idk what to do here
-                    elif ids[i] == helper2_id:
-                        pass
+                elif ids[i] == helper1_id:
+                    pass # again, idk what to do here
+                elif ids[i] == helper2_id:
+                    pass
             cv2.imshow('aruco',frame)
             key = cv2.waitKey(100) & 0xFF
             if key == ord('q'):
