@@ -91,3 +91,6 @@ class RobotControl:
         while self.current_state == last_state:
             sleep(0.001)
             self.update_status()
+
+    def rotate_camers(self):
+        #stuff goes here
