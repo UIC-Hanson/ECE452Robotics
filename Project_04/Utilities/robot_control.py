@@ -39,8 +39,10 @@ class RobotControl:
                 self.current_state = 'outstate'
             elif state[0] == 1:
                 self.current_state = 'right'
+                self.offset = -30
             elif state[2] == 1:
                 self.current_state = 'left'
+                self.offset = 30
             elif state[1] == 1:
                 self.current_state = 'forward'
             else:
@@ -56,7 +58,7 @@ class RobotControl:
         """Continuously adjusts the robot's movements based on its state."""
         while True:
             """Adjust the robot's movement based on the current state."""
-            inboard_wheel = self.power * 0.75
+            inboard_wheel = self.power * 0.8
 
             if self.current_state == 'left':
                 self.px.set_dir_servo_angle(self.offset)
@@ -64,7 +66,7 @@ class RobotControl:
                 self.px.set_motor_speed(2, self.power)
 
             elif self.current_state == 'right':
-                self.px.set_dir_servo_angle(-self.offset)
+                self.px.set_dir_servo_angle(self.offset)
                 self.px.set_motor_speed(2, inboard_wheel)
                 self.px.set_motor_speed(1, self.power)
 
