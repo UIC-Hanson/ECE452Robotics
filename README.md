@@ -2,121 +2,93 @@
 
 <b>Install script modified from SunFounder</b>
 
+echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
+
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
 sudo apt update
-
-sudo apt install network-manager network-manager-gnome python3 git python3-pip python3-setuptools python3-smbus keychain python3-pandas
-
-
+sudo apt install network-manager network-manager-gnome python3 git python3-pip python3-setuptools python3-smbus keychain python3-pandas python3-tflite-runtime libatlas-base-dev libgtk2.0-dev pkg-config python3-pycoral -y
+sudo pip3 install mediapipe mediapipe-rpi4 PyYAML opencv-contrib-python==4.5.5.64 opencv-python==4.5.5.64
 sudo apt full-upgrade -y
 
-
 sudo systemctl disable --now dhcpcd
-
-sudo systemctl enable --now network-manager
-
-
-#Allows for connecting to UIC WiFi
+sudo systemctl enable --now NetworkManager
 
 sudo sudo systemctl restart NetworkManager
-
-sudo systemctl enable NetworkManager
-
 systemctl status NetworkManager
 
-
 sudo raspi-config
-
-#Enable VNC, I2C, update WiFi country
-
-
-sudo usermod -aG nordvpn $USER
+#Enable VNC, I2C, update WiFi
 
 sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh)
-
+sudo usermod -aG nordvpn $USER
 
 sudo reboot now
 
-
-#use token to login instead of web broswer
-
-nordvpn login --token XXXXX
-
-
-#use nord meshnet to connect to device because it can't be found over the UIC WiFi
+nordvpn login --token XXXXXXXX
 
 nordvpn set meshnet on
-
-nordvpn meshnet set nickname XXXX
-
+nordvpn meshnet set nickname ECE542LabTeam1
 nordvpn meshnet peer list
-
 
 sudo reboot now
 
-
 cd ~/
-
 git clone -b v2.0 https://github.com/sunfounder/robot-hat.git
-
 git clone -b picamera2 https://github.com/sunfounder/vilib.git
-
 git clone -b v2.0 https://github.com/sunfounder/picar-x.git
 
-
 cd ~/robot-hat
-
 sudo python3 setup.py install
-
 
 cd ~/vilib
-
 sudo python3 install.py
 
-
 cd ~/picar-x
-
 sudo python3 setup.py install
 
-
 cd ~/picar-x
-
-sudo bash i2samp.sh
-
+sudo bash i2samp.sh -y
 
 
 cd ~/picar-x/example
-
 sudo python3 servo_zeroing.py
 
-
 cd ~/picar-x/example/calibration
-
 sudo python3 calibration.py
-
 
 sudo python3 grayscale_calibration.py
 
+mkdir .ssh cd ~/.ssh
 
-#enable ssh github deploy key access. Create key here, add to project git 
+ssh-keygen -t rsa -b 4096 -C "XXXXX@uic.edu"
 
-cd ~/.ssh
-
-
-ssh-keygen -t rsa -b 4096 -C "XXXXX"
-
+chmod 600 *
 
 eval `ssh-agent -s`
 
-
 ssh-add 452SSH
 
-
 nano ~/.bashrc
-
 At the end add: eval $(keychain --eval --noask 452SSH)
+
+nano ~/.bash_profile
+eval $(keychain --eval 452SSH)
+
+cd ~/
+
+git clone git@github.com:UIC-Hanson/ECE452Robotics.git
 
 Add peers to meshnet https://meshnet.nordvpn.com/features/linking-devices-in-meshnet/adding-external-meshnet-devices-on-linux
 
+<b>Notes:</b>
+Use the 64bit RaspberryPi OS
+The keychain is used to connect to git so changes made on the device can be synced.
+install the version of opencv project 3 was written for.
+Need a Nord token for login
+Need to reload certs after uploading to connect to UIC WiFi
+-https://acm.cs.uic.edu/uicwifi-linux
+-https://help.uillinois.edu/TDClient/37/uic/KB/ArticleDet?ID=2757
 
 <b>Project 02:</b>
 
