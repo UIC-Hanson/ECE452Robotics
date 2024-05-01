@@ -42,7 +42,7 @@ def distance(xdiff,zdiff):
     dist = math.sqrt(xdiff**2 + zdiff**2)
     return dist
 
-def test():
+def utils_test():
     print("Test transmtx2twist function:")
     gMatrix = np.array( [ [  0.5555,  0.5274,  0.6429,  6.0000 ],
                         [ -0.3906,  0.8480, -0.3581,  1.4015 ],
