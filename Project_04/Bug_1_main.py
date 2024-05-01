@@ -20,6 +20,7 @@ def DetermineGoal():
 # Returns 'left', 'right', or 'forward'
 def read_line(px):
     sensor_values = px.get_grayscale_data()
+    print(sensor_values)
     threshold = 100 # Arbitrary, set this later
 
     detected = []
