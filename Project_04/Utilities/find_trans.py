@@ -51,15 +51,15 @@ def process_video(cap, aruco_dict, aruco_params, mtx, dist, goal_id, max_helpers
                         cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
                         g_gc = utils.cvdata2transmtx(rvecs[i], tvecs[i])[0]
                         p_gc = g_gc[:, 3]
-                        goal.x = p_gc[0]
-                        goal.z = p_gc[2]
+                        goal.x = round(p_gc[0], 5)
+                        goal.z = round(p_gc[2], 5)
                         print(f"Goal point x:{goal.x}, z:{goal.z}")
                     elif id_ in helpers:
                         cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
                         g_hc = utils.cvdata2transmtx(rvecs[i], tvecs[i])[0]
                         p_hc = g_hc[:, 3]
-                        helpers[id_].x = p_hc[0]
-                        helpers[id_].z = p_hc[2]
+                        helpers[id_].x = round(p_hc[0], 5)
+                        helpers[id_].z = round(p_hc[2], 5)
                         print(f"Helper {id_} point x:{helpers[id_].x}, z:{helpers[id_].z}")
             cv2.imshow('aruco', frame)
             key = cv2.waitKey(1) & 0xFF
