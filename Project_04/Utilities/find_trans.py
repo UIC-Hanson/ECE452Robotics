@@ -71,7 +71,7 @@ def output():
     aruco_dict, aruco_params = initialize_aruco()
     mtx, dist = load_calibration('calib_data.yaml')
     cap = cv2.VideoCapture(cv2.CAP_V4L)
-    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, [1, 2])
+    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, 5)
     return goal, helpers
 
 def find_trans_main():
