@@ -3,9 +3,9 @@ import time
 import sys
 import cv2
 import math
-import utils  # assuming this contains utility functions like cvdata2transmtx
 sys.path.append('Utilities')
 from robot_control import RobotControl
+import utils  # assuming this contains utility functions like cvdata2transmtx
 
 robot = RobotControl()
 
