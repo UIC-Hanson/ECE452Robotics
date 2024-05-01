@@ -73,6 +73,9 @@ class RobotControl:
         elif self.current_state == 'forward':
             self.px.set_dir_servo_angle(0)
             self.px.forward(self.power)
+        time.sleep(0.1)
+        self.px.stop()
+        time.sleep(0.1)
 
     def handle_outstate(self):
         """Handle when the robot is out of state."""

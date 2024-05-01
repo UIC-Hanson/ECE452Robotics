@@ -14,41 +14,31 @@ def DetermineGoal():
     # Logic to determine the goal
     pass
 
-def read_line(white_line=False):
+# Returns 'left', 'right', or 'forward'
+def read_line():
     sensor_values = px.get_grayscale_data()
-    numSensors = 3
-    coef1 = 1000
-    threshold1 = 200 # Helps in deciding if the line is detected at all
-    threshold2 = 50 # Filters out noise from the sensor readings
+    threshold = 1000 # Arbitrary, set this later
 
-    avg = 0
-    sum_sensors = 0
-    on_line = False
-    global last_value
-
-    for i in range(numSensors):
-        value = sensor_values[i]
-
-        if white_line:
-            value = coef1 - value
+    detected = []
+    for i in range(3):
+        detected.append(sensor_values[i] < threshold)
         
-        if value > threshold1:
-            on_line = True
-        
-        if value > threshold2:
-            avg += value * (i + 1) * coef1  # Assuming the positions are 1-indexed for sensors
-            sum_sensors += value
+    # Is the line detected on both sides?
+    if detected[0] and detected[2]:
+        return 'forward'
 
-    if not on_line:
-        # Check last read position relative to the center
-        if last_value < (numSensors * coef1) / 2:
-            return 0  # Line to the left of center
-        else:
-            return (numSensors - 1) * coef1  # Line to the right of center
+    # Is the line detected by every sensor or no sensor?
+    if detected[1] == detected[0] and detected[1] == detected[2]:
+        return 'forward'
 
-    if sum_sensors != 0:
-        last_value = avg / sum_sensors
-    return last_value
+    if detected[1]:
+        return 'forward'
+
+    if detected[2]:
+        return 'right'
+    if detected[0]:
+        return 'left'
+    return 'forward' # Edge case, ensure it always returns something
 
 def ObstacleTrack():
     # Initial position
@@ -60,6 +50,8 @@ def ObstacleTrack():
         # Read line position
         line_position = read_line()
         # Follow the line based on 'line_position'
+        robot.current_state = line_position
+        robot.navigate()
         # Code to move the robot based on line position
         time.sleep(1)
         CP = GetPosn()
