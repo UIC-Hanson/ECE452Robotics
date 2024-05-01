@@ -140,12 +140,12 @@ def ObstacleTrack(px):
         robot.navigate()
         # Code to move the robot based on line position
         time.sleep(1)
-        CP = GetPosn()
-        if CP < L1:
-            L1 = CP
+        #CP = GetPosn()
+        #if CP < L1:
+        #    L1 = CP
 
-    while CP != L1:
-        time.sleep(1)
+    #while CP != L1:
+    #    time.sleep(1)
 
     robot.stop()  # Ensure stop is also awaited if it becomes async
 
