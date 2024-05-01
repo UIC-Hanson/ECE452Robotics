@@ -16,11 +16,15 @@ def cvdata2transmtx(rvec,tvec):
     return g, R, p
 
 def cvdata2transmtx2(rvec,tvec):
-    # TODO: Find the transformation matrix from the camera to the marker.
+    R = cv2.Rodrigues(rvec)[0]
+    p = tvec.reshape(-1,1)
+    g = np.vstack((np.hstack((R,p)), [0, 0, 0 ,1]))
+    return g, R, p
 
 def transmtx2twist(g):
     R = g[0:3,0:3]
     p = g[0:3,3]
+    
     rot_exp_coord = cv2.Rodrigues(R)[0]
     th = np.linalg.norm(rot_exp_coord)
     w = rot_exp_coord/th
@@ -37,3 +41,21 @@ def twist2screw(v,w,th):
 def distance(xdiff,zdiff):
     dist = math.sqrt(xdiff**2 + zdiff**2)
     return dist
+
+
+
+print("Test transmtx2twist function:")
+gMatrix = np.array( [ [  0.5555,  0.5274,  0.6429,  6.0000 ],
+                      [ -0.3906,  0.8480, -0.3581,  1.4015 ],
+                      [ -0.7341, -0.0522,  0.6771, -1.3978 ],
+                      [       0,       0,       0,  1.0000 ] ] )
+
+v, w, th = transmtx2twist(gMatrix)
+
+print("test",w.dot(w.T))
+
+print("  v = " + str(v))
+print("  w = " + str(w))
+print("  th = " + str(th))
+
+
