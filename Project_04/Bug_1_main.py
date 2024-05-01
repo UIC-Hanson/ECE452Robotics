@@ -1,20 +1,20 @@
 #Bug 1 main
-import asyncio
+import time
 import sys
 sys.path.append('/utilities')
 from robot_control import RobotControl
 
 robot = RobotControl()
 
-async def InitialScan():
+def InitialScan():
     # Implement scanning logic
     pass
 
-async def DetermineGoal():
+def DetermineGoal():
     # Logic to determine the goal
     pass
 
-async def read_line(white_line=True, threshold2=50): #threshold2 may need to be adjusted
+def read_line(white_line=True, threshold2=50): #threshold2 may need to be adjusted
     coef1 = 255 if white_line else 0 #coef1 may need to be adjusted
     numSensors = 3
     sensor_positions = [1, 2, 3]
@@ -40,9 +40,9 @@ async def read_line(white_line=True, threshold2=50): #threshold2 may need to be 
     last_value = avg / sum_sensors if sum_sensors != 0 else 0
     return last_value
 
-async def ObstacleTrack():
+def ObstacleTrack():
     # Initial position
-    H1 = await GetPosn()
+    H1 = GetPosn()
     L1 = H1
     CP = H1
 
@@ -51,15 +51,15 @@ async def ObstacleTrack():
         line_position = read_line()
         # Follow the line based on 'line_position'
         # Code to move the robot based on line position
-        await asyncio.sleep(1)  # Simulate following the line
-        CP = await GetPosn()
+        time.sleep(1)
+        CP = GetPosn()
         if CP < L1:
             L1 = CP
 
     while CP != L1:
-        await asyncio.sleep(1)  # Continue following the line
+        time.sleep(1)
 
-    await robot.stop()  # Ensure stop is also awaited if it becomes async
+    robot.stop()  # Ensure stop is also awaited if it becomes async
 
 async def is_goal_reached():
     # Implement the logic to determine if the goal is reached
@@ -112,19 +112,19 @@ async def main():
         stop
     """
     
-    await robot.initialize_robot()
-    await robot.set_power_level()
-    await InitialScan()
+    robot.initialize_robot()
+    robot.set_power_level()
+    InitialScan()
 
     while True:
-        if await is_goal_reached():
+        if is_goal_reached():
             print("Goal reached! Exiting loop.")
             break  # Break out of the loop once the goal is reached
         
-        await DetermineGoal()
-        await MoveGoal()
+        DetermineGoal()
+        MoveGoal()
         if robot.current_state != 'forward':
-            await ObstacleTrack()
+            ObstacleTrack()
             #at the end of obstacle track the robot should be at L1
 
 if __name__ == '__main__':

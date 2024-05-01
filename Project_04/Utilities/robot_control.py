@@ -1,3 +1,5 @@
+import time
+
 class RobotControl:
     def __init__(self):
         self.px = Picarx()
@@ -29,85 +31,77 @@ class RobotControl:
             attempts += 1
         print("Failed to set power level after several attempts.")
 
-    async def update_status(self):
-        """Continuously updates the robot's state based on sensor data."""
-        while True:
-            val_list = self.px.get_grayscale_data()
-            state = self.px.get_line_status(val_list)
-        
-            if state == [0, 0, 0]:
-                self.current_state = 'outstate'
-            elif state[0] == 1:
-                self.current_state = 'right'
-                self.offset = -30
-            elif state[2] == 1:
-                self.current_state = 'left'
-                self.offset = 30
-            elif state[1] == 1:
-                self.current_state = 'forward'
-            else:
-                print(f"Unexpected state: {state}")
-                self.current_state = 'stop'
-            await asyncio.sleep(0.1)  # simulate a delay for the sensor check
+    def update_status(self):
+        """Updates the robot's state based on sensor data."""
+        val_list = self.px.get_grayscale_data()
+        state = self.px.get_line_status(val_list)
+    
+        if state == [0, 0, 0]:
+            self.current_state = 'outstate'
+        elif state[0] == 1:
+            self.current_state = 'right'
+            self.offset = -30
+        elif state[2] == 1:
+            self.current_state = 'left'
+            self.offset = 30
+        elif state[1] == 1:
+            self.current_state = 'forward'
+        else:
+            print(f"Unexpected state: {state}")
+            self.current_state = 'stop'
+        time.sleep(0.1)
 
     def stop(self):
         """Stop the robot."""
         self.px.stop()
 
-    async def navigate(self):
+    def navigate(self):
         """Continuously adjusts the robot's movements based on its state."""
-        while True:
-            """Adjust the robot's movement based on the current state."""
-            inboard_wheel = self.power * 0.8
+        """Adjust the robot's movement based on the current state."""
+        inboard_wheel = self.power * 0.8
 
-            if self.current_state == 'left':
-                self.px.set_dir_servo_angle(self.offset)
-                self.px.set_motor_speed(1, inboard_wheel)
-                self.px.set_motor_speed(2, self.power)
+        if self.current_state == 'left':
+            self.px.set_dir_servo_angle(self.offset)
+            self.px.set_motor_speed(1, inboard_wheel)
+            self.px.set_motor_speed(2, self.power)
 
-            elif self.current_state == 'right':
-                self.px.set_dir_servo_angle(self.offset)
-                self.px.set_motor_speed(2, inboard_wheel)
-                self.px.set_motor_speed(1, self.power)
+        elif self.current_state == 'right':
+            self.px.set_dir_servo_angle(self.offset)
+            self.px.set_motor_speed(2, inboard_wheel)
+            self.px.set_motor_speed(1, self.power)
 
-            elif self.current_state == 'forward':
-                self.px.set_dir_servo_angle(0)
-                self.px.forward(self.power)
+        elif self.current_state == 'forward':
+            self.px.set_dir_servo_angle(0)
+            self.px.forward(self.power)
 
-            await asyncio.sleep(0.002)
-
-    async def handle_outstate(self):
+    def handle_outstate(self):
         """Handle when the robot is out of state."""
         last_state = self.current_state
         self.stop()
         self.px.set_dir_servo_angle(-self.offset if last_state == 'left' else self.offset)
         self.px.forward(-5)
-        await asyncio.sleep(0.1)
+        time.sleep(0.1)
 
         while self.current_state == last_state:
-            await asyncio.sleep(0.001)
-            await self.update_status()
+            self.update_status()
 
-    async def scan_camera(self):
+    def scan_camera(self):
         """Scans the environment by panning the camera left and right."""
-        while True:
-            for angle in range(-90, 91, 10):  # Sweep from -90 to 90 degrees
-                self.px.set_cam_pan_angle(angle)
-                await asyncio.sleep(0.1)  # Time to move to the new angle and stabilize
+        for angle in range(-90, 91, 10):  # Sweep from -90 to 90 degrees
+            self.px.set_cam_pan_angle(angle)
+            time.sleep(0.1)
 
-            for angle in range(90, -91, -10):  # Sweep back to -90 degrees
-                self.px.set_cam_pan_angle(angle)
-                await asyncio.sleep(0.1)
+        for angle in range(90, -91, -10):  # Sweep back to -90 degrees
+            self.px.set_cam_pan_angle(angle)
+            time.sleep(0.1)
 
-async def main():
+def main():
     robot = RobotControl()
-    await robot.set_power_level()
-    tasks = [
-        asyncio.create_task(robot.update_status()),
-        asyncio.create_task(robot.navigate()),
-        asyncio.create_task(robot.scan_camera())
-    ]
-    await asyncio.gather(*tasks)
+    robot.set_power_level()
+    while True:
+        robot.update_status()
+        robot.navigate()
+        robot.scan_camera()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
