@@ -14,7 +14,7 @@ async def DetermineGoal():
     # Logic to determine the goal
     pass
 
-def read_line(white_line=True, threshold2=50): #threshold2 may need to be adjusted
+async def read_line(white_line=True, threshold2=50): #threshold2 may need to be adjusted
     coef1 = 255 if white_line else 0 #coef1 may need to be adjusted
     numSensors = 3
     sensor_positions = [1, 2, 3]
