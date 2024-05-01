@@ -82,6 +82,7 @@ async def main():
 
         stop
     """
+    
     await robot.initialize_robot()
     await robot.set_power_level()
     await InitialScan()
@@ -98,6 +99,4 @@ async def main():
             #at the end of obstacle track the robot should be at L1
 
 if __name__ == '__main__':
-    robot.initialize_robot()
-    robot.get_power_level()
     main()
