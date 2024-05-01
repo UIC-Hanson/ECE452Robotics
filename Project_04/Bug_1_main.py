@@ -37,9 +37,9 @@ def read_line(px):
     if detected[1]:
         return 'forward'
 
-    if detected[2]:
-        return 'right'
     if detected[0]:
+        return 'right'
+    if detected[2]:
         return 'left'
     return 'forward' # Edge case, ensure it always returns something
 
