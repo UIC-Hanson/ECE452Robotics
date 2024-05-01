@@ -1,6 +1,9 @@
 #Bug 1 main
 import time
 import sys
+import cv2
+import math
+import utils  # assuming this contains utility functions like cvdata2transmtx
 sys.path.append('Utilities')
 from robot_control import RobotControl
 
@@ -40,10 +43,6 @@ def read_line():
         return 'left'
     return 'forward' # Edge case, ensure it always returns something
 
-import cv2
-import math
-import time
-import utils  # assuming this contains utility functions like cvdata2transmtx
 
 def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional, angle_to_goal):
     print("Warming up the Line track sensors...")
