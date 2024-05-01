@@ -14,30 +14,40 @@ def DetermineGoal():
     # Logic to determine the goal
     pass
 
-def read_line(white_line=True, threshold2=50): #threshold2 may need to be adjusted
-    coef1 = 255 if white_line else 0 #coef1 may need to be adjusted
-    numSensors = 3
-    sensor_positions = [1, 2, 3]
+def read_line(white_line=False):
     sensor_values = px.get_grayscale_data()
-    
+    numSensors = 3
+    coef1 = 1000
+    threshold1 = 200 # Helps in deciding if the line is detected at all
+    threshold2 = 50 # Filters out noise from the sensor readings
+
     avg = 0
     sum_sensors = 0
     on_line = False
+    global last_value
 
     for i in range(numSensors):
-        value = abs(coef1 - sensor_values[i])
-        if value > threshold2:
-            avg += value * sensor_positions[i]
-            sum_sensors += value
+        value = sensor_values[i]
+
+        if white_line:
+            value = coef1 - value
+        
+        if value > threshold1:
             on_line = True
+        
+        if value > threshold2:
+            avg += value * (i + 1) * coef1  # Assuming the positions are 1-indexed for sensors
+            sum_sensors += value
 
     if not on_line:
-        if last_value < (max(sensor_positions) + 1) // 2:
+        # Check last read position relative to the center
+        if last_value < (numSensors * coef1) / 2:
             return 0  # Line to the left of center
         else:
-            return max(sensor_positions)  # Line to the right of center
+            return (numSensors - 1) * coef1  # Line to the right of center
 
-    last_value = avg / sum_sensors if sum_sensors != 0 else 0
+    if sum_sensors != 0:
+        last_value = avg / sum_sensors
     return last_value
 
 def ObstacleTrack():
