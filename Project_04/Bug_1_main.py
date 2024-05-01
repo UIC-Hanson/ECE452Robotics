@@ -43,7 +43,7 @@ def read_line():
         return 'left'
     return 'forward' # Edge case, ensure it always returns something
 
-
+"""
 def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional, angle_to_goal):
     print("Warming up the Line track sensors...")
     time.sleep(0.5)
@@ -124,7 +124,7 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
                             stop(px)
                             state = 3
                             return state, goal, hit, last_proportional, angle_to_goal
-
+"""
 def ObstacleTrack():
     # Initial position
     H1 = GetPosn()
@@ -210,7 +210,7 @@ def main():
             break  # Break out of the loop once the goal is reached
         
         DetermineGoal()
-        go_to_goal()
+        #go_to_goal()
         if robot.current_state != 'forward':
             ObstacleTrack()
             #at the end of obstacle track the robot should be at L1
