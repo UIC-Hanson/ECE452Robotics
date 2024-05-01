@@ -152,7 +152,8 @@ def ObstacleTrack():
 def is_goal_reached():
     # Implement the logic to determine if the goal is reached
     # This might involve checking sensors or internal state variables
-    return robot.at_goal  # Example: Check an attribute that indicates goal status
+    #return robot.at_goal  # Example: Check an attribute that indicates goal status
+    return false;
 
 def main():
 
