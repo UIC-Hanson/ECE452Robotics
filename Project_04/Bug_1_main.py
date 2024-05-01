@@ -204,17 +204,18 @@ def main():
     robot.initialize_robot()
     robot.set_power_level()
     InitialScan()
-
+    print("Start main loop")
     while True:
         if is_goal_reached():
             print("Goal reached! Exiting loop.")
             break  # Break out of the loop once the goal is reached
-        
+
         DetermineGoal()
+        ObstacleTrack(robot.px)
         #go_to_goal()
-        robot.current_state = read_line(robot.px)
-        if robot.current_state != 'forward':
-            ObstacleTrack(robot.px)
+        #robot.current_state = read_line(robot.px)
+        #if robot.current_state != 'forward':
+        #    ObstacleTrack(robot.px)
             #at the end of obstacle track the robot should be at L1
 
 if __name__ == '__main__':

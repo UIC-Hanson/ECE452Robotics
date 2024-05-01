@@ -60,7 +60,7 @@ class RobotControl:
         """Continuously adjusts the robot's movements based on its state."""
         """Adjust the robot's movement based on the current state."""
         inboard_wheel = self.power * 0.8
-
+        print(self.current_state)
         if self.current_state == 'left':
             self.px.set_dir_servo_angle(self.offset)
             self.px.set_motor_speed(1, inboard_wheel)

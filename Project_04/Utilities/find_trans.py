@@ -45,41 +45,41 @@ def process_video(cap, aruco_dict, aruco_params, mtx, dist, goal_id, max_helpers
         if ret:
             corners, ids, rvecs, tvecs = detect_markers(frame, aruco_dict, aruco_params, marker_length, mtx, dist)
             if ids is not None:
-                for i, id_ in enumerate(ids):
+                for i in range(len(ids)):
+                    id_ = ids[i][0]  # Correctly extract the ID as an integer
                     if id_ == goal_id:
                         cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
                         g_gc = utils.cvdata2transmtx(rvecs[i], tvecs[i])[0]
                         p_gc = g_gc[:, 3]
-                        goal.x = p_gc[0]
-                        goal.z = p_gc[2]
+                        goal.x = round(p_gc[0], 5)
+                        goal.z = round(p_gc[2], 5)
                         print(f"Goal point x:{goal.x}, z:{goal.z}")
                     elif id_ in helpers:
                         cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
                         g_hc = utils.cvdata2transmtx(rvecs[i], tvecs[i])[0]
                         p_hc = g_hc[:, 3]
-                        helpers[id_].x = p_hc[0]
-                        helpers[id_].z = p_hc[2]
+                        helpers[id_].x = round(p_hc[0], 5)
+                        helpers[id_].z = round(p_hc[2], 5)
                         print(f"Helper {id_} point x:{helpers[id_].x}, z:{helpers[id_].z}")
             cv2.imshow('aruco', frame)
             key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-    cap.release()
-    cv2.destroyAllWindows()
+        cap.release()
+        cv2.destroyAllWindows()
     return goal, helpers
 
 def output():
     aruco_dict, aruco_params = initialize_aruco()
     mtx, dist = load_calibration('calib_data.yaml')
     cap = cv2.VideoCapture(cv2.CAP_V4L)
-    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, [1, 2])
+    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, 5)
     return goal, helpers
 
 def find_trans_main():
     aruco_dict, aruco_params = initialize_aruco()
     mtx, dist = load_calibration('calib_data.yaml')
     cap = cv2.VideoCapture(cv2.CAP_V4L)
-    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, [1, 2])
+    # Assuming helper IDs range from 1 to 5, pass the maximum helper ID
+    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, 5)
     print(f"Detected goal point at x: {goal.x}, z: {goal.z}")
     for id_, helper in helpers.items():
         print(f"Detected helper {id_} point at x: {helper.x}, z: {helper.z}")
