@@ -45,7 +45,8 @@ def process_video(cap, aruco_dict, aruco_params, mtx, dist, goal_id, max_helpers
         if ret:
             corners, ids, rvecs, tvecs = detect_markers(frame, aruco_dict, aruco_params, marker_length, mtx, dist)
             if ids is not None:
-                for i, id_ in enumerate(ids):
+                for i in range(len(ids)):
+                    id_ = ids[i][0]  # Correctly extract the ID as an integer
                     if id_ == goal_id:
                         cv2.aruco.drawAxis(frame, mtx, dist, rvecs[i], tvecs[i], 0.05)
                         g_gc = utils.cvdata2transmtx(rvecs[i], tvecs[i])[0]
