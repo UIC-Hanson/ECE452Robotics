@@ -12,6 +12,7 @@
         and the background gray value.
 
 '''
+import time
 from picarx import Picarx
 from time import sleep
 
