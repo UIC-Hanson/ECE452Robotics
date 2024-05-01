@@ -114,9 +114,9 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
                 if 'th' in locals(): # 
                     if th - angle_to_goal > 0:
                         
-                    else:
+                    #else:    
                         
-                else:
+                #else:
 
             cv2.imshow('aruco', frame)
             key = cv2.waitKey(100) & 0xFF
