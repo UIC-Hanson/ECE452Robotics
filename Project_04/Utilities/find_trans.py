@@ -35,7 +35,8 @@ def detect_markers(frame, aruco_dict, aruco_params, marker_length, mtx, dist):
         return transformations
     return []
 
-def process_video(camera_id, marker_length, goal_id, helper_id, mtx, dist, aruco_dict, aruco_params):
+def process_video(camera_id, goal_id, helper_id, mtx, dist, aruco_dict, aruco_params):
+    marker_length=0.05
     cap = cv2.VideoCapture(camera_id)
     print(f"Press q to save the transformation between Goal and Helper {helper_id}")
     while cap.isOpened():
@@ -58,8 +59,8 @@ def process_video(camera_id, marker_length, goal_id, helper_id, mtx, dist, aruco
 def find_trans_main():
     aruco_dict, aruco_params = initialize_aruco()
     mtx, dist = load_calibration('calib_data.yaml')
-    g_gh1 = process_video(cv2.CAP_V4L, 0.05, 2, 1, mtx, dist, aruco_dict, aruco_params)
-    g_gh2 = process_video(cv2.CAP_V4L, 0.05, 2, 0, mtx, dist, aruco_dict, aruco_params)
+    g_gh1 = process_video(cv2.CAP_V4L, 2, 1, mtx, dist, aruco_dict, aruco_params)
+    g_gh2 = process_video(cv2.CAP_V4L, 2, 0, mtx, dist, aruco_dict, aruco_params)
     print(f"Helper1 location x:{g_gh1[0,3]}, z:{g_gh1[2,3]}")
     print(f"Helper2 location x:{g_gh2[0,3]}, z:{g_gh2[2,3]}")
     calib_data = {
