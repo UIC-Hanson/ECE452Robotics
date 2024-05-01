@@ -18,7 +18,7 @@ def DetermineGoal():
     pass
 
 # Returns 'left', 'right', or 'forward'
-def read_line():
+def read_line(px):
     sensor_values = px.get_grayscale_data()
     threshold = 1000 # Arbitrary, set this later
 
@@ -125,26 +125,27 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
                             state = 3
                             return state, goal, hit, last_proportional, angle_to_goal
 """
-def ObstacleTrack():
+def ObstacleTrack(px):
     # Initial position
-    H1 = GetPosn()
-    L1 = H1
-    CP = H1
+    #H1 = GetPosn()
+    #L1 = H1
+    #CP = H1
 
-    while CP != H1:
+    #while CP != H1:
+    while True:
         # Read line position
-        line_position = read_line()
+        line_position = read_line(px)
         # Follow the line based on 'line_position'
         robot.current_state = line_position
         robot.navigate()
         # Code to move the robot based on line position
         time.sleep(1)
-        CP = GetPosn()
-        if CP < L1:
-            L1 = CP
+        #CP = GetPosn()
+        #if CP < L1:
+        #    L1 = CP
 
-    while CP != L1:
-        time.sleep(1)
+    #while CP != L1:
+    #    time.sleep(1)
 
     robot.stop()  # Ensure stop is also awaited if it becomes async
 
@@ -212,7 +213,7 @@ def main():
         DetermineGoal()
         #go_to_goal()
         if robot.current_state != 'forward':
-            ObstacleTrack()
+            ObstacleTrack(robot.px)
             #at the end of obstacle track the robot should be at L1
 
 if __name__ == '__main__':
