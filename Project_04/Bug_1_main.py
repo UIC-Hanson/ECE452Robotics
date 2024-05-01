@@ -1,7 +1,7 @@
 #Bug 1 main
 import time
 import sys
-sys.path.append('/Utilities')
+sys.path.append('Utilities')
 from robot_control import RobotControl
 
 robot = RobotControl()
