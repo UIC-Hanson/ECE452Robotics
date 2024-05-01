@@ -127,11 +127,12 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
 """
 def ObstacleTrack():
     # Initial position
-    H1 = GetPosn()
-    L1 = H1
-    CP = H1
+    #H1 = GetPosn()
+    #L1 = H1
+    #CP = H1
 
-    while CP != H1:
+    #while CP != H1:
+    while True:
         # Read line position
         line_position = read_line()
         # Follow the line based on 'line_position'
