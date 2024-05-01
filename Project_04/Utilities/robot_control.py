@@ -1,4 +1,5 @@
 import time
+from picarx import Picarx
 
 class RobotControl:
     def __init__(self):
