@@ -212,6 +212,7 @@ def main():
         
         DetermineGoal()
         #go_to_goal()
+        robot.current_state = read_line(px)
         if robot.current_state != 'forward':
             ObstacleTrack(robot.px)
             #at the end of obstacle track the robot should be at L1
