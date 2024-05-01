@@ -118,13 +118,13 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
                         
                 #else:
 
-            cv2.imshow('aruco', frame)
-            key = cv2.waitKey(100) & 0xFF
-            if key == ord('q'):
-                cv2.destroyAllWindows()
-                stop(px)
-                state = 3
-                return state, goal, hit, last_proportional, angle_to_goal
+                        cv2.imshow('aruco', frame)
+                        key = cv2.waitKey(100) & 0xFF
+                        if key == ord('q'):
+                            cv2.destroyAllWindows()
+                            stop(px)
+                            state = 3
+                            return state, goal, hit, last_proportional, angle_to_goal
 
 def ObstacleTrack():
     # Initial position
