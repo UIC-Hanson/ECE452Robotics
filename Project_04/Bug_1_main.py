@@ -62,7 +62,7 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
     coef1 = 2000
     threshold1 = 500
 
-    for i in range(100):
+    for i in range(0,100):
         position = read_line()
         proportional = position - coef1
         last_proportional = proportional
@@ -77,6 +77,7 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
         derivative = proportional - last_proportional
         last_proportional = proportional
 
+        # When the IR sensor detects a line
         if abs(derivative) >= threshold1:
             state = 1
             print("Hit line...")
@@ -88,7 +89,7 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
         elif ret:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
-            if corners:
+            if (len(corners)!=0):
                 rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, marker_length, mtx, dist)
                 for i, _ in enumerate(rvecs):
                     if ids[i] == goal_id:
@@ -98,6 +99,8 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
                         th = utils.transmtx2twist(g_gc)[2]
                         if angle_to_goal is None:
                             goal.z = 0.1
+                            # This is the angle between the robot's initial position to the Goal marker frame's origin
+                            # The goal point will be set along this line near to the Goal marker
                             angle_to_goal = math.atan2(p_gc[0], p_gc[2])
                             goal.x = goal.z * math.tan(angle_to_goal)
                             print("Set Goal Point x:{} z:{}".format(goal.x, goal.z))
@@ -118,15 +121,19 @@ def go_to_goal(px, cap, goal_id, goal, hit, deg_eps, dist_eps, last_proportional
                         # Placeholder for additional logic related to helper markers
                         pass
             else:
-                # Handle scenarios when no markers are detected
-                move(px, "search")  # Assume a 'search' function to scan for markers
+                if 'th' in locals(): # 
+                    if th - angle_to_goal > 0:
+                        
+                    else:
+                        
+                else:
 
             cv2.imshow('aruco', frame)
             key = cv2.waitKey(100) & 0xFF
             if key == ord('q'):
                 cv2.destroyAllWindows()
                 stop(px)
-                state = 2
+                state = 3
                 return state, goal, hit, last_proportional, angle_to_goal
 
 def ObstacleTrack():
