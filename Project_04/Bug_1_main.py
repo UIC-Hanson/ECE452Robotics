@@ -37,9 +37,9 @@ def read_line(px):
     if detected[1]:
         return 'forward'
 
-    if detected[2]:
-        return 'right'
     if detected[0]:
+        return 'right'
+    if detected[2]:
         return 'left'
     return 'forward' # Edge case, ensure it always returns something
 
@@ -212,6 +212,7 @@ def main():
         
         DetermineGoal()
         #go_to_goal()
+        robot.current_state = read_line(robot.px)
         if robot.current_state != 'forward':
             ObstacleTrack(robot.px)
             #at the end of obstacle track the robot should be at L1
