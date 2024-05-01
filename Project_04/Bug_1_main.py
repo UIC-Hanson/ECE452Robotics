@@ -140,7 +140,7 @@ def ObstacleTrack(px):
         robot.current_state = line_position
         robot.navigate()
         # Code to move the robot based on line position
-        time.sleep(1)
+        time.sleep(0.5)
         #CP = GetPosn()
         #if CP < L1:
         #    L1 = CP

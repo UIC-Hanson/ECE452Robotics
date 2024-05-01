@@ -63,16 +63,19 @@ class RobotControl:
         print(self.current_state)
         if self.current_state == 'left':
             self.px.set_dir_servo_angle(self.offset)
+            time.sleep(0.1)
             self.px.set_motor_speed(1, inboard_wheel)
             self.px.set_motor_speed(2, self.power)
 
         elif self.current_state == 'right':
             self.px.set_dir_servo_angle(self.offset)
+            time.sleep(0.1)
             self.px.set_motor_speed(2, inboard_wheel)
             self.px.set_motor_speed(1, self.power)
 
         elif self.current_state == 'forward':
             self.px.set_dir_servo_angle(0)
+            time.sleep(0.1)
             self.px.forward(self.power)
         time.sleep(0.1)
         self.px.stop()
