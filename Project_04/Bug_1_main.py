@@ -14,6 +14,32 @@ async def DetermineGoal():
     # Logic to determine the goal
     pass
 
+def read_line(white_line=True, threshold2=50): #threshold2 may need to be adjusted
+    coef1 = 255 if white_line else 0 #coef1 may need to be adjusted
+    numSensors = 3
+    sensor_positions = [1, 2, 3]
+    sensor_values = px.get_grayscale_data()
+    
+    avg = 0
+    sum_sensors = 0
+    on_line = False
+
+    for i in range(numSensors):
+        value = abs(coef1 - sensor_values[i])
+        if value > threshold2:
+            avg += value * sensor_positions[i]
+            sum_sensors += value
+            on_line = True
+
+    if not on_line:
+        if last_value < (max(sensor_positions) + 1) // 2:
+            return 0  # Line to the left of center
+        else:
+            return max(sensor_positions)  # Line to the right of center
+
+    last_value = avg / sum_sensors if sum_sensors != 0 else 0
+    return last_value
+
 async def ObstacleTrack():
     # Initial position
     H1 = await GetPosn()
@@ -21,7 +47,10 @@ async def ObstacleTrack():
     CP = H1
 
     while CP != H1:
-        # Follow the line for a time, then stop and update position
+        # Read line position
+        line_position = read_line()
+        # Follow the line based on 'line_position'
+        # Code to move the robot based on line position
         await asyncio.sleep(1)  # Simulate following the line
         CP = await GetPosn()
         if CP < L1:
