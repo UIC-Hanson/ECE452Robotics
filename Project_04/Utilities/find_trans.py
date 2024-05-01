@@ -79,7 +79,8 @@ def find_trans_main():
     aruco_dict, aruco_params = initialize_aruco()
     mtx, dist = load_calibration('calib_data.yaml')
     cap = cv2.VideoCapture(cv2.CAP_V4L)
-    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, [1, 2])
+    # Assuming helper IDs range from 1 to 5, pass the maximum helper ID
+    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, 5)
     print(f"Detected goal point at x: {goal.x}, z: {goal.z}")
     for id_, helper in helpers.items():
         print(f"Detected helper {id_} point at x: {helper.x}, z: {helper.z}")
