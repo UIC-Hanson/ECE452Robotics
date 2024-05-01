@@ -149,12 +149,12 @@ def ObstacleTrack():
 
     robot.stop()  # Ensure stop is also awaited if it becomes async
 
-async def is_goal_reached():
+def is_goal_reached():
     # Implement the logic to determine if the goal is reached
     # This might involve checking sensors or internal state variables
     return robot.at_goal  # Example: Check an attribute that indicates goal status
 
-async def main():
+def main():
 
     """Script
     scan for markers, denote locatons
