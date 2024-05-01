@@ -211,7 +211,7 @@ def main():
             break  # Break out of the loop once the goal is reached
         
         DetermineGoal()
-        MoveGoal()
+        go_to_goal()
         if robot.current_state != 'forward':
             ObstacleTrack()
             #at the end of obstacle track the robot should be at L1
