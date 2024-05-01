@@ -36,9 +36,10 @@ def detect_markers(frame, aruco_dict, aruco_params, marker_length, mtx, dist):
         return corners, ids, rvecs, tvecs
     return None, None, None, None
 
-def process_video(cap, aruco_dict, aruco_params, marker_length, mtx, dist, goal_id, helper_ids):
+def process_video(cap, aruco_dict, aruco_params, mtx, dist, goal_id, max_helpers):
+    marker_length = 0.05
     goal = point()
-    helpers = {id_: point() for id_ in helper_ids}  # Initialize points for each helper
+    helpers = {id_: point() for id_ in range(1, max_helpers + 1)}  # Initialize points for each helper
     while cap.isOpened():
         ret, frame = cap.read()
         if ret:
@@ -71,14 +72,14 @@ def output():
     aruco_dict, aruco_params = initialize_aruco()
     mtx, dist = load_calibration('calib_data.yaml')
     cap = cv2.VideoCapture(cv2.CAP_V4L)
-    goal, helpers = process_video(cap, aruco_dict, aruco_params, 0.05, mtx, dist, 0, [1, 2])
+    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, [1, 2])
     return goal, helpers
 
 def find_trans_main():
     aruco_dict, aruco_params = initialize_aruco()
     mtx, dist = load_calibration('calib_data.yaml')
     cap = cv2.VideoCapture(cv2.CAP_V4L)
-    goal, helpers = process_video(cap, aruco_dict, aruco_params, 0.05, mtx, dist, 0, [1, 2])
+    goal, helpers = process_video(cap, aruco_dict, aruco_params, mtx, dist, 0, [1, 2])
     print(f"Detected goal point at x: {goal.x}, z: {goal.z}")
     for id_, helper in helpers.items():
         print(f"Detected helper {id_} point at x: {helper.x}, z: {helper.z}")
