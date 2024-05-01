@@ -63,10 +63,8 @@ def process_video(cap, aruco_dict, aruco_params, mtx, dist, goal_id, max_helpers
                         print(f"Helper {id_} point x:{helpers[id_].x}, z:{helpers[id_].z}")
             cv2.imshow('aruco', frame)
             key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-    cap.release()
-    cv2.destroyAllWindows()
+        cap.release()
+        cv2.destroyAllWindows()
     return goal, helpers
 
 def output():
