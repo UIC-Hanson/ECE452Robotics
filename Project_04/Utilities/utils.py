@@ -2,63 +2,60 @@ import cv2
 import numpy as np
 import math
 
-# ======== TO DO ========
-#Fill out each functions based on the materials from the lecture.
-
 def vec2hat(x):
-    # Find x^
-    x_hat = np.array([[0, -x[2], x[1]],
-                      [x[2], 0, -x[0]],
-                      [-x[1], x[0], 0]])
-    
-    return x_hat
+    return np.array([[  0,     -x[2][0],   x[1][0]],
+                     [ x[2][0],     0,     -x[0][0]],
+                     [-x[1][0],  x[0][0],   0]])
 
 def cvdata2transmtx(rvec,tvec):
-    # Rotation and translation of Camera to ArUco
     R_temp = cv2.Rodrigues(rvec)[0]
-    p_temp = tvec.reshape((3, 1))
-    
-    # Find the Rotation and translation of ArUco to Camera
-    R = np.transpose(R_temp) # R_T
-    p = -np.dot(R, p_temp) # -R_T.p
-    g = np.vstack((np.hstack((R, p)), [0, 0, 0, 1]))
-    
+    p_temp = tvec.reshape(-1,1)
+    R = R_temp.T
+    p = -R.dot(p_temp)
+    g = np.vstack((np.hstack((R,p)), [0, 0, 0 ,1]))
+    return g, R, p
+
+def cvdata2transmtx2(rvec,tvec):
+    R = cv2.Rodrigues(rvec)[0]
+    p = tvec.reshape(-1,1)
+    g = np.vstack((np.hstack((R,p)), [0, 0, 0 ,1]))
     return g, R, p
 
 def transmtx2twist(g):
-    # Rotation and translation from g
-    R = g[:3, :3]
-    p = g[:3, 3]
+    R = g[0:3,0:3]
+    p = g[0:3,3]
     
-    # Convert the rotation matrix to rotation vector (including theta)
-    rvec = cv2.Rodrigues(R)[0]
-    
-    # Find the twist coordinate
-    th = np.linalg.norm(p)
-    
-    # Compute angular velocity (w) and linear velocity (v)
-    if th < 1e-6:  # Check if translation vector is close to zero
-        w = np.zeros(3)
-        v = np.zeros(3)
-    else:
-        w = (rvec / th).flatten()
-        v = np.dot(-vec2hat(w), p).flatten() #np.dot(np.linalg.inv(np.eye(3) - R), p) / th
-
-    #print("v shape:", v.shape)
-    #print("w shape:", w.shape)
-        
+    rot_exp_coord = cv2.Rodrigues(R)[0]
+    th = np.linalg.norm(rot_exp_coord)
+    w = rot_exp_coord/th
+    v = np.linalg.inv((np.identity(3)-R).dot(vec2hat(w))+w.dot(w.T)*th).dot(p).reshape(-1,1)
     return v, w, th
 
 def twist2screw(v,w,th):
-    # Convert the twist coordinate to screw motion
-    q = np.cross(v, w) # Point on screw axis
-    h = np.linalg.norm(v) # Pitch
-    u = w / np.linalg.norm(w) # Normalized w
-    M = th # Magnitude
-    
+    q = np.cross(w.reshape(-1),v.reshape(-1)).reshape(-1,1)
+    h = w.T.dot(v)
+    u = w
+    M = th
     return q, h, u, M
 
 def distance(xdiff,zdiff):
-    # Find the distance using delta(x) and delta(z) in the x-z plane
-    dist = np.sqrt(xdiff**2 + zdiff**2)
+    dist = math.sqrt(xdiff**2 + zdiff**2)
     return dist
+
+
+
+print("Test transmtx2twist function:")
+gMatrix = np.array( [ [  0.5555,  0.5274,  0.6429,  6.0000 ],
+                      [ -0.3906,  0.8480, -0.3581,  1.4015 ],
+                      [ -0.7341, -0.0522,  0.6771, -1.3978 ],
+                      [       0,       0,       0,  1.0000 ] ] )
+
+v, w, th = transmtx2twist(gMatrix)
+
+print("test",w.dot(w.T))
+
+print("  v = " + str(v))
+print("  w = " + str(w))
+print("  th = " + str(th))
+
+
